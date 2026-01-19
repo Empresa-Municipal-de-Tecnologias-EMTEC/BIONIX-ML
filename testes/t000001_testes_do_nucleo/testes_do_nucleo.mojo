@@ -1,4 +1,4 @@
-def run_tests():
+def executar_testes():
     # Testes agrupados do núcleo Bionix (forward + backward)
     import src.nucleo.nucleo as nucleo
 

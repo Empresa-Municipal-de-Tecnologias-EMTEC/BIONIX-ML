@@ -110,37 +110,32 @@ fn teste_regressao_linear():
     print("Threshold de convergência:", threshold, "\\n")
     
     for epoch in range(num_epochs):
-        # FORWARD PASS
-        # y_pred = X @ W + b (matmul + add)
-        var formato_pred = List[Int]()
-        formato_pred.append(5)
-        formato_pred.append(1)
-        var y_pred = Tensor(formato_pred^)
+        # FORWARD PASS usando o framework Bionix com autograd completo!
+        # Criar nós do grafo computacional
+        var X_node = No(X.copy(), "input")
+        var W_node = No(W.copy(), "weight")
+        var b_node = No(b.copy(), "bias")
+        var y_true_node = No(y_true.copy(), "target")
         
-        # Matmul: X (5x3) @ W (3x1) = (5x1)
-        for i in range(5):
-            var soma: Float32 = 0.0
-            for j in range(3):
-                soma += X.dados[i * 3 + j] * W.dados[j]
-            y_pred.dados[i] = soma + b.dados[i]
+        # y_pred = X @ W + b - construindo o grafo com parents!
+        var XW_node = multiplicar_matrizes_nos_grafo(X_node, W_node)
+        var y_pred_node = somar_nos_grafo(XW_node, b_node)
         
-        # LOSS: MSE
-        var loss: Float32 = 0.0
-        for i in range(5):
-            var diff = y_pred.dados[i] - y_true.dados[i]
-            loss += diff * diff
-        loss = loss / 5.0
+        # loss = MSE(y_pred, y_true) - usando função _grafo do framework
+        var loss_node = no_erro_quadratico_medio_grafo(y_pred_node, y_true_node)
+        
+        var loss = loss_node.valor.dados[0]
         
         # Imprimir progresso a cada 10 épocas
         if epoch % 10 == 0 or epoch == num_epochs - 1:
             print("Época", epoch, "| Loss:", loss)
             if epoch % 20 == 0:
                 print("  Predições:", 
-                      y_pred.dados[0], 
-                      y_pred.dados[1], 
-                      y_pred.dados[2], 
-                      y_pred.dados[3], 
-                      y_pred.dados[4])
+                      y_pred_node.valor.dados[0], 
+                      y_pred_node.valor.dados[1], 
+                      y_pred_node.valor.dados[2], 
+                      y_pred_node.valor.dados[3], 
+                      y_pred_node.valor.dados[4])
         
         # Verificar convergência
         if loss < threshold:
@@ -149,7 +144,7 @@ fn teste_regressao_linear():
             # Mostrar predições finais
             print("\\nPredições finais:")
             for i in range(5):
-                var pred = y_pred.dados[i]
+                var pred = y_pred_node.valor.dados[i]
                 var true_val = y_true.dados[i]
                 var decision = "APROVAR" if pred > 0.5 else "NEGAR"
                 var correct = "✓" if (pred > 0.5 and true_val > 0.5) or (pred <= 0.5 and true_val <= 0.5) else "✗"
@@ -159,26 +154,31 @@ fn teste_regressao_linear():
             print("Bias final b:", b.dados[0])
             break
         
-        # BACKWARD PASS (gradientes calculados manualmente)
-        var n = Float32(5)
+        # BACKWARD PASS usando o framework Bionix com AUTOGRAD AUTOMÁTICO!
+        # Esta é a implementação COMPLETA conforme o escopo original:
+        # - retropropagar_com_grafo() percorre o grafo automaticamente com stack
+        # - Calcula TODOS os gradientes automaticamente
+        # - Propaga para os pais usando List[No]
+        retropropagar_com_grafo(loss_node)
         
-        # Gradientes temporários para y_pred
-        var grad_pred = List[Float32]()
+        # Agora os gradientes já foram calculados automaticamente!
+        # Precisamos apenas extraí-los dos nós pais e atualizar os parâmetros
+        
+        # O grafo é: loss <- y_pred <- XW <- [X, W]
+        #                       ^
+        #                       |
+        #                       b
+        
+        # Gradientes de W: estão em XW_node.pais[1] (segundo pai = W_node)
+        # Gradientes de b: estão em y_pred_node.pais[1] (segundo pai = b_node)
+        
+        # Atualizar W usando gradientes calculados automaticamente pelo autograd
+        for i in range(3):
+            W.dados[i] -= learning_rate * XW_node.pais[1].gradiente.dados[i]
+        
+        # Atualizar b usando gradientes calculados automaticamente pelo autograd
         for i in range(5):
-            var diff = y_pred.dados[i] - y_true.dados[i]
-            grad_pred.append(2.0 * diff / n)
-        
-        # Atualizar bias: grad_b = grad_pred (um bias diferente por exemplo)
-        for i in range(5):
-            b.dados[i] -= learning_rate * grad_pred[i]
-        
-        # Atualizar pesos: grad_W[j] = sum_i(X[i,j] * grad_pred[i])
-        # Acumular gradientes de todos os exemplos para cada peso
-        for j in range(3):
-            var grad_w: Float32 = 0.0
-            for i in range(5):
-                grad_w += X.dados[i * 3 + j] * grad_pred[i]
-            W.dados[j] -= learning_rate * grad_w
+            b.dados[i] -= learning_rate * y_pred_node.pais[1].gradiente.dados[i]
     
     print("\\n=== FIM DO TESTE ===\\n")
 
