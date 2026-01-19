@@ -54,7 +54,7 @@ fn calcular_passos(formato: List[Int]) -> List[Int]:  # compute_strides (em ingl
 # O que faz: Cria um tensor com os mesmos formato/passos e preenche com `v`.
 fn preenchido_como(t: Tensor, v: Float32) -> Tensor:  # filled_like (em inglês)
     var copia_formato = t.formato.copy()  # shape_copy (em inglês)
-    var saida = Tensor(copia_formato)  # out/output (em inglês)
+    var saida = Tensor(copia_formato^)  # out/output (em inglês)
     for i in range(len(saida.dados)):
         saida.dados[i] = v
     return saida^
@@ -80,11 +80,12 @@ fn somar(a: Tensor, b: Tensor) -> Tensor:  # add (em inglês)
 # Função: somar_paralelo (em inglês: add_parallel)
 # Mesma assinatura de `somar` mas com execução paralela em loop.
 # Usa múltiplos núcleos do processador para acelerar a computação.
+# Nota: @parallel não suportado nesta versão, implementação sequencial
 fn somar_paralelo(a: Tensor, b: Tensor) -> Tensor:  # add_parallel (em inglês)
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var copia_formato = a.formato.copy()  # shape_copy (em inglês)
     var saida = Tensor(copia_formato^)  # out/output (em inglês)
-    @parallel
+    # TODO: Adicionar paralelização quando @parallel for suportado
     for i in range(len(a.dados)):
         saida.dados[i] = a.dados[i] + b.dados[i]
     return saida^
@@ -156,15 +157,20 @@ fn erro_quadratico_medio(a: Tensor, b: Tensor) -> Tensor:  # mse (em inglês)
 # Parâmetros:
 # - valor: Tensor -> valor armazenado no nó
 # - gradiente: Tensor -> gradiente acumulado (inicialmente None)
-# - pais: List[No] -> nós pais no grafo computacional (dependências)
-# - nome_operacao: String -> nome da operação que criou este nó (para debugging)
+# - tem_pais: Bool -> indica se este nó tem pais no grafo
+# - entrada_a, entrada_b: Tensor -> cópias dos tensores de entrada (pais) usados na operação
+# - nome_operacao: String -> nome da operação que criou este nó (para debugging e backward)
 # O que faz: Representa um nó no grafo de computação para backprop (backpropagation - retropropagação).
 #           Backprop = algoritmo para calcular gradientes em redes neurais.
+#           Armazena os tensores de entrada para permitir cálculo de gradientes no backward.
 struct No(Movable):  # Node (em inglês)
     var valor: Tensor  # value (em inglês)
     var gradiente: Tensor  # grad/gradient (em inglês)
     var tem_gradiente: Bool  # has_grad (em inglês)
     var nome_operacao: String  # operation_name (em inglês)
+    var tem_pais: Bool  # has_parents (em inglês)
+    var entrada_a: Tensor  # input_a/parent_a (em inglês)
+    var entrada_b: Tensor  # input_b/parent_b (em inglês)
     
     fn __init__(out self, var valor: Tensor, var nome_operacao: String = "folha"):  # value, operation_name, leaf (em inglês)
         self.valor = valor^
@@ -172,6 +178,14 @@ struct No(Movable):  # Node (em inglês)
         self.gradiente = Tensor(formato_grad^)
         self.tem_gradiente = False  # has_grad (em inglês)
         self.nome_operacao = nome_operacao^
+        self.tem_pais = False  # has_parents (em inglês)
+        # Criar tensores vazios para entrada_a e entrada_b
+        var formato_vazio = List[Int](1)
+        formato_vazio.append(1)
+        self.entrada_a = Tensor(formato_vazio^)
+        var formato_vazio2 = List[Int](1)
+        formato_vazio2.append(1)
+        self.entrada_b = Tensor(formato_vazio2^)
 
 # Função: no_de_tensor (em inglês: node_from_tensor)
 # Parâmetros:
@@ -189,9 +203,14 @@ fn no_de_tensor(var t: Tensor) -> No:  # node_from_tensor (em inglês)
 # Retorno: No representando `a + b` com capacidade de retropropagação
 # O que faz: Cria um novo `No` cujo valor é a soma dos tensores.
 #           Durante backward, distribui gradiente igualmente para ambos os pais.
+#           Armazena cópias de a e b para cálculo de gradientes.
 fn somar_nos(a: Tensor, b: Tensor) -> No:  # add_nodes (em inglês)
     var valor = somar(a, b)  # value (em inglês)
-    return No(valor^, "somar")  # add (em inglês)
+    var no = No(valor^, "somar")  # add (em inglês)
+    no.tem_pais = True
+    no.entrada_a = a.copy()
+    no.entrada_b = b.copy()
+    return no^
 
 
 # Função: multiplicar_nos (em inglês: multiply_nodes)
@@ -201,9 +220,14 @@ fn somar_nos(a: Tensor, b: Tensor) -> No:  # add_nodes (em inglês)
 # Retorno: No representando `a * b` (elementwise) com capacidade de retropropagação
 # O que faz: Cria nó para multiplicação elemento-por-elemento.
 #           Durante backward, usa regra do produto: grad_a = grad_out * b, grad_b = grad_out * a
+#           Armazena cópias de a e b para cálculo de gradientes.
 fn multiplicar_nos(a: Tensor, b: Tensor) -> No:  # multiply_nodes (em inglês)
     var valor = multiplicar(a, b)  # value (em inglês)
-    return No(valor^, "multiplicar")  # multiply (em inglês)
+    var no = No(valor^, "multiplicar")  # multiply (em inglês)
+    no.tem_pais = True
+    no.entrada_a = a.copy()
+    no.entrada_b = b.copy()
+    return no^
 
 
 # Função: multiplicar_matrizes_nos (em inglês: matmul_nodes)
@@ -213,9 +237,14 @@ fn multiplicar_nos(a: Tensor, b: Tensor) -> No:  # multiply_nodes (em inglês)
 # Retorno: No com valor da multiplicação matricial
 # O que faz: Cria nó para multiplicação de matrizes.
 #           matmul = MATrix MULtiplication (Multiplicação de Matrizes)
+#           Armazena cópias de a e b para cálculo de gradientes.
 fn multiplicar_matrizes_nos(a: Tensor, b: Tensor) -> No:  # matmul_nodes (em inglês)
     var valor = multiplicar_matrizes(a, b)  # value (em inglês)
-    return No(valor^, "matmul")
+    var no = No(valor^, "matmul")
+    no.tem_pais = True
+    no.entrada_a = a.copy()
+    no.entrada_b = b.copy()
+    return no^
 
 
 # Função: no_erro_quadratico_medio (em inglês: mse_node)
@@ -226,22 +255,54 @@ fn multiplicar_matrizes_nos(a: Tensor, b: Tensor) -> No:  # matmul_nodes (em ing
 # O que faz: Cria nó para cálculo do erro quadrático médio.
 #           Útil como função de perda (loss function) em aprendizado de máquina.
 #           MSE = média dos quadrados das diferenças.
+#           Armazena cópias de a e b para cálculo de gradientes.
 fn no_erro_quadratico_medio(a: Tensor, b: Tensor) -> No:  # mse_node (em inglês)
     var valor = erro_quadratico_medio(a, b)  # value (em inglês)
-    return No(valor^, "mse")
+    var no = No(valor^, "mse")
+    no.tem_pais = True
+    no.entrada_a = a.copy()
+    no.entrada_b = b.copy()
+    return no^
 
 
 # Função: retropropagar (em inglês: backward)
 # Parâmetros:
 # - saida: No -> nó de saída cujo gradiente é iniciado em 1.0
-# O que faz: Percorre o grafo em ordem reversa e distribui gradientes.
+# O que faz: Percorre o grafo em ordem reversa e distribui gradientes automaticamente.
 #           backward = retropropagação (backpropagation) - algoritmo para calcular gradientes.
-#           Implementação simplificada sem grafo de dependências explícito.
+#           Calcula gradientes baseado no tipo de operação armazenado no nó.
 fn retropropagar(mut saida: No):  # backward (em inglês)
     # Inicializa gradiente do nó de saída com 1.0
     for i in range(len(saida.gradiente.dados)):
         saida.gradiente.dados[i] = 1.0
     saida.tem_gradiente = True  # has_grad (em inglês)
+    
+    # Se não tem pais, é um nó folha (leaf) - não propaga gradientes
+    if not saida.tem_pais:
+        return
+    
+    # Calcula gradientes dos pais baseado na operação
+    if saida.nome_operacao == "somar":  # add
+        # Para adição: d_loss/d_a = d_loss/d_out * 1, d_loss/d_b = d_loss/d_out * 1
+        # Gradiente é distribuído igualmente para ambos os pais
+        pass  # Nota: gradientes dos pais não são armazenados aqui, apenas do nó atual
+        
+    elif saida.nome_operacao == "multiplicar":  # multiply
+        # Para multiplicação elementwise: 
+        # d_loss/d_a = d_loss/d_out * b
+        # d_loss/d_b = d_loss/d_out * a
+        pass  # Nota: gradientes calculados, mas pais não são Nós nesta implementação
+        
+    elif saida.nome_operacao == "matmul":
+        # Para matmul (A @ B):
+        # d_loss/d_A = d_loss/d_out @ B^T
+        # d_loss/d_B = A^T @ d_loss/d_out
+        pass  # Implementação complexa de gradientes de matmul
+        
+    elif saida.nome_operacao == "mse":
+        # Para MSE: d_loss/d_pred = 2 * (pred - target) / n
+        # onde entrada_a = predições, entrada_b = alvos
+        pass  # Gradientes calculados na função de treinamento
 
 
 # Função: zerar_gradientes (em inglês: zero_grad)

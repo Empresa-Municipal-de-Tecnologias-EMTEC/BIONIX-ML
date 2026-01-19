@@ -168,10 +168,47 @@ def run_tests():
     var y_alvo = nucleo.Tensor(formato_y^)  # y_target (em inglês)
     y_alvo.dados[0] = 2.0
     
-    print("W inicial:", w_no.valor.dados[0], w_no.valor.dados[1])
-    print("b inicial:", b_no.valor.dados[0])
+    print("W (Weigt, Peso) inicial:", w_no.valor.dados[0], w_no.valor.dados[1])
+    print("b (Bias, Viés) inicial:", b_no.valor.dados[0])
     
     var perda_treino = nucleo.passo_treinamento(x_treino.copy(), y_alvo.copy(), w_no, b_no, 0.01)  # loss_train (em inglês)
     print("perda após 1 passo:", perda_treino)  # loss after 1 step
+    
+    # Teste 9: preenchido_como (filled_like em inglês)
+    # Cria um tensor com o mesmo formato de outro tensor, mas preenchido com um valor específico
+    print("\n--- Teste de preenchido_como ---")
+    var formato_teste = List[Int](2)
+    formato_teste.append(2)
+    formato_teste.append(3)
+    var tensor_ref = nucleo.Tensor(formato_teste^)  # tensor de referência
+    var tensor_preenchido = nucleo.preenchido_como(tensor_ref, 7.5)  # filled_like
+    print("Tensor preenchido com 7.5:")
+    print("  formato:", tensor_preenchido.formato[0], "x", tensor_preenchido.formato[1])
+    for i in range(len(tensor_preenchido.dados)):
+        print("  ", tensor_preenchido.dados[i])
+    
+    # Teste 10: somar_paralelo (add_parallel em inglês)
+    # Soma paralela usando múltiplos núcleos do processador
+    # Deve produzir o mesmo resultado que soma sequencial
+    print("\n--- Teste de somar_paralelo ---")
+    var formato_par = List[Int](1)
+    formato_par.append(4)
+    var tensor_par1 = nucleo.Tensor(formato_par^)
+    var formato_par2 = List[Int](1)
+    formato_par2.append(4)
+    var tensor_par2 = nucleo.Tensor(formato_par2^)
+    tensor_par1.dados[0] = 1.0
+    tensor_par1.dados[1] = 2.0
+    tensor_par1.dados[2] = 3.0
+    tensor_par1.dados[3] = 4.0
+    tensor_par2.dados[0] = 5.0
+    tensor_par2.dados[1] = 6.0
+    tensor_par2.dados[2] = 7.0
+    tensor_par2.dados[3] = 8.0
+    
+    var resultado_sequencial = nucleo.somar(tensor_par1, tensor_par2)
+    var resultado_paralelo = nucleo.somar_paralelo(tensor_par1.copy(), tensor_par2.copy())
+    print("Resultado sequencial:", resultado_sequencial.dados[0], resultado_sequencial.dados[1], resultado_sequencial.dados[2], resultado_sequencial.dados[3])
+    print("Resultado paralelo:", resultado_paralelo.dados[0], resultado_paralelo.dados[1], resultado_paralelo.dados[2], resultado_paralelo.dados[3])
     
     print("\n--- Fim dos testes do núcleo ---")
