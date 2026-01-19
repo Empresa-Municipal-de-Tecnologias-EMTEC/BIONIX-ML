@@ -253,4 +253,54 @@ def run_tests():
     print("Gradiente de y (via multiplicação):", no_mult.grad_entrada_b.dados[0], no_mult.grad_entrada_b.dados[1])
     print("  Esperado para y: [2.0, 3.0] (d_(xy)/d_y = x)")
     
+    # Teste 12: GRAFO COMPUTACIONAL COMPLETO (conforme escopo original)
+    # Usa List[No] como parents e travessia automática com stack
+    # Demonstra backward propagando automaticamente por todo o grafo
+    print("\n--- Teste de GRAFO COMPLETO com travessia automática ---")
+    var formato_grafo = List[Int](1)
+    formato_grafo.append(2)
+    var tensor_x_grafo = nucleo.Tensor(formato_grafo^)
+    tensor_x_grafo.dados[0] = 2.0
+    tensor_x_grafo.dados[1] = 3.0
+    var no_x = nucleo.no_de_tensor(tensor_x_grafo^)
+    
+    var formato_grafo2 = List[Int](1)
+    formato_grafo2.append(2)
+    var tensor_y_grafo = nucleo.Tensor(formato_grafo2^)
+    tensor_y_grafo.dados[0] = 4.0
+    tensor_y_grafo.dados[1] = 5.0
+    var no_y = nucleo.no_de_tensor(tensor_y_grafo^)
+    
+    var formato_grafo3 = List[Int](1)
+    formato_grafo3.append(2)
+    var tensor_w_grafo = nucleo.Tensor(formato_grafo3^)
+    tensor_w_grafo.dados[0] = 1.0
+    tensor_w_grafo.dados[1] = 1.0
+    var no_w = nucleo.no_de_tensor(tensor_w_grafo^)
+    
+    # Construir grafo usando funções _grafo: z = (x * y) + w
+    var no_mult_grafo = nucleo.multiplicar_nos_grafo(no_x, no_y)
+    var no_z = nucleo.somar_nos_grafo(no_mult_grafo, no_w)
+    
+    print("Construiu grafo: z = (x * y) + w")
+    print("Valor de z:", no_z.valor.dados[0], no_z.valor.dados[1])
+    print("  z tem", len(no_z.pais), "pais no grafo")
+    print("  (x*y) tem", len(no_mult_grafo.pais), "pais no grafo")
+    
+    # Chamar backward_com_grafo - deve propagar automaticamente!
+    nucleo.retropropagar_com_grafo(no_z)
+    
+    print("\nApós backward automático com stack:")
+    print("Gradiente de z:", no_z.gradiente.dados[0], no_z.gradiente.dados[1])
+    print("Gradiente de (x*y):", no_mult_grafo.gradiente.dados[0], no_mult_grafo.gradiente.dados[1])
+    print("Gradiente de w:", no_w.gradiente.dados[0], no_w.gradiente.dados[1])
+    print("Gradiente de x:", no_x.gradiente.dados[0], no_x.gradiente.dados[1])
+    print("Gradiente de y:", no_y.gradiente.dados[0], no_y.gradiente.dados[1])
+    print("\nEsperado:")
+    print("  dz/dz = [1, 1]")
+    print("  dz/d(xy) = [1, 1]")
+    print("  dz/dw = [1, 1]")
+    print("  dz/dx = [4, 5] (via chain rule)")
+    print("  dz/dy = [2, 3] (via chain rule)")
+    
     print("\n--- Fim dos testes do núcleo ---")

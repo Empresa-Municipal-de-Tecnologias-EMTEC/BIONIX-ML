@@ -9,3 +9,6 @@ pixi run mojo build src/principal/principal.mojo -o build/principal
 
 #Executar os testes
 pixi run mojo run testes/principal.mojo
+
+#Rodar no WSL para prevenir o stack trace do estouro de memória
+export Malloc=libc
