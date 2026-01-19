@@ -1,0 +1,11 @@
+# Executar
+pixi run mojo run src/principal/principal.mojo
+
+# Compilar
+pixi run mojo build src/principal/principal.mojo
+
+# Compilar indicando o diretório
+pixi run mojo build src/principal/principal.mojo -o build/principal
+
+#Executar os testes
+pixi run mojo run testes/principal.mojo
