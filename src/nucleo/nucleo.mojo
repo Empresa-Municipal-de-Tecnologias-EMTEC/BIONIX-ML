@@ -159,10 +159,11 @@ fn erro_quadratico_medio(a: Tensor, b: Tensor) -> Tensor:  # mse (em inglês)
 # - gradiente: Tensor -> gradiente acumulado (inicialmente None)
 # - tem_pais: Bool -> indica se este nó tem pais no grafo
 # - entrada_a, entrada_b: Tensor -> cópias dos tensores de entrada (pais) usados na operação
+# - grad_entrada_a, grad_entrada_b: Tensor -> gradientes calculados para as entradas
 # - nome_operacao: String -> nome da operação que criou este nó (para debugging e backward)
 # O que faz: Representa um nó no grafo de computação para backprop (backpropagation - retropropagação).
 #           Backprop = algoritmo para calcular gradientes em redes neurais.
-#           Armazena os tensores de entrada para permitir cálculo de gradientes no backward.
+#           Armazena os tensores de entrada e seus gradientes para propagação.
 struct No(Movable):  # Node (em inglês)
     var valor: Tensor  # value (em inglês)
     var gradiente: Tensor  # grad/gradient (em inglês)
@@ -171,6 +172,8 @@ struct No(Movable):  # Node (em inglês)
     var tem_pais: Bool  # has_parents (em inglês)
     var entrada_a: Tensor  # input_a/parent_a (em inglês)
     var entrada_b: Tensor  # input_b/parent_b (em inglês)
+    var grad_entrada_a: Tensor  # grad_input_a (em inglês)
+    var grad_entrada_b: Tensor  # grad_input_b (em inglês)
     
     fn __init__(out self, var valor: Tensor, var nome_operacao: String = "folha"):  # value, operation_name, leaf (em inglês)
         self.valor = valor^
@@ -186,6 +189,12 @@ struct No(Movable):  # Node (em inglês)
         var formato_vazio2 = List[Int](1)
         formato_vazio2.append(1)
         self.entrada_b = Tensor(formato_vazio2^)
+        var formato_vazio3 = List[Int](1)
+        formato_vazio3.append(1)
+        self.grad_entrada_a = Tensor(formato_vazio3^)
+        var formato_vazio4 = List[Int](1)
+        formato_vazio4.append(1)
+        self.grad_entrada_b = Tensor(formato_vazio4^)
 
 # Função: no_de_tensor (em inglês: node_from_tensor)
 # Parâmetros:
@@ -210,6 +219,8 @@ fn somar_nos(a: Tensor, b: Tensor) -> No:  # add_nodes (em inglês)
     no.tem_pais = True
     no.entrada_a = a.copy()
     no.entrada_b = b.copy()
+    no.grad_entrada_a = preenchido_como(a, 0.0)
+    no.grad_entrada_b = preenchido_como(b, 0.0)
     return no^
 
 
@@ -227,6 +238,8 @@ fn multiplicar_nos(a: Tensor, b: Tensor) -> No:  # multiply_nodes (em inglês)
     no.tem_pais = True
     no.entrada_a = a.copy()
     no.entrada_b = b.copy()
+    no.grad_entrada_a = preenchido_como(a, 0.0)
+    no.grad_entrada_b = preenchido_como(b, 0.0)
     return no^
 
 
@@ -244,6 +257,8 @@ fn multiplicar_matrizes_nos(a: Tensor, b: Tensor) -> No:  # matmul_nodes (em ing
     no.tem_pais = True
     no.entrada_a = a.copy()
     no.entrada_b = b.copy()
+    no.grad_entrada_a = preenchido_como(a, 0.0)
+    no.grad_entrada_b = preenchido_como(b, 0.0)
     return no^
 
 
@@ -262,6 +277,8 @@ fn no_erro_quadratico_medio(a: Tensor, b: Tensor) -> No:  # mse_node (em inglês
     no.tem_pais = True
     no.entrada_a = a.copy()
     no.entrada_b = b.copy()
+    no.grad_entrada_a = preenchido_como(a, 0.0)
+    no.grad_entrada_b = preenchido_como(b, 0.0)
     return no^
 
 
@@ -270,7 +287,7 @@ fn no_erro_quadratico_medio(a: Tensor, b: Tensor) -> No:  # mse_node (em inglês
 # - saida: No -> nó de saída cujo gradiente é iniciado em 1.0
 # O que faz: Percorre o grafo em ordem reversa e distribui gradientes automaticamente.
 #           backward = retropropagação (backpropagation) - algoritmo para calcular gradientes.
-#           Calcula gradientes baseado no tipo de operação armazenado no nó.
+#           Implementa autograd dinâmico completo com cálculo de gradientes por operação.
 fn retropropagar(mut saida: No):  # backward (em inglês)
     # Inicializa gradiente do nó de saída com 1.0
     for i in range(len(saida.gradiente.dados)):
@@ -281,28 +298,61 @@ fn retropropagar(mut saida: No):  # backward (em inglês)
     if not saida.tem_pais:
         return
     
-    # Calcula gradientes dos pais baseado na operação
+    # Inicializa tensores de gradiente das entradas com formato correto
+    saida.grad_entrada_a = preenchido_como(saida.entrada_a, 0.0)
+    saida.grad_entrada_b = preenchido_como(saida.entrada_b, 0.0)
+    
+    # Calcula gradientes dos pais baseado na operação (backward_fn inline)
     if saida.nome_operacao == "somar":  # add
-        # Para adição: d_loss/d_a = d_loss/d_out * 1, d_loss/d_b = d_loss/d_out * 1
+        # Para adição: d_loss/d_a = d_loss/d_out, d_loss/d_b = d_loss/d_out
         # Gradiente é distribuído igualmente para ambos os pais
-        pass  # Nota: gradientes dos pais não são armazenados aqui, apenas do nó atual
+        for i in range(len(saida.gradiente.dados)):
+            saida.grad_entrada_a.dados[i] = saida.gradiente.dados[i]
+            saida.grad_entrada_b.dados[i] = saida.gradiente.dados[i]
         
     elif saida.nome_operacao == "multiplicar":  # multiply
         # Para multiplicação elementwise: 
         # d_loss/d_a = d_loss/d_out * b
         # d_loss/d_b = d_loss/d_out * a
-        pass  # Nota: gradientes calculados, mas pais não são Nós nesta implementação
+        for i in range(len(saida.gradiente.dados)):
+            saida.grad_entrada_a.dados[i] = saida.gradiente.dados[i] * saida.entrada_b.dados[i]
+            saida.grad_entrada_b.dados[i] = saida.gradiente.dados[i] * saida.entrada_a.dados[i]
         
     elif saida.nome_operacao == "matmul":
-        # Para matmul (A @ B):
-        # d_loss/d_A = d_loss/d_out @ B^T
-        # d_loss/d_B = A^T @ d_loss/d_out
-        pass  # Implementação complexa de gradientes de matmul
+        # Para matmul (A @ B = C):
+        # d_loss/d_A = d_loss/d_C @ B^T
+        # d_loss/d_B = A^T @ d_loss/d_C
+        var m = saida.entrada_a.formato[0]  # linhas de A
+        var n = saida.entrada_a.formato[1]  # colunas de A / linhas de B
+        var p = saida.entrada_b.formato[1]  # colunas de B
+        
+        # grad_A = grad_out @ B^T
+        for i in range(m):
+            for j in range(n):
+                var acumulador: Float32 = 0.0
+                for k in range(p):
+                    # grad_out[i,k] * B[j,k] (B transposta)
+                    acumulador += saida.gradiente.dados[i * p + k] * saida.entrada_b.dados[j * p + k]
+                saida.grad_entrada_a.dados[i * n + j] = acumulador
+        
+        # grad_B = A^T @ grad_out
+        for i in range(n):
+            for j in range(p):
+                var acumulador: Float32 = 0.0
+                for k in range(m):
+                    # A[k,i] (A transposta) * grad_out[k,j]
+                    acumulador += saida.entrada_a.dados[k * n + i] * saida.gradiente.dados[k * p + j]
+                saida.grad_entrada_b.dados[i * p + j] = acumulador
         
     elif saida.nome_operacao == "mse":
         # Para MSE: d_loss/d_pred = 2 * (pred - target) / n
         # onde entrada_a = predições, entrada_b = alvos
-        pass  # Gradientes calculados na função de treinamento
+        var n = Float32(len(saida.entrada_a.dados))
+        for i in range(len(saida.entrada_a.dados)):
+            # Gradiente do MSE em relação às predições
+            saida.grad_entrada_a.dados[i] = 2.0 * (saida.entrada_a.dados[i] - saida.entrada_b.dados[i]) / n * saida.gradiente.dados[0]
+            # Gradiente em relação aos alvos (geralmente não usado)
+            saida.grad_entrada_b.dados[i] = -2.0 * (saida.entrada_a.dados[i] - saida.entrada_b.dados[i]) / n * saida.gradiente.dados[0]
 
 
 # Função: zerar_gradientes (em inglês: zero_grad)

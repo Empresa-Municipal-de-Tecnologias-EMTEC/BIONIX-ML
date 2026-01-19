@@ -211,4 +211,46 @@ def run_tests():
     print("Resultado sequencial:", resultado_sequencial.dados[0], resultado_sequencial.dados[1], resultado_sequencial.dados[2], resultado_sequencial.dados[3])
     print("Resultado paralelo:", resultado_paralelo.dados[0], resultado_paralelo.dados[1], resultado_paralelo.dados[2], resultado_paralelo.dados[3])
     
+    # Teste 11: Autograd completo (backward automático)
+    # Demonstra o cálculo automático de gradientes através de operações compostas
+    # Cria grafo: z = (x * y) + w, depois calcula gradientes automaticamente
+    print("\n--- Teste de autograd completo ---")
+    var formato_auto = List[Int](1)
+    formato_auto.append(2)
+    var x_auto = nucleo.Tensor(formato_auto^)
+    x_auto.dados[0] = 2.0
+    x_auto.dados[1] = 3.0
+    var formato_auto2 = List[Int](1)
+    formato_auto2.append(2)
+    var y_auto = nucleo.Tensor(formato_auto2^)
+    y_auto.dados[0] = 4.0
+    y_auto.dados[1] = 5.0
+    var formato_auto3 = List[Int](1)
+    formato_auto3.append(2)
+    var w_auto = nucleo.Tensor(formato_auto3^)
+    w_auto.dados[0] = 1.0
+    w_auto.dados[1] = 1.0
+    
+    # Construir grafo: z = (x * y) + w
+    var no_mult = nucleo.multiplicar_nos(x_auto.copy(), y_auto.copy())  # x * y
+    var no_final = nucleo.somar_nos(no_mult.valor.copy(), w_auto.copy())  # (x*y) + w
+    
+    print("Valor de z = (x*y) + w:", no_final.valor.dados[0], no_final.valor.dados[1])
+    print("  Esperado: (2*4)+1=9, (3*5)+1=16")
+    
+    # Calcular gradientes automaticamente
+    nucleo.retropropagar(no_final)
+    print("Gradiente de z (saída):", no_final.gradiente.dados[0], no_final.gradiente.dados[1])
+    print("Gradiente de w:", no_final.grad_entrada_b.dados[0], no_final.grad_entrada_b.dados[1])
+    print("  Esperado para w: [1.0, 1.0] (d_z/d_w = 1)")
+    print("Gradiente de (x*y):", no_final.grad_entrada_a.dados[0], no_final.grad_entrada_a.dados[1])
+    print("  Esperado para (x*y): [1.0, 1.0] (d_z/d_(xy) = 1)")
+    
+    # Propagar para camada anterior (x*y)
+    nucleo.retropropagar(no_mult)
+    print("Gradiente de x (via multiplicação):", no_mult.grad_entrada_a.dados[0], no_mult.grad_entrada_a.dados[1])
+    print("  Esperado para x: [4.0, 5.0] (d_(xy)/d_x = y)")
+    print("Gradiente de y (via multiplicação):", no_mult.grad_entrada_b.dados[0], no_mult.grad_entrada_b.dados[1])
+    print("  Esperado para y: [2.0, 3.0] (d_(xy)/d_y = x)")
+    
     print("\n--- Fim dos testes do núcleo ---")
