@@ -4,7 +4,8 @@ def run_tests():
 
     print("--- Iniciando testes do núcleo Bionix ---")
 
-    # Teste 1: Soma elementwise (elemento por elemento)
+    # Teste 1: Soma elemento-a-elemento (elementwise em inglês)
+    # Cada elemento é somado com o elemento correspondente: a[i] + b[i]
     var formato1 = List[Int](2)  # shape1 (em inglês)
     formato1.append(2)
     formato1.append(2)
@@ -27,7 +28,9 @@ def run_tests():
     for i in range(len(resultado_soma.dados)):
         print("  ", resultado_soma.dados[i])
 
-    # Teste 2: Multiplicação de Matrizes (2x2) - Matmul
+    # Teste 2: Multiplicação de Matrizes (matmul em inglês)
+    # Produto matricial: cada elemento é a soma dos produtos linha × coluna
+    # Diferente de multiplicação elemento-a-elemento
     var formatoA = List[Int](2)  # shapeA (em inglês)
     formatoA.append(2)
     formatoA.append(2)
@@ -50,19 +53,23 @@ def run_tests():
     for i in range(len(resultado_matmul.dados)):
         print("  ", resultado_matmul.dados[i])
 
-    # Teste 3: Autograd (gradiente automático) simples com somar_nos (autograd simplificado)
+    # Teste 3: Soma com nós (nodes) para autograd
+    # Autograd = gradiente automático (automatic gradient em inglês)
+    # Nós armazenam valores e gradientes para retropropagação
     var nc = nucleo.somar_nos(a.copy(), b.copy())  # nc (node c - nó c)
     print("resultado de somar_nos:")  # add_nodes result
     for i in range(len(nc.valor.dados)):
         print("  ", nc.valor.dados[i])
 
-    # Teste 4: Multiplicar_matrizes_nos + MSE (Erro Quadrático Médio)
+    # Teste 4: Multiplicação de matrizes com nós + MSE (Erro Quadrático Médio)
+    # MSE = Mean Squared Error em inglês, usado para calcular perda/erro
     var n_saida = nucleo.multiplicar_matrizes_nos(A.copy(), B.copy())  # nOut (node output - nó de saída)
     print("resultado de multiplicar_matrizes_nos:")  # matmul_nodes result
     for i in range(len(n_saida.valor.dados)):
         print("  ", n_saida.valor.dados[i])
 
-    # Criar alvo e calcular MSE (Mean Squared Error - Erro Quadrático Médio)
+    # Criar tensor alvo (target em inglês) e calcular MSE
+    # MSE mede a diferença entre valores preditos e valores esperados
     var formato_alvo = List[Int](2)  # shape_target (em inglês)
     formato_alvo.append(2)
     formato_alvo.append(2)
@@ -75,8 +82,10 @@ def run_tests():
     var tensor_mse = nucleo.erro_quadratico_medio(n_saida.valor, alvo)  # mse_tensor (tensor MSE)
     print("perda (MSE - Erro Quadrático Médio):", tensor_mse.dados[0])  # loss (MSE)
 
-    # Teste 5: Multiplicação elementwise (elemento por elemento)
-    print("\n--- Teste de multiplicação elementwise ---")
+    # Teste 5: Multiplicação elemento-a-elemento (elementwise em inglês)
+    # Cada elemento é multiplicado com o elemento correspondente: C[i] * D[i]
+    # Diferente de multiplicação de matrizes (matmul)
+    print("\n--- Teste de multiplicação elemento-a-elemento ---")
     var formato_mult = List[Int](2)  # shape_mult (em inglês)
     formato_mult.append(2)
     formato_mult.append(2)
@@ -95,17 +104,20 @@ def run_tests():
     D.dados[3] = 4.0
     
     var resultado_mult = nucleo.multiplicar(C, D)  # out_mult (em inglês)
-    print("resultado da multiplicação elementwise:")  # multiply result
+    print("resultado da multiplicação elemento-a-elemento:")  # multiply result
     for i in range(len(resultado_mult.dados)):
         print("  ", resultado_mult.dados[i])
 
-    # Teste 6: multiplicar_nos (autograd)
+    # Teste 6: Multiplicação elemento-a-elemento com nós (para autograd)
+    # Permite calcular gradientes da multiplicação durante retropropagação
     var n_mult = nucleo.multiplicar_nos(C.copy(), D.copy())  # n_mult (node multiply)
     print("\nresultado de multiplicar_nos:")  # multiply_nodes result
     for i in range(len(n_mult.valor.dados)):
         print("  ", n_mult.valor.dados[i])
 
-    # Teste 7: Backward pass e gradientes
+    # Teste 7: Retropropagação (backward pass em inglês) e gerenciamento de gradientes
+    # Backward = calcular gradientes de trás para frente no grafo computacional
+    # Gradientes são usados para atualizar pesos durante treinamento
     print("\n--- Teste de backward e gradientes ---")
     var formato_grad = List[Int](1)  # shape_grad (em inglês)
     formato_grad.append(2)
@@ -124,7 +136,9 @@ def run_tests():
     nucleo.zerar_gradiente(no_grad)
     print("gradiente após zerar:", no_grad.tem_gradiente)  # has_grad
 
-    # Teste 8: Training loop simplificado
+    # Teste 8: Loop de treinamento (training loop em inglês)
+    # Um passo completo: forward pass → calcular perda → backward pass → atualizar pesos
+    # Simula como redes neurais aprendem
     print("\n--- Teste de training loop (passo de treinamento) ---")
     var formato_x = List[Int](2)  # shape_x (em inglês)
     formato_x.append(1)
@@ -160,6 +174,4 @@ def run_tests():
     var perda_treino = nucleo.passo_treinamento(x_treino.copy(), y_alvo.copy(), w_no, b_no, 0.01)  # loss_train (em inglês)
     print("perda após 1 passo:", perda_treino)  # loss after 1 step
     
-    print("perda após 1 passo:", perda_treino)  # loss after 1 step
-    
-    print("--- Fim dos testes do núcleo ---")
+    print("\n--- Fim dos testes do núcleo ---")

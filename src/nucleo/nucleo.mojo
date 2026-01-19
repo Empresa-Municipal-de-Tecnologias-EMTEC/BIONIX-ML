@@ -275,7 +275,7 @@ fn atualizar_parametro(mut parametro: No, taxa_aprendizado: Float32):  # update_
 # - taxa_aprendizado: Float32 -> taxa de aprendizado (lr/learning rate)
 # Retorno: Float32 com valor da perda (loss)
 # O que faz: Executa um passo completo de treinamento: forward pass, calcula perda (MSE),
-#           backward pass e atualiza parâmetros usando gradient descent.
+#           calcula gradientes manualmente e atualiza parâmetros usando gradient descent.
 #           Modelo linear: y = xW + b
 fn passo_treinamento(x: Tensor, y_esperado: Tensor, 
                      mut W: No, mut b: No, 
@@ -288,12 +288,30 @@ fn passo_treinamento(x: Tensor, y_esperado: Tensor,
     var perda_no = no_erro_quadratico_medio(y_predito, y_esperado)  # loss_node (em inglês)
     var valor_perda = perda_no.valor.dados[0]  # loss_value (em inglês)
     
-    # Backward pass (retropropagação)
-    retropropagar(perda_no)
+    # Backward pass (retropropagação) - Cálculo manual de gradientes
+    # Para MSE: d_loss/d_pred = 2 * (pred - target) / n
+    var n = Float32(len(y_predito.dados))
+    for i in range(len(y_predito.dados)):
+        var grad_pred = 2.0 * (y_predito.dados[i] - y_esperado.dados[i]) / n
+        
+        # Gradiente de b: d_loss/d_b = d_loss/d_pred (pois b é somado diretamente)
+        b.gradiente.dados[i] += grad_pred
+        
+        # Para W, precisamos multiplicar pelo input x
+        # d_loss/d_W = x^T * d_loss/d_pred
+        for j in range(len(x.dados)):
+            var idx = j * len(b.valor.dados) + i  # índice em W (assume W tem shape [len(x), len(b)])
+            if idx < len(W.gradiente.dados):
+                W.gradiente.dados[idx] += x.dados[j] * grad_pred
+    
+    W.tem_gradiente = True
+    b.tem_gradiente = True
     
     # Atualizar parâmetros (gradient descent)
-    # Nota: Implementação simplificada sem cálculo automático de gradientes
-    # Em uma versão completa, os gradientes seriam propagados do loss até W e b
+    # W = W - lr * grad_W
+    # b = b - lr * grad_b
+    atualizar_parametro(W, taxa_aprendizado)
+    atualizar_parametro(b, taxa_aprendizado)
     
     # Zerar gradientes para próxima iteração
     zerar_gradiente(W)
