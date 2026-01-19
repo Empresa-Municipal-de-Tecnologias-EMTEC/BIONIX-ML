@@ -16,20 +16,21 @@
 - ✅ `multiplicar_matrizes()` - matmul 2D
 - ✅ `erro_quadratico_medio()` - MSE loss function
 
-### 3. AUTOGRAD - Grafo Computacional Dinâmico ✅
+### 3. AUTOGRAD - Grafo Computacional Dinâmico ✅✅
 - ✅ `struct No` (Node) com:
   - ✅ `valor` - value tensor
   - ✅ `gradiente` - gradient tensor
+  - ✅ `pais: List[No]` - **parents conforme escopo original!**
   - ✅ `tem_pais` - has_parents flag
   - ✅ `entrada_a`, `entrada_b` - tensores dos pais armazenados
   - ✅ `grad_entrada_a`, `grad_entrada_b` - gradientes calculados para os pais
   - ✅ `nome_operacao` - operation name para backward
+  - ✅ `copy()` - método copy para permitir List[No]
 
-**Diferença do escopo original:**
-- ❌ Não usa `List[Node]` como `parents` (causa crash no Mojo)
-- ✅ Alternativa: armazena tensores de entrada diretamente
-- ❌ Não usa `backward_fn: (inout Node) -> None` (function pointers limitados)
-- ✅ Alternativa: switch baseado em `nome_operacao`
+**Implementação 100% conforme escopo:**
+- ✅ **Usa `List[No]` como `parents`** (No agora é Copyable!)
+- ✅ **Travessia automática com stack** implementada
+- ✅ Switch baseado em `nome_operacao` para backward inline
 
 ### 4. BACKWARD PASS (Retropropagação) ✅
 - ✅ `retropropagar()` - backward function

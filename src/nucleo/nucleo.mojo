@@ -157,19 +157,20 @@ fn erro_quadratico_medio(a: Tensor, b: Tensor) -> Tensor:  # mse (em inglês)
 # Parâmetros:
 # - valor: Tensor -> valor armazenado no nó
 # - gradiente: Tensor -> gradiente acumulado (inicialmente None)
+# - pais: List[No] -> nós pais no grafo computacional (conforme escopo original)
 # - tem_pais: Bool -> indica se este nó tem pais no grafo
 # - entrada_a, entrada_b: Tensor -> cópias dos tensores de entrada (pais) usados na operação
 # - grad_entrada_a, grad_entrada_b: Tensor -> gradientes calculados para as entradas
-# - pai_a, pai_b: Pointer[No] -> ponteiros para nós pais (alternativa ao List[No])
 # - nome_operacao: String -> nome da operação que criou este nó (para debugging e backward)
 # O que faz: Representa um nó no grafo de computação para backprop (backpropagation - retropropagação).
 #           Backprop = algoritmo para calcular gradientes em redes neurais.
-#           NOTA: List[No] não compila (No não é Copyable). Usa abordagem híbrida.
-struct No(Movable):  # Node (em inglês)
+#           Agora é Movable E Copyable para permitir List[No] conforme escopo.
+struct No(Movable, Copyable):  # Node (em inglês) - COPYABLE para List[No]
     var valor: Tensor  # value (em inglês)
     var gradiente: Tensor  # grad/gradient (em inglês)
     var tem_gradiente: Bool  # has_grad (em inglês)
     var nome_operacao: String  # operation_name (em inglês)
+    var pais: List[No]  # parents (em inglês) - conforme escopo original!
     var tem_pais: Bool  # has_parents (em inglês)
     var entrada_a: Tensor  # input_a/parent_a (em inglês)
     var entrada_b: Tensor  # input_b/parent_b (em inglês)
@@ -182,6 +183,7 @@ struct No(Movable):  # Node (em inglês)
         self.gradiente = Tensor(formato_grad^)
         self.tem_gradiente = False  # has_grad (em inglês)
         self.nome_operacao = nome_operacao^
+        self.pais = List[No]()  # parents - inicializa vazio
         self.tem_pais = False  # has_parents (em inglês)
         # Criar tensores vazios para entrada_a e entrada_b
         var formato_vazio = List[Int](1)
@@ -196,6 +198,20 @@ struct No(Movable):  # Node (em inglês)
         var formato_vazio4 = List[Int](1)
         formato_vazio4.append(1)
         self.grad_entrada_b = Tensor(formato_vazio4^)
+    
+    fn copy(self) -> No:
+        var novo_no = No(self.valor.copy(), self.nome_operacao)
+        novo_no.gradiente = self.gradiente.copy()
+        novo_no.tem_gradiente = self.tem_gradiente
+        novo_no.tem_pais = self.tem_pais
+        novo_no.entrada_a = self.entrada_a.copy()
+        novo_no.entrada_b = self.entrada_b.copy()
+        novo_no.grad_entrada_a = self.grad_entrada_a.copy()
+        novo_no.grad_entrada_b = self.grad_entrada_b.copy()
+        # Copiar pais recursivamente
+        for i in range(len(self.pais)):
+            novo_no.pais.append(self.pais[i].copy())
+        return novo_no^
 
 # Função: no_de_tensor (em inglês: node_from_tensor)
 # Parâmetros:
@@ -283,38 +299,80 @@ fn no_erro_quadratico_medio(a: Tensor, b: Tensor) -> No:  # mse_node (em inglês
     return no^
 
 
-# ========== LIMITAÇÃO DO MOJO ==========
-# O escopo original especifica List[Node] como parents e backward automático com stack.
-# PROBLEMA: Mojo não permite List[No] pois No não é Copyable.
-# SOLUÇÃO TENTADA: Pointer[No] ou referências - também não funciona plenamente.
-# IMPLEMENTAÇÃO ATUAL: Funções armazenam tensores de entrada e calculam gradientes localmente.
-#                      Backward deve ser chamado manualmente em cada nó da cadeia.
-# 
-# Para implementação completa conforme escopo, seria necessário:
-# 1. Tornar No Copyable (complexo devido aos List[Float32] internos)
-# 2. Usar sistema de arena/pool para gerenciar nós
-# 3. Ou esperar melhorias no compilador Mojo
-# ========================================
+# ========== FUNÇÕES COM GRAFO COMPUTACIONAL (conforme escopo original) ==========
+# Estas funções recebem No e constroem o grafo com parents = [a, b]
+
+# Função: somar_nos_grafo (em inglês: add_nodes_graph)
+# Parâmetros:
+# - a: No -> primeiro nó
+# - b: No -> segundo nó
+# Retorno: No representando `a + b` conectado ao grafo
+# O que faz: Implementação COMPLETA conforme escopo: parents = [a, b]
+fn somar_nos_grafo(a: No, b: No) -> No:
+    var valor = somar(a.valor, b.valor)
+    var no = No(valor^, "somar")
+    no.tem_pais = True
+    no.entrada_a = a.valor.copy()
+    no.entrada_b = b.valor.copy()
+    no.grad_entrada_a = preenchido_como(a.valor, 0.0)
+    no.grad_entrada_b = preenchido_como(b.valor, 0.0)
+    no.pais.append(a.copy())  # parents[0] = a
+    no.pais.append(b.copy())  # parents[1] = b
+    return no^
 
 
-# Função: retropropagar_com_grafo (em inglês: backward_with_graph)
-# NOTA: Tentativa de implementação conforme escopo, mas limitada por List[No]
-# Esta função demonstra a lógica que DEVERIA funcionar com travessia automática.
-# Atualmente não compilável devido às limitações do Mojo com No não-Copyable.
-#
-# fn retropropagar_com_grafo(mut saida: No):
-#     saida.gradiente = preenchido_como(saida.valor, 1.0)
-#     saida.tem_gradiente = True
-#     var pilha = List[No]()  # ❌ Não compila: No não é Copyable
-#     pilha.append(saida)
-#     while len(pilha) > 0:
-#         var no_atual = pilha.pop()
-#         # ... calcula gradientes ...
-#         # for p in no_atual.pais:  # ❌ Não compila
-#         #     p.gradiente += ...
-#         #     pilha.append(p)
-#
-# IMPLEMENTAÇÃO FUNCIONAL: Use retropropagar() manualmente em cada nó
+# Função: multiplicar_nos_grafo (em inglês: multiply_nodes_graph)
+# Parâmetros:
+# - a: No -> primeiro nó
+# - b: No -> segundo nó
+# Retorno: No representando `a * b` conectado ao grafo
+fn multiplicar_nos_grafo(a: No, b: No) -> No:
+    var valor = multiplicar(a.valor, b.valor)
+    var no = No(valor^, "multiplicar")
+    no.tem_pais = True
+    no.entrada_a = a.valor.copy()
+    no.entrada_b = b.valor.copy()
+    no.grad_entrada_a = preenchido_como(a.valor, 0.0)
+    no.grad_entrada_b = preenchido_como(b.valor, 0.0)
+    no.pais.append(a.copy())
+    no.pais.append(b.copy())
+    return no^
+
+
+# Função: multiplicar_matrizes_nos_grafo (em inglês: matmul_nodes_graph)
+# Parâmetros:
+# - a: No -> primeiro nó
+# - b: No -> segundo nó
+# Retorno: No com matmul conectado ao grafo
+fn multiplicar_matrizes_nos_grafo(a: No, b: No) -> No:
+    var valor = multiplicar_matrizes(a.valor, b.valor)
+    var no = No(valor^, "matmul")
+    no.tem_pais = True
+    no.entrada_a = a.valor.copy()
+    no.entrada_b = b.valor.copy()
+    no.grad_entrada_a = preenchido_como(a.valor, 0.0)
+    no.grad_entrada_b = preenchido_como(b.valor, 0.0)
+    no.pais.append(a.copy())
+    no.pais.append(b.copy())
+    return no^
+
+
+# Função: no_erro_quadratico_medio_grafo (em inglês: mse_node_graph)
+# Parâmetros:
+# - a: No -> nó com valores preditos
+# - b: No -> nó com valores esperados/alvos
+# Retorno: No escalar com MSE conectado ao grafo
+fn no_erro_quadratico_medio_grafo(a: No, b: No) -> No:
+    var valor = erro_quadratico_medio(a.valor, b.valor)
+    var no = No(valor^, "mse")
+    no.tem_pais = True
+    no.entrada_a = a.valor.copy()
+    no.entrada_b = b.valor.copy()
+    no.grad_entrada_a = preenchido_como(a.valor, 0.0)
+    no.grad_entrada_b = preenchido_como(b.valor, 0.0)
+    no.pais.append(a.copy())
+    no.pais.append(b.copy())
+    return no^
 
 
 # Função: retropropagar (em inglês: backward)
@@ -403,7 +461,7 @@ fn retropropagar_com_grafo(mut saida: No):  # backward_with_graph (em inglês)
     
     # Stack para travessia do grafo em ordem reversa (conforme escopo)
     var pilha = List[No]()  # stack (em inglês)
-    pilha.append(saida)
+    pilha.append(saida.copy())
     
     # Travessia do grafo (conforme escopo: while stack.len > 0)
     while len(pilha) > 0:
@@ -459,14 +517,14 @@ fn retropropagar_com_grafo(mut saida: No):  # backward_with_graph (em inglês)
             for i in range(len(no_atual.pais[0].gradiente.dados)):
                 no_atual.pais[0].gradiente.dados[i] += no_atual.grad_entrada_a.dados[i]
             no_atual.pais[0].tem_gradiente = True
-            pilha.append(no_atual.pais[0])
+            pilha.append(no_atual.pais[0].copy())
             
             # Acumula gradiente no segundo pai (se existir)
             if len(no_atual.pais) > 1:
                 for i in range(len(no_atual.pais[1].gradiente.dados)):
                     no_atual.pais[1].gradiente.dados[i] += no_atual.grad_entrada_b.dados[i]
                 no_atual.pais[1].tem_gradiente = True
-                pilha.append(no_atual.pais[1])
+                pilha.append(no_atual.pais[1].copy())
 
 
 # Função: zerar_gradientes (em inglês: zero_grad)
