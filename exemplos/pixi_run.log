@@ -1,3 +1,31 @@
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:177:27: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    audio_simulado.append(frame0)
+                          ^~~~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:177:27: note: consider transferring the value with '^'
+    audio_simulado.append(frame0)
+                          ^
+                                ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:177:27: note: you can copy it explicitly with '.copy()'
+    audio_simulado.append(frame0)
+                          ^
+                                .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:182:27: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    audio_simulado.append(frame1)
+                          ^~~~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:182:27: note: consider transferring the value with '^'
+    audio_simulado.append(frame1)
+                          ^
+                                ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:182:27: note: you can copy it explicitly with '.copy()'
+    audio_simulado.append(frame1)
+                          ^
+                                .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:19:34: warning: transfer from an owned value has no effect and can be removed
     return wav.parse_wav(caminho)^
@@ -642,16 +670,26 @@ Desvios por coluna:
 Exemplo de processamento de imagem:
 Arquivo BMP não encontrado ou inválido — usando imagem simulada
 Imagem normalizada (Min-Max):
-nan
-nan
+0.0
+1.0
 
 Exemplo de processamento de áudio:
 Arquivo WAV não encontrado ou inválido — usando áudio simulado
-#0 0x000070cd4916e9db llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/lib/libKGENCompilerRTShared.so+0x3c89db)
-#1 0x000070cd4916c2e6 llvm::sys::RunSignalHandlers() (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/lib/libKGENCompilerRTShared.so+0x3c62e6)
-#2 0x000070cd4916f5e7 SignalHandler(int, siginfo_t*, void*) (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/lib/libKGENCompilerRTShared.so+0x3c95e7)
-#3 0x000070cd4c245330 (/lib/x86_64-linux-gnu/libc.so.6+0x45330)
-#4 0x000070cd4f3f48ba tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::AlignAsPolicy, tcmalloc::tcmalloc_internal::AllocationAccessHotPolicy, tcmalloc::tcmalloc_internal::InvokeHooksPolicy, tcmalloc::tcmalloc_internal::NonSizeReturningPolicy, tcmalloc::tcmalloc_internal::LocalNumaPartitionPolicy>::pointer_type tcmalloc::tcmalloc_internal::alloc_small_sampled_hooks_or_perthread<tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::AlignAsPolicy, tcmalloc::tcmalloc_internal::AllocationAccessHotPolicy, tcmalloc::tcmalloc_internal::InvokeHooksPolicy, tcmalloc::tcmalloc_internal::NonSizeReturningPolicy, tcmalloc::tcmalloc_internal::LocalNumaPartitionPolicy>>(unsigned long, unsigned long, tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::AlignAsPolicy, tcmalloc::tcmalloc_internal::AllocationAccessHotPolicy, tcmalloc::tcmalloc_internal::InvokeHooksPolicy, tcmalloc::tcmalloc_internal::NonSizeReturningPolicy, tcmalloc::tcmalloc_internal::LocalNumaPartitionPolicy>, unsigned long) (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/bin/../lib/libAsyncRTRuntimeGlobals.so+0x418ba)
-#5 0x000070ccec00ff3a
+Áudio normalizado (Z-Score):
+1.0
+-1.0
 
-To get symbolicated stack trace, compile your program using `mojo build` with debug info enabled, e.g. `-debug-level=line-tables`.
+--- Fim do exemplo e000001 ---
+
+--- Exemplo do núcleo Bionix (operações tensoriais) ---
+resultado da soma no exemplo:
+   1.5
+   3.5
+   2.0
+   6.0
+--- Fim do exemplo ---
+
+============================================================
+CONCLUÍDO: EXEMPLOS
+============================================================
+

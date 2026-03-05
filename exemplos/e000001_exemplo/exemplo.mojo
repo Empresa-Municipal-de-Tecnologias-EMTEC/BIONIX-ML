@@ -132,7 +132,7 @@ def executar_exemplo():
     # --- Exemplo de imagem ---
     print("\nExemplo de processamento de imagem:")
     # Tenta carregar BMP a partir do pacote `dados`
-    var caminho_bmp = "exemplos/e000001_exemplo/dados.BMP"
+    var caminho_bmp = "exemplos/e000001_exemplo/dados.bmp"
     var bmp_info = dados_pkg.carregar_bmp(caminho_bmp)
     if bmp_info.width != 0:
         print("Arquivo BMP encontrado:", caminho_bmp, "w=", bmp_info.width, "h=", bmp_info.height, "bpp=", bmp_info.bits_per_pixel)
@@ -140,12 +140,12 @@ def executar_exemplo():
         print("Arquivo BMP não encontrado ou inválido — usando imagem simulada")
 
     var imagem_simulada = List[List[Float32]]()
-    var row1 = List[Float32](2)
-    row1[0] = 0.0
-    row1[1] = 128.0
-    var row2 = List[Float32](2)
-    row2[0] = 255.0
-    row2[1] = 64.0
+    var row1 = List[Float32]()
+    row1.append(0.0)
+    row1.append(128.0)
+    var row2 = List[Float32]()
+    row2.append(255.0)
+    row2.append(64.0)
     imagem_simulada.append(row1.copy())
     imagem_simulada.append(row2.copy())
 
@@ -170,14 +170,16 @@ def executar_exemplo():
         print("Arquivo WAV não encontrado ou inválido — usando áudio simulado")
 
     var audio_simulado = List[List[Float32]]()
-    audio_simulado.append(List[Float32](3))
-    audio_simulado[0][0] = 0.1
-    audio_simulado[0][1] = -0.2
-    audio_simulado[0][2] = 0.3
-    audio_simulado.append(List[Float32](3))
-    audio_simulado[1][0] = -0.1
-    audio_simulado[1][1] = 0.2
-    audio_simulado[1][2] = -0.05
+    var frame0 = List[Float32]()
+    frame0.append(0.1)
+    frame0.append(-0.2)
+    frame0.append(0.3)
+    audio_simulado.append(frame0)
+    var frame1 = List[Float32]()
+    frame1.append(-0.1)
+    frame1.append(0.2)
+    frame1.append(-0.05)
+    audio_simulado.append(frame1)
 
     var audio_zs = dados_pkg.normalizar_zscore(audio_simulado.copy())
     print("Áudio normalizado (Z-Score):")
