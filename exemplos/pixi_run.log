@@ -403,196 +403,264 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
                                                                              
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:142:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:161:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     return _validar_wav_bytes(b, True)
                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:142:31: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:161:31: note: consider transferring the value with '^'
     return _validar_wav_bytes(b, True)
                               ^
                                ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:142:31: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:161:31: note: you can copy it explicitly with '.copy()'
     return _validar_wav_bytes(b, True)
                               ^
                                .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:146:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:165:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     if not _validar_wav_bytes(b, False):
                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:146:31: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:165:31: note: consider transferring the value with '^'
     if not _validar_wav_bytes(b, False):
                               ^
                                ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:146:31: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:165:31: note: you can copy it explicitly with '.copy()'
     if not _validar_wav_bytes(b, False):
                               ^
                                .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:147:59: warning: transfer from an owned value has no effect and can be removed
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:166:59: warning: transfer from an owned value has no effect and can be removed
         return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
                                                           ^
                                                           
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:158:59: warning: transfer from an owned value has no effect and can be removed
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:180:59: warning: transfer from an owned value has no effect and can be removed
         return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
                                                           ^
                                                           
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:170:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:192:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:170:46: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:192:46: note: consider transferring the value with '^'
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
                                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:170:46: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:192:46: note: you can copy it explicitly with '.copy()'
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
                                               .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:180:52: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:202:52: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:180:52: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:202:52: note: consider transferring the value with '^'
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                                                    ^
                                                     ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:180:52: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:202:52: note: you can copy it explicitly with '.copy()'
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                                                    ^
                                                     .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:181:51: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:203:51: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                                                   ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:181:51: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:203:51: note: consider transferring the value with '^'
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                                                   ^
                                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:181:51: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:203:51: note: you can copy it explicitly with '.copy()'
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                                                   ^
                                                    .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:182:55: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:204:55: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
                                                       ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:182:55: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:204:55: note: consider transferring the value with '^'
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
                                                       ^
                                                        ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:182:55: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:204:55: note: you can copy it explicitly with '.copy()'
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
                                                       ^
                                                        .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:196:63: warning: transfer from an owned value has no effect and can be removed
-            return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
-                                                              ^
-                                                              
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:208:59: warning: transfer from an owned value has no effect and can be removed
-        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
-                                                          ^
-                                                          
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:210:59: warning: transfer from an owned value has no effect and can be removed
-        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
-                                                          ^
-                                                          
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:240:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-                var iv = _bytes_to_uint32_le(b, s_offset)
-                                             ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:240:46: note: consider transferring the value with '^'
-                var iv = _bytes_to_uint32_le(b, s_offset)
-                                             ^
-                                              ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:240:46: note: you can copy it explicitly with '.copy()'
-                var iv = _bytes_to_uint32_le(b, s_offset)
-                                             ^
-                                              .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:245:67: warning: transfer from an owned value has no effect and can be removed
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:223:67: warning: transfer from an owned value has no effect and can be removed
                 return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
                                                                   ^
                                                                   
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:247:24: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:228:52: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                var fmt_size = _bytes_to_uint32_le(b, i + 4)
+                                                   ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:228:52: note: consider transferring the value with '^'
+                var fmt_size = _bytes_to_uint32_le(b, i + 4)
+                                                   ^
+                                                    ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:228:52: note: you can copy it explicitly with '.copy()'
+                var fmt_size = _bytes_to_uint32_le(b, i + 4)
+                                                   ^
+                                                    .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:230:56: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                    num_channels = _bytes_to_uint16_le(b, i + 10)
+                                                       ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:230:56: note: consider transferring the value with '^'
+                    num_channels = _bytes_to_uint16_le(b, i + 10)
+                                                       ^
+                                                        ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:230:56: note: you can copy it explicitly with '.copy()'
+                    num_channels = _bytes_to_uint16_le(b, i + 10)
+                                                       ^
+                                                        .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:231:55: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                    sample_rate = _bytes_to_uint32_le(b, i + 12)
+                                                      ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:231:55: note: consider transferring the value with '^'
+                    sample_rate = _bytes_to_uint32_le(b, i + 12)
+                                                      ^
+                                                       ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:231:55: note: you can copy it explicitly with '.copy()'
+                    sample_rate = _bytes_to_uint32_le(b, i + 12)
+                                                      ^
+                                                       .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:232:59: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
+                                                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:232:59: note: consider transferring the value with '^'
+                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
+                                                          ^
+                                                           ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:232:59: note: you can copy it explicitly with '.copy()'
+                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
+                                                          ^
+                                                           .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:245:59: warning: transfer from an owned value has no effect and can be removed
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+                                                          ^
+                                                          
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:247:59: warning: transfer from an owned value has no effect and can be removed
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+                                                          ^
+                                                          
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:277:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                var iv = _bytes_to_uint32_le(b, s_offset)
+                                             ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:277:46: note: consider transferring the value with '^'
+                var iv = _bytes_to_uint32_le(b, s_offset)
+                                             ^
+                                              ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:277:46: note: you can copy it explicitly with '.copy()'
+                var iv = _bytes_to_uint32_le(b, s_offset)
+                                             ^
+                                              .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:282:67: warning: transfer from an owned value has no effect and can be removed
+                return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+                                                                  ^
+                                                                  
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:284:24: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
         samples.append(frame)
                        ^~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:247:24: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:284:24: note: consider transferring the value with '^'
         samples.append(frame)
                        ^
                             ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:247:24: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:284:24: note: you can copy it explicitly with '.copy()'
         samples.append(frame)
                        ^
                             .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:249:77: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:286:77: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     return WAVInfo(sample_rate, num_channels, bits_per_sample, data_offset, samples)^
                                                                             ^~~~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:249:77: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:286:77: note: consider transferring the value with '^'
     return WAVInfo(sample_rate, num_channels, bits_per_sample, data_offset, samples)^
                                                                             ^
                                                                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:249:77: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:286:77: note: you can copy it explicitly with '.copy()'
     return WAVInfo(sample_rate, num_channels, bits_per_sample, data_offset, samples)^
                                                                             ^
                                                                                    .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:249:85: warning: transfer from an owned value has no effect and can be removed
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:286:85: warning: transfer from an owned value has no effect and can be removed
     return WAVInfo(sample_rate, num_channels, bits_per_sample, data_offset, samples)^
                                                                                     ^
                                                                                     
@@ -716,72 +784,140 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
                                               .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:61:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:64:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:61:46: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:64:46: note: consider transferring the value with '^'
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
                                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:61:46: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:64:46: note: you can copy it explicitly with '.copy()'
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
                                               .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:76:52: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:79:52: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:76:52: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:79:52: note: consider transferring the value with '^'
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                                                    ^
                                                     ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:76:52: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:79:52: note: you can copy it explicitly with '.copy()'
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                                                    ^
                                                     .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:77:51: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:80:51: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                                                   ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:77:51: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:80:51: note: consider transferring the value with '^'
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                                                   ^
                                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:77:51: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:80:51: note: you can copy it explicitly with '.copy()'
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                                                   ^
                                                    .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:78:55: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:81:55: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
                                                       ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:78:55: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:81:55: note: consider transferring the value with '^'
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
                                                       ^
                                                        ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:78:55: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:81:55: note: you can copy it explicitly with '.copy()'
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
                                                       ^
                                                        .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:109:52: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                var fmt_size = _bytes_to_uint32_le(b, i + 4)
+                                                   ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:109:52: note: consider transferring the value with '^'
+                var fmt_size = _bytes_to_uint32_le(b, i + 4)
+                                                   ^
+                                                    ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:109:52: note: you can copy it explicitly with '.copy()'
+                var fmt_size = _bytes_to_uint32_le(b, i + 4)
+                                                   ^
+                                                    .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:111:56: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                    num_channels = _bytes_to_uint16_le(b, i + 10)
+                                                       ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:111:56: note: consider transferring the value with '^'
+                    num_channels = _bytes_to_uint16_le(b, i + 10)
+                                                       ^
+                                                        ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:111:56: note: you can copy it explicitly with '.copy()'
+                    num_channels = _bytes_to_uint16_le(b, i + 10)
+                                                       ^
+                                                        .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:112:55: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                    sample_rate = _bytes_to_uint32_le(b, i + 12)
+                                                      ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:112:55: note: consider transferring the value with '^'
+                    sample_rate = _bytes_to_uint32_le(b, i + 12)
+                                                      ^
+                                                       ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:112:55: note: you can copy it explicitly with '.copy()'
+                    sample_rate = _bytes_to_uint32_le(b, i + 12)
+                                                      ^
+                                                       .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:113:59: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
+                                                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:113:59: note: consider transferring the value with '^'
+                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
+                                                          ^
+                                                           ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:113:59: note: you can copy it explicitly with '.copy()'
+                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
+                                                          ^
+                                                           .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:29:28: warning: assignment to 'linha_prefix' was never used; assign to '_' instead?
@@ -799,7 +935,7 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
                      ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:220:36: warning: assignment to 'value_f' was never used; assign to '_' instead?
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:257:36: warning: assignment to 'value_f' was never used; assign to '_' instead?
             var value_f: Float32 = 0.0
                                    ^
 
@@ -882,7 +1018,8 @@ Imagem normalizada (Min-Max):
 
 Exemplo de processamento de áudio:
 [diag.wav] arquivo= exemplos/e000001_exemplo/dados.wav  bytes= 97268
-[diag.wav] inválido: chunk excede tamanho do arquivo
+[diag.wav] aviso: chunk excede tamanho do arquivo; tentando fallback
+[diag.wav] inválido: bits_per_sample não suportado ( 19456 )
 Arquivo WAV não encontrado ou inválido — usando áudio simulado
 Áudio normalizado (Z-Score):
 0.37139064
