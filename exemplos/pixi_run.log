@@ -330,6 +330,14 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:1: note: '__iter__' declared here
 import exemplos.e000001_exemplo.exemplo as exemplo
 ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/arquivo.mojo:30:23: warning: Use `str.codepoints()` or `str.codepoint_slices()` instead.
+            for ch in raw:
+                      ^~~
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:1: note: '__iter__' declared here
+import exemplos.e000001_exemplo.exemplo as exemplo
+^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:30:64: warning: transfer from an owned value has no effect and can be removed
@@ -777,14 +785,16 @@ Desvios por coluna:
    1.4142135
 
 Exemplo de processamento de imagem:
-Diagnóstico BMP: bytes lidos= 0
+Diagnóstico BMP: bytes lidos= 10782
+Diagnóstico BMP: assinatura= 66 77
 Arquivo BMP não encontrado ou inválido — usando imagem simulada
 Imagem normalizada (Min-Max):
 0.0
 1.0
 
 Exemplo de processamento de áudio:
-Diagnóstico WAV: bytes lidos= 0
+Diagnóstico WAV: bytes lidos= 97268
+Diagnóstico WAV: assinatura= 82 73 70 70 / 65 86 69 102
 Arquivo WAV não encontrado ou inválido — usando áudio simulado
 Áudio normalizado (Z-Score):
 1.0

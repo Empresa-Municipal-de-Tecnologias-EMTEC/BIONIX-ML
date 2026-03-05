@@ -22,4 +22,13 @@ fn ler_arquivo_binario(var caminho: String) -> List[Int]:
                 out.append(ord(ch) & 0xFF)
         return out^
     except Exception:
-        return List[Int]()
+        try:
+            var f = open(caminho, "r")
+            var raw = f.read()
+            f.close()
+            var out = List[Int]()
+            for ch in raw:
+                out.append(ord(ch) & 0xFF)
+            return out^
+        except Exception:
+            return List[Int]()
