@@ -12,3 +12,7 @@ pixi run mojo run testes/principal.mojo
 
 #Rodar no WSL para prevenir o stack trace do estouro de memória
 export Malloc=libc
+
+#Capturar a saída da compilação
+#cd /mnt/c/PROJETOS/BIONIX-ML
+pixi run mojo run exemplos/principal.mojo > exemplos/pixi_run.log 2>&1

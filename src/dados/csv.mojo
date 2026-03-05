@@ -5,6 +5,11 @@ struct CSVData(Movable, Copyable):
     var linhas: List[List[String]]
     var texto_original: String
 
+    fn __init__(out self, var cab: List[String], var linhas_in: List[List[String]], var texto: String):
+        self.cabecalho = cab^
+        self.linhas = linhas_in^
+        self.texto_original = texto
+
 fn split_linhas(var texto: String) -> List[String]:
     var partes = List[String]()
     var buffer = ""
@@ -46,9 +51,17 @@ fn detectar_cabecalho_por_conteudo(var primeira_linha: List[String]) -> Bool:
             continue
         var numerico = True
         var i: Int = 0
+        var zero = "0"[0:1]
+        var nine = "9"[0:1]
+        var dot = "."[0:1]
+        var comma = ","[0:1]
+        var minus = "-"[0:1]
+        var plus = "+"[0:1]
+        var e_l = "e"[0:1]
+        var e_U = "E"[0:1]
         while i < len(s):
             var ch = s[i:i+1]
-            if not (ch >= "0" and ch <= "9") and ch != "." and ch != "," and ch != "-" and ch != "+" and ch != "e" and ch != "E":
+            if not (ch >= zero and ch <= nine) and ch != dot and ch != comma and ch != minus and ch != plus and ch != e_l and ch != e_U:
                 numerico = False
                 break
             i = i + 1
@@ -71,7 +84,7 @@ fn parse_csv(var texto: String, var delimitador: String = ",", var detectar_cabe
         return CSVData(cab, List[List[String]](), texto)^
 
     if detectar_cabecalho:
-        var possivel = todas_linhas[0]
+        var possivel = todas_linhas[0].copy()
         if detectar_cabecalho_por_conteudo(possivel):
             cab = possivel.copy()
             inicio = 1
@@ -83,22 +96,23 @@ fn parse_csv(var texto: String, var delimitador: String = ",", var detectar_cabe
     return CSVData(cab, dados, texto)^
 
 fn ler_arquivo_texto(var caminho: String) -> String:
-    var conteudo = ""
-    var f = open(caminho, "r")
     try:
-        conteudo = f.read()
-    finally:
+        var f = open(caminho, "r")
+        var conteudo = f.read()
         f.close()
-    return conteudo
+        return conteudo
+    except Exception:
+        return ""
 
 fn ler_arquivo_binario(var caminho: String) -> List[Int]:
     # Retorna bytes como List[Int] para consumo simples
-    var f = open(caminho, "rb")
     try:
-        var b = f.read()
-    finally:
+        var f = open(caminho, "rb")
+        var raw = f.read()
         f.close()
-    var out = List[Int](len(b))
-    for i in range(len(b)):
-        out.append(b[i])
-    return out^
+        var out = List[Int]()
+        for i in range(len(raw)):
+            out.append(Int(raw[i]))
+        return out^
+    except Exception:
+        return List[Int]()

@@ -24,11 +24,16 @@ fn imprimir_matriz_float(var matriz: List[List[Float32]], var max_linhas: Int = 
     for i in range(len(matriz)):
         if max_linhas != -1 and count >= max_linhas:
             break
-        var l = matriz[i]
-        var out = ""
+        var l = matriz[i].copy()
+        # Print values separated by space
+        var linha_prefix = "  "
+        var first = True
         for j in range(len(l)):
-            out = out + str(l[j]) + " "
-        print("  ", out)
+            if first:
+                print(l[j])
+                first = False
+            else:
+                print(" ", l[j])
         count = count + 1
 
 fn imprimir_min_max(var mm: MinMaxResult):

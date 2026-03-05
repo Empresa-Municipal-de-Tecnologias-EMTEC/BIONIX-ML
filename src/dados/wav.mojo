@@ -7,6 +7,13 @@ struct WAVInfo(Movable, Copyable):
     var data_offset: Int
     var samples: List[List[Float32]]
 
+    fn __init__(out self, var sr: Int, var nch: Int, var bps: Int, var off: Int, var amostras: List[List[Float32]]):
+        self.sample_rate = sr
+        self.num_channels = nch
+        self.bits_per_sample = bps
+        self.data_offset = off
+        self.samples = amostras^
+
 fn _bytes_to_uint32_le(var b: List[Int], var offset: Int) -> Int:
     var v: Int = 0
     for i in range(4):
@@ -19,12 +26,12 @@ fn _bytes_to_uint16_le(var b: List[Int], var offset: Int) -> Int:
 fn parse_wav(var caminho: String) -> WAVInfo:
     var b = io.ler_arquivo_binario(caminho)
     if len(b) < 44:
-        raise Exception("Arquivo WAV muito pequeno ou inválido")
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
     # Verifica 'RIFF' e 'WAVE'
     if not (b[0] == 82 and b[1] == 73 and b[2] == 70 and b[3] == 70):
-        raise Exception("Não é um arquivo RIFF/WAV")
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
     if not (b[8] == 87 and b[9] == 65 and b[10] == 86 and b[11] == 69):
-        raise Exception("Cabeçalho WAVE ausente")
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
     # Procurar chunk fmt (posição 12 em diante)
     var offset = 12
     var sample_rate = 0
@@ -46,11 +53,13 @@ fn parse_wav(var caminho: String) -> WAVInfo:
             break
         offset = offset + 8 + chunk_size
     if data_offset == -1:
-        raise Exception("Chunk 'data' não encontrado no WAV")
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
 
-    var bytes_per_sample = bits_per_sample / 8
+    var bytes_per_sample = bits_per_sample // 8
     var frame_bytes = bytes_per_sample * num_channels
-    var n_frames = (len(b) - data_offset) / frame_bytes
+    if frame_bytes == 0:
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+    var n_frames = (len(b) - data_offset) // frame_bytes
 
     var samples = List[List[Float32]]()
     for f_idx in range(n_frames):
@@ -82,7 +91,7 @@ fn parse_wav(var caminho: String) -> WAVInfo:
                     iv = iv - (1 << 32)
                 value_f = Float32(iv) / 2147483648.0
             else:
-                raise Exception("Bits per sample não suportado: " + str(bits_per_sample))
+                return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
             frame[ch] = value_f
         samples.append(frame)
 

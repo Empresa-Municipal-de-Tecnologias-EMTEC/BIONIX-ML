@@ -5,10 +5,20 @@ struct MinMaxResult(Movable, Copyable):
     var minimo_por_coluna: List[Float32]
     var maximo_por_coluna: List[Float32]
 
+    fn __init__(out self, var dados_norm: List[List[Float32]], var min_col: List[Float32], var max_col: List[Float32]):
+        self.dados_normalizados = dados_norm^
+        self.minimo_por_coluna = min_col^
+        self.maximo_por_coluna = max_col^
+
 struct ZScoreResult(Movable, Copyable):
     var dados_normalizados: List[List[Float32]]
     var media_por_coluna: List[Float32]
     var desvio_por_coluna: List[Float32]
+
+    fn __init__(out self, var dados_norm: List[List[Float32]], var medias: List[Float32], var desvios: List[Float32]):
+        self.dados_normalizados = dados_norm^
+        self.media_por_coluna = medias^
+        self.desvio_por_coluna = desvios^
 
 import math
 
@@ -38,9 +48,8 @@ fn min_max_normalize(var dados: List[List[Float32]]) -> MinMaxResult:
                 linha_norm[j] = 0.0
             else:
                 linha_norm[j] = (dados[i][j] - min_col[j]) / denom
-        resultado.append(linha_norm)
-
-    return MinMaxResult(resultado, min_col, max_col)^
+        resultado.append(linha_norm.copy())
+    return MinMaxResult(resultado, min_col, max_col)
 
 fn z_score_normalize(var dados: List[List[Float32]]) -> ZScoreResult:
     if len(dados) == 0:
@@ -78,6 +87,6 @@ fn z_score_normalize(var dados: List[List[Float32]]) -> ZScoreResult:
                 linha_norm[j] = 0.0
             else:
                 linha_norm[j] = (dados[i][j] - medias[j]) / desvios[j]
-        resultado.append(linha_norm)
+        resultado.append(linha_norm.copy())
 
-    return ZScoreResult(resultado, medias, desvios)^
+    return ZScoreResult(resultado, medias, desvios)

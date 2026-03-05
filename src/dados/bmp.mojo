@@ -16,22 +16,30 @@ struct BMPInfo(Movable, Copyable):
     var pixel_array_offset: Int
     var pixels: List[List[List[Float32]]]  # rows x cols x channels (r,g,b) normalized 0..1
 
+    fn __init__(out self, var w: Int, var h: Int, var bpp: Int, var off: Int, var px: List[List[List[Float32]]]):
+        self.width = w
+        self.height = h
+        self.bits_per_pixel = bpp
+        self.pixel_array_offset = off
+        self.pixels = px^
+
 fn parse_bmp(var caminho: String) -> BMPInfo:
     var b = io.ler_arquivo_binario(caminho)
     if len(b) < 54:
-        raise Exception("Arquivo BMP muito pequeno ou inválido")
+        # return empty BMPInfo to indicate failure
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
     # verifica 'BM'
     if not (b[0] == 0x42 and b[1] == 0x4D):
-        raise Exception("Não é um arquivo BMP")
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
     var pixel_array_offset = _bytes_to_uint32_le(b, 10)
     var dib_header_size = _bytes_to_uint32_le(b, 14)
     var width = _bytes_to_uint32_le(b, 18)
     var height = _bytes_to_uint32_le(b, 22)
     var bits_per_pixel = _bytes_to_uint16_le(b, 28)
 
-    var bytes_per_pixel = bits_per_pixel / 8
+    var bytes_per_pixel = bits_per_pixel // 8
     var row_raw = width * bytes_per_pixel
-    var row_stride = ((row_raw + 3) / 4) * 4  # padded to 4 bytes
+    var row_stride = ((row_raw + 3) // 4) * 4  # padded to 4 bytes
 
     var bottom_up = True
     if height < 0:

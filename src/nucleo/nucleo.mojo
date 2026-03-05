@@ -2,12 +2,7 @@
 # Todas as documentações abaixo estão em Português: nome, parâmetros e descrição.
 
 # Importa definições de Tensor centralizadas (suporta múltiplos backends)
-import src.nucleo.Tensor as tensor_defs
-
-# Reexporta nomes localmente para manter compatibilidade com o código existente
-Tensor = tensor_defs.Tensor
-calcular_passos = tensor_defs.calcular_passos
-preenchido_como = tensor_defs.preenchido_como
+from src.nucleo.Tensor import Tensor, calcular_passos, preenchido_como
 
 
 # Operações tensoriais (forward - propagação direta)
