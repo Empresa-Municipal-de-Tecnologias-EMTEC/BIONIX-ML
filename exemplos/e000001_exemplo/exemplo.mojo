@@ -1,4 +1,5 @@
 import src.dados as dados_pkg
+import src.dados.csv as dados_io
 import src.dados.print_helpers as print_helpers
 import src.nucleo.nucleo as nucleo
 
@@ -133,55 +134,70 @@ def executar_exemplo():
     print("\nExemplo de processamento de imagem:")
     # Tenta carregar BMP a partir do pacote `dados`
     var caminho_bmp = "exemplos/e000001_exemplo/dados.bmp"
+    var bmp_bytes = dados_io.ler_arquivo_binario(caminho_bmp)
+    print("Diagnóstico BMP: bytes lidos=", len(bmp_bytes))
+    if len(bmp_bytes) >= 2:
+        print("Diagnóstico BMP: assinatura=", bmp_bytes[0], bmp_bytes[1])
     var bmp_info = dados_pkg.carregar_bmp(caminho_bmp)
+
+    var imagem_para_normalizar = List[List[Float32]]()
     if bmp_info.width != 0:
         print("Arquivo BMP encontrado:", caminho_bmp, "w=", bmp_info.width, "h=", bmp_info.height, "bpp=", bmp_info.bits_per_pixel)
+        for y in range(bmp_info.height):
+            var linha = List[Float32]()
+            for x in range(bmp_info.width):
+                var px = bmp_info.pixels[y][x]
+                var gray = (px[0] + px[1] + px[2]) / 3.0
+                linha.append(gray)
+            imagem_para_normalizar.append(linha)
     else:
         print("Arquivo BMP não encontrado ou inválido — usando imagem simulada")
+        var row1 = List[Float32]()
+        row1.append(0.0)
+        row1.append(128.0)
+        var row2 = List[Float32]()
+        row2.append(255.0)
+        row2.append(64.0)
+        imagem_para_normalizar.append(row1)
+        imagem_para_normalizar.append(row2)
 
-    var imagem_simulada = List[List[Float32]]()
-    var row1 = List[Float32]()
-    row1.append(0.0)
-    row1.append(128.0)
-    var row2 = List[Float32]()
-    row2.append(255.0)
-    row2.append(64.0)
-    imagem_simulada.append(row1.copy())
-    imagem_simulada.append(row2.copy())
-
-    var flat = List[List[Float32]]()
-    for i in range(len(imagem_simulada)):
-        var linha = List[Float32](len(imagem_simulada[i]))
-        for j in range(len(imagem_simulada[i])):
-            linha[j] = imagem_simulada[i][j]
-        flat.append(linha.copy())
-
-    var img_mm = dados_pkg.normalizar_min_max(flat.copy())
+    var img_mm = dados_pkg.normalizar_min_max(imagem_para_normalizar.copy())
     print("Imagem normalizada (Min-Max):")
     print_helpers.imprimir_matriz_float(img_mm.dados_normalizados.copy())
 
     # --- Exemplo de áudio ---
     print("\nExemplo de processamento de áudio:")
     var caminho_wav = "exemplos/e000001_exemplo/dados.wav"
+    var wav_bytes = dados_io.ler_arquivo_binario(caminho_wav)
+    print("Diagnóstico WAV: bytes lidos=", len(wav_bytes))
+    if len(wav_bytes) >= 12:
+        print("Diagnóstico WAV: assinatura=", wav_bytes[0], wav_bytes[1], wav_bytes[2], wav_bytes[3], "/", wav_bytes[8], wav_bytes[9], wav_bytes[10], wav_bytes[11])
     var wav_info = dados_pkg.carregar_wav(caminho_wav)
+
+    var audio_para_normalizar = List[List[Float32]]()
     if wav_info.sample_rate != 0:
         print("Arquivo WAV encontrado:", caminho_wav, "sr=", wav_info.sample_rate, "ch=", wav_info.num_channels, "bps=", wav_info.bits_per_sample)
+        for i in range(len(wav_info.samples)):
+            var frame = List[Float32]()
+            if len(wav_info.samples[i]) > 0:
+                frame.append(wav_info.samples[i][0])
+            else:
+                frame.append(0.0)
+            audio_para_normalizar.append(frame)
     else:
         print("Arquivo WAV não encontrado ou inválido — usando áudio simulado")
+        var frame0 = List[Float32]()
+        frame0.append(0.1)
+        frame0.append(-0.2)
+        frame0.append(0.3)
+        audio_para_normalizar.append(frame0)
+        var frame1 = List[Float32]()
+        frame1.append(-0.1)
+        frame1.append(0.2)
+        frame1.append(-0.05)
+        audio_para_normalizar.append(frame1)
 
-    var audio_simulado = List[List[Float32]]()
-    var frame0 = List[Float32]()
-    frame0.append(0.1)
-    frame0.append(-0.2)
-    frame0.append(0.3)
-    audio_simulado.append(frame0)
-    var frame1 = List[Float32]()
-    frame1.append(-0.1)
-    frame1.append(0.2)
-    frame1.append(-0.05)
-    audio_simulado.append(frame1)
-
-    var audio_zs = dados_pkg.normalizar_zscore(audio_simulado.copy())
+    var audio_zs = dados_pkg.normalizar_zscore(audio_para_normalizar.copy())
     print("Áudio normalizado (Z-Score):")
     print_helpers.imprimir_matriz_float(audio_zs.dados_normalizados.copy())
 

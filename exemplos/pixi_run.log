@@ -1,31 +1,101 @@
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:177:27: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    audio_simulado.append(frame0)
-                          ^~~~~~
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:149:44: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+                var px = bmp_info.pixels[y][x]
+                         ~~~~~~~~~~~~~~~~~~^~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:177:27: note: consider transferring the value with '^'
-    audio_simulado.append(frame0)
-                          ^
-                                ^
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:149:44: note: consider transferring the value with '^'
+                var px = bmp_info.pixels[y][x]
+                                           ^
+                                              ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:177:27: note: you can copy it explicitly with '.copy()'
-    audio_simulado.append(frame0)
-                          ^
-                                .copy()
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:149:44: note: you can copy it explicitly with '.copy()'
+                var px = bmp_info.pixels[y][x]
+                                           ^
+                                              .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:182:27: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    audio_simulado.append(frame1)
-                          ^~~~~~
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:152:43: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+            imagem_para_normalizar.append(linha)
+                                          ^~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:182:27: note: consider transferring the value with '^'
-    audio_simulado.append(frame1)
-                          ^
-                                ^
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:152:43: note: consider transferring the value with '^'
+            imagem_para_normalizar.append(linha)
+                                          ^
+                                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:182:27: note: you can copy it explicitly with '.copy()'
-    audio_simulado.append(frame1)
-                          ^
-                                .copy()
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:152:43: note: you can copy it explicitly with '.copy()'
+            imagem_para_normalizar.append(linha)
+                                          ^
+                                               .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:161:39: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+        imagem_para_normalizar.append(row1)
+                                      ^~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:161:39: note: consider transferring the value with '^'
+        imagem_para_normalizar.append(row1)
+                                      ^
+                                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:161:39: note: you can copy it explicitly with '.copy()'
+        imagem_para_normalizar.append(row1)
+                                      ^
+                                          .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:162:39: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+        imagem_para_normalizar.append(row2)
+                                      ^~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:162:39: note: consider transferring the value with '^'
+        imagem_para_normalizar.append(row2)
+                                      ^
+                                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:162:39: note: you can copy it explicitly with '.copy()'
+        imagem_para_normalizar.append(row2)
+                                      ^
+                                          .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:186:42: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+            audio_para_normalizar.append(frame)
+                                         ^~~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:186:42: note: consider transferring the value with '^'
+            audio_para_normalizar.append(frame)
+                                         ^
+                                              ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:186:42: note: you can copy it explicitly with '.copy()'
+            audio_para_normalizar.append(frame)
+                                         ^
+                                              .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:193:38: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+        audio_para_normalizar.append(frame0)
+                                     ^~~~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:193:38: note: consider transferring the value with '^'
+        audio_para_normalizar.append(frame0)
+                                     ^
+                                           ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:193:38: note: you can copy it explicitly with '.copy()'
+        audio_para_normalizar.append(frame0)
+                                     ^
+                                           .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:198:38: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+        audio_para_normalizar.append(frame1)
+                                     ^~~~~~
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:198:38: note: consider transferring the value with '^'
+        audio_para_normalizar.append(frame1)
+                                     ^
+                                           ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:198:38: note: you can copy it explicitly with '.copy()'
+        audio_para_normalizar.append(frame1)
+                                     ^
+                                           .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:19:34: warning: transfer from an owned value has no effect and can be removed
     return wav.parse_wav(caminho)^
@@ -117,35 +187,35 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
                                      ^
                                      
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:41:29: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     imprimir_matriz_float(mm.dados_normalizados, 20)
                           ~~^~~~~~~~~~~~~~~~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:41:29: note: consider transferring the value with '^'
     imprimir_matriz_float(mm.dados_normalizados, 20)
                             ^
                                                ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:41:29: note: you can copy it explicitly with '.copy()'
     imprimir_matriz_float(mm.dados_normalizados, 20)
                             ^
                                                .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:51:29: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     imprimir_matriz_float(zs.dados_normalizados, 20)
                           ~~^~~~~~~~~~~~~~~~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:51:29: note: consider transferring the value with '^'
     imprimir_matriz_float(zs.dados_normalizados, 20)
                             ^
                                                ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:51:29: note: you can copy it explicitly with '.copy()'
     imprimir_matriz_float(zs.dados_normalizados, 20)
                             ^
@@ -574,7 +644,7 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:3:
     except Exception:
            ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:3:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:29:28: warning: assignment to 'linha_prefix' was never used; assign to '_' instead?
         var linha_prefix = "  "
                            ^
@@ -668,12 +738,14 @@ Desvios por coluna:
    1.4142135
 
 Exemplo de processamento de imagem:
+Diagnóstico BMP: bytes lidos= 0
 Arquivo BMP não encontrado ou inválido — usando imagem simulada
 Imagem normalizada (Min-Max):
 0.0
 1.0
 
 Exemplo de processamento de áudio:
+Diagnóstico WAV: bytes lidos= 0
 Arquivo WAV não encontrado ou inválido — usando áudio simulado
 Áudio normalizado (Z-Score):
 1.0
