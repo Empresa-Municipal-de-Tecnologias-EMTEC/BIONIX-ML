@@ -19,6 +19,12 @@ def carregar_wav(var caminho: String) -> wav.WAVInfo:
 def carregar_bmp(var caminho: String) -> bmp.BMPInfo:
     return bmp.parse_bmp(caminho)^
 
+def diagnosticar_wav(var caminho: String) -> Bool:
+    return wav.diagnosticar_wav(caminho)
+
+def diagnosticar_bmp(var caminho: String) -> Bool:
+    return bmp.diagnosticar_bmp(caminho)
+
 def normalizar_min_max(var dados_numericos: List[List[Float32]]) -> normalizacao.MinMaxResult:
     return normalizacao.min_max_normalize(dados_numericos.copy())
 
