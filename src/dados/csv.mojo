@@ -1,4 +1,5 @@
 # Parser CSV e helpers de I/O (texto e binário).
+import src.dados.arquivo as arquivo
 
 struct CSVData(Movable, Copyable):
     var cabecalho: List[String]
@@ -96,23 +97,7 @@ fn parse_csv(var texto: String, var delimitador: String = ",", var detectar_cabe
     return CSVData(cab, dados, texto)^
 
 fn ler_arquivo_texto(var caminho: String) -> String:
-    try:
-        var f = open(caminho, "r")
-        var conteudo = f.read()
-        f.close()
-        return conteudo
-    except Exception:
-        return ""
+    return arquivo.ler_arquivo_texto(caminho)
 
 fn ler_arquivo_binario(var caminho: String) -> List[Int]:
-    # Retorna bytes como List[Int] para consumo simples
-    try:
-        var f = open(caminho, "rb")
-        var raw = f.read()
-        f.close()
-        var out = List[Int]()
-        for i in range(len(raw)):
-            out.append(Int(raw[i]))
-        return out^
-    except Exception:
-        return List[Int]()
+    return arquivo.ler_arquivo_binario(caminho)

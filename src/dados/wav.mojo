@@ -1,4 +1,4 @@
-import src.dados.csv as io
+import src.dados.arquivo as io
 
 struct WAVInfo(Movable, Copyable):
     var sample_rate: Int
@@ -52,12 +52,16 @@ fn parse_wav(var caminho: String) -> WAVInfo:
             data_offset = offset + 8
             break
         offset = offset + 8 + chunk_size
+        if offset < 0 or offset > len(b):
+            break
     if data_offset == -1:
         return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
 
     var bytes_per_sample = bits_per_sample // 8
     var frame_bytes = bytes_per_sample * num_channels
     if frame_bytes == 0:
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+    if data_offset < 0 or data_offset >= len(b):
         return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
     var n_frames = (len(b) - data_offset) // frame_bytes
 
@@ -66,6 +70,8 @@ fn parse_wav(var caminho: String) -> WAVInfo:
         var frame = List[Float32](num_channels)
         for ch in range(num_channels):
             var s_offset = data_offset + f_idx * frame_bytes + ch * bytes_per_sample
+            if s_offset < 0 or s_offset + bytes_per_sample > len(b):
+                return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
             var value_f: Float32 = 0.0
             if bits_per_sample == 8:
                 var uv = b[s_offset]

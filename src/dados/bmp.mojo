@@ -1,4 +1,4 @@
-import src.dados.csv as io
+import src.dados.arquivo as io
 
 fn _bytes_to_uint32_le(var b: List[Int], var offset: Int) -> Int:
     var v: Int = 0
@@ -37,6 +37,15 @@ fn parse_bmp(var caminho: String) -> BMPInfo:
     var height = _bytes_to_uint32_le(b, 22)
     var bits_per_pixel = _bytes_to_uint16_le(b, 28)
 
+    if dib_header_size < 40:
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
+    if width <= 0 or height == 0:
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
+    if bits_per_pixel != 24 and bits_per_pixel != 32:
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
+    if pixel_array_offset < 0 or pixel_array_offset >= len(b):
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
+
     var bytes_per_pixel = bits_per_pixel // 8
     var row_raw = width * bytes_per_pixel
     var row_stride = ((row_raw + 3) // 4) * 4  # padded to 4 bytes
@@ -45,6 +54,10 @@ fn parse_bmp(var caminho: String) -> BMPInfo:
     if height < 0:
         bottom_up = False
         height = -height
+
+    var total_needed = pixel_array_offset + height * row_stride
+    if total_needed > len(b):
+        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
 
     var pixels = List[List[List[Float32]]]()
     for y in range(height):
@@ -67,10 +80,10 @@ fn parse_bmp(var caminho: String) -> BMPInfo:
             var blue = Float32(b0) / 255.0
             var green = Float32(b1) / 255.0
             var red = Float32(b2) / 255.0
-            var pixel = List[Float32](3)
-            pixel[0] = red
-            pixel[1] = green
-            pixel[2] = blue
+            var pixel = List[Float32]()
+            pixel.append(red)
+            pixel.append(green)
+            pixel.append(blue)
             row.append(pixel)
         pixels.append(row)
 

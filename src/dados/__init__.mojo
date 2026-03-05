@@ -1,5 +1,6 @@
 # Pacote `dados` (lowercase) - utilitários para leitura e normalização de dados
 import src.dados.csv as csv
+import src.dados.arquivo as arquivo
 import src.dados.wav as wav
 import src.dados.bmp as bmp
 import src.dados.normalizacao as normalizacao
@@ -9,11 +10,8 @@ def carregar_csv_de_texto(var texto: String, var delimitador: String = ",", var 
     return csv.parse_csv(texto, delimitador, detectar_cabecalho)
 
 def carregar_csv(var caminho: String, var delimitador: String = ",", var detectar_cabecalho: Bool = True) -> csv.CSVData:
-    try:
-        var texto = csv.ler_arquivo_texto(caminho)
-        return csv.parse_csv(texto, delimitador, detectar_cabecalho)
-    except Exception:
-        return csv.parse_csv("", delimitador, detectar_cabecalho)
+    var texto = arquivo.ler_arquivo_texto(caminho)
+    return csv.parse_csv(texto, delimitador, detectar_cabecalho)
 
 def carregar_wav(var caminho: String) -> wav.WAVInfo:
     return wav.parse_wav(caminho)^

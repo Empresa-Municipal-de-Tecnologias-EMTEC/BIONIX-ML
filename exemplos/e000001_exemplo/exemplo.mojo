@@ -1,5 +1,5 @@
 import src.dados as dados_pkg
-import src.dados.csv as dados_io
+import src.dados.arquivo as dados_io
 import src.dados.print_helpers as print_helpers
 import src.nucleo.nucleo as nucleo
 
