@@ -2,6 +2,66 @@ import src.dados as dados_pkg
 import src.dados.print_helpers as print_helpers
 import src.nucleo.nucleo as nucleo
 
+fn _digit_value(var ch: String) -> Int:
+    if ch == "0":
+        return 0
+    if ch == "1":
+        return 1
+    if ch == "2":
+        return 2
+    if ch == "3":
+        return 3
+    if ch == "4":
+        return 4
+    if ch == "5":
+        return 5
+    if ch == "6":
+        return 6
+    if ch == "7":
+        return 7
+    if ch == "8":
+        return 8
+    if ch == "9":
+        return 9
+    return -1
+
+fn _parse_float_ascii(var texto: String) -> Float32:
+    var s = texto.strip().replace(",", ".")
+    if len(s) == 0:
+        return 0.0
+
+    var sinal: Float32 = 1.0
+    var i: Int = 0
+    if s[0:1] == "-":
+        sinal = -1.0
+        i = 1
+    elif s[0:1] == "+":
+        i = 1
+
+    var inteiro: Float32 = 0.0
+    while i < len(s):
+        var ch = s[i:i+1]
+        if ch == ".":
+            i = i + 1
+            break
+        var d = _digit_value(ch)
+        if d < 0:
+            return sinal * inteiro
+        inteiro = inteiro * 10.0 + Float32(d)
+        i = i + 1
+
+    var frac: Float32 = 0.0
+    var base: Float32 = 1.0
+    while i < len(s):
+        var d = _digit_value(s[i:i+1])
+        if d < 0:
+            break
+        frac = frac * 10.0 + Float32(d)
+        base = base * 10.0
+        i = i + 1
+
+    return sinal * (inteiro + (frac / base))
+
 def executar_exemplo():
     print("--- Exemplo e000001: leitura e normalização de dados ---")
 
@@ -24,11 +84,36 @@ def executar_exemplo():
     # Converter colunas para Float32 (assume todas as colunas numéricas neste exemplo)
     var dados_numericos = List[List[Float32]]()
     for r in parsed.linhas:
+        var linha_numerica = True
+        for j in range(len(r)):
+            var campo_check = r[j].strip().replace(",", ".")
+            if campo_check == "":
+                linha_numerica = False
+                break
+            var i: Int = 0
+            var zero = "0"[0:1]
+            var nine = "9"[0:1]
+            var dot = "."[0:1]
+            var minus = "-"[0:1]
+            var plus = "+"[0:1]
+            var e_l = "e"[0:1]
+            var e_U = "E"[0:1]
+            while i < len(campo_check):
+                var ch = campo_check[i:i+1]
+                if not (ch >= zero and ch <= nine) and ch != dot and ch != minus and ch != plus and ch != e_l and ch != e_U:
+                    linha_numerica = False
+                    break
+                i = i + 1
+            if not linha_numerica:
+                break
+        if not linha_numerica:
+            continue
+
         var linha = List[Float32](len(r))
         for j in range(len(r)):
             var campo = r[j].strip()
             var campo_clean = campo.replace(",", ".")
-            linha[j] = Float32(campo_clean)
+            linha[j] = _parse_float_ascii(campo_clean)
         dados_numericos.append(linha.copy())
 
     print("Matriz numérica (primeiras linhas):")

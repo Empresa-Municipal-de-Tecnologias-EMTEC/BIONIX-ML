@@ -593,6 +593,65 @@ Linhas (raw):
    3.0 6.0 
    4.0 8.1 
    5.0 10.2 
-stack trace was not collected. Enable stack trace collection with environment variable `MOJO_ENABLE_STACK_TRACE_ON_ERROR`
-Unhandled exception caught during execution: must be real number, not str
-/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/bin/mojo: error: execution exited with a non-zero result: 1
+Matriz numérica (primeiras linhas):
+1.0
+2.0
+3.0
+4.0
+5.0
+1.0
+2.0
+3.0
+4.0
+5.0
+
+
+Min-Max: valores normalizados (primeiras linhas):
+0.0
+0.25
+0.5
+0.75
+1.0
+0.0
+0.25
+0.5
+0.75
+1.0
+Min por coluna:
+   1.0
+Max por coluna:
+   5.0
+
+
+Z-Score: valores normalizados (primeiras linhas):
+-1.4142135
+-0.70710677
+0.0
+0.70710677
+1.4142135
+-1.4142135
+-0.70710677
+0.0
+0.70710677
+1.4142135
+Médias por coluna:
+   3.0
+Desvios por coluna:
+   1.4142135
+
+Exemplo de processamento de imagem:
+Arquivo BMP não encontrado ou inválido — usando imagem simulada
+Imagem normalizada (Min-Max):
+nan
+nan
+
+Exemplo de processamento de áudio:
+Arquivo WAV não encontrado ou inválido — usando áudio simulado
+#0 0x000070cd4916e9db llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/lib/libKGENCompilerRTShared.so+0x3c89db)
+#1 0x000070cd4916c2e6 llvm::sys::RunSignalHandlers() (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/lib/libKGENCompilerRTShared.so+0x3c62e6)
+#2 0x000070cd4916f5e7 SignalHandler(int, siginfo_t*, void*) (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/lib/libKGENCompilerRTShared.so+0x3c95e7)
+#3 0x000070cd4c245330 (/lib/x86_64-linux-gnu/libc.so.6+0x45330)
+#4 0x000070cd4f3f48ba tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::AlignAsPolicy, tcmalloc::tcmalloc_internal::AllocationAccessHotPolicy, tcmalloc::tcmalloc_internal::InvokeHooksPolicy, tcmalloc::tcmalloc_internal::NonSizeReturningPolicy, tcmalloc::tcmalloc_internal::LocalNumaPartitionPolicy>::pointer_type tcmalloc::tcmalloc_internal::alloc_small_sampled_hooks_or_perthread<tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::AlignAsPolicy, tcmalloc::tcmalloc_internal::AllocationAccessHotPolicy, tcmalloc::tcmalloc_internal::InvokeHooksPolicy, tcmalloc::tcmalloc_internal::NonSizeReturningPolicy, tcmalloc::tcmalloc_internal::LocalNumaPartitionPolicy>>(unsigned long, unsigned long, tcmalloc::tcmalloc_internal::TCMallocPolicy<tcmalloc::tcmalloc_internal::CppOomPolicy, tcmalloc::tcmalloc_internal::AlignAsPolicy, tcmalloc::tcmalloc_internal::AllocationAccessHotPolicy, tcmalloc::tcmalloc_internal::InvokeHooksPolicy, tcmalloc::tcmalloc_internal::NonSizeReturningPolicy, tcmalloc::tcmalloc_internal::LocalNumaPartitionPolicy>, unsigned long) (/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/bin/../lib/libAsyncRTRuntimeGlobals.so+0x418ba)
+#5 0x000070ccec00ff3a
+
+To get symbolicated stack trace, compile your program using `mojo build` with debug info enabled, e.g. `-debug-level=line-tables`.
