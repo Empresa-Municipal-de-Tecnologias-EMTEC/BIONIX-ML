@@ -1,63 +1,13 @@
 # Núcleo do Bionix: tensores, operações e autograd (automatic gradient - gradiente automático)
 # Todas as documentações abaixo estão em Português: nome, parâmetros e descrição.
 
-# Estrutura: Tensor (em inglês: Tensor)
-# Parâmetros:
-# - dados: List[Float32] -> buffer (memória intermediária) contíguo com os dados do tensor
-# - formato: List[Int] -> dimensões do tensor (em inglês: shape)
-# - passos: List[Int] -> passos entre elementos de cada dimensão (em inglês: strides)
-# O que faz: Representa um tensor n-dimensional simples com buffer contíguo,
-#           formato e passos. Fornece inicialização básica.
-struct Tensor(Movable, Copyable):
-    var dados: List[Float32]  # data (em inglês)
-    var formato: List[Int]     # shape (em inglês)
-    var passos: List[Int]      # strides (em inglês)
-    
-    fn __init__(out self, var formato: List[Int]):  # shape (em inglês)
-        self.formato = formato^
-        self.passos = calcular_passos(self.formato)  # compute_strides (em inglês)
-        var total: Int = 1
-        for i in range(len(self.formato)):
-            total = total * self.formato[i]
-        self.dados = List[Float32](capacity=total)
-        for _ in range(total):
-            self.dados.append(0.0)
-    
-    fn copy(self) -> Tensor:
-        var novo_formato = self.formato.copy()
-        var novo_tensor = Tensor(novo_formato^)
-        for i in range(len(self.dados)):
-            novo_tensor.dados[i] = self.dados[i]
-        return novo_tensor^
+# Importa definições de Tensor centralizadas (suporta múltiplos backends)
+import src.nucleo.Tensor as tensor_defs
 
-
-# Função: calcular_passos (em inglês: compute_strides)
-# Parâmetros:
-# - formato: List[Int] -> dimensões do tensor (em inglês: shape)
-# Retorno: List[Int] com os passos correspondentes (em inglês: strides)
-# O que faz: Calcula os passos para indexação em buffer (memória intermediária) contíguo 
-#           usando ordenação row-major (linhas principais - elementos consecutivos na última dimensão).
-fn calcular_passos(formato: List[Int]) -> List[Int]:  # compute_strides (em inglês)
-    var passos = List[Int](len(formato))  # strides (em inglês)
-    var acumulador: Int = 1  # acc/accumulator (em inglês)
-    for i in reversed(range(len(formato))):
-        passos[i] = acumulador
-        acumulador = acumulador * formato[i]
-    return passos^
-
-
-# Função: preenchido_como (em inglês: filled_like)
-# Parâmetros:
-# - t: Tensor -> tensor de referência para formato
-# - v: Float32 -> valor para preencher
-# Retorno: Tensor preenchido com `v` e mesmo `formato` de `t`
-# O que faz: Cria um tensor com os mesmos formato/passos e preenche com `v`.
-fn preenchido_como(t: Tensor, v: Float32) -> Tensor:  # filled_like (em inglês)
-    var copia_formato = t.formato.copy()  # shape_copy (em inglês)
-    var saida = Tensor(copia_formato^)  # out/output (em inglês)
-    for i in range(len(saida.dados)):
-        saida.dados[i] = v
-    return saida^
+# Reexporta nomes localmente para manter compatibilidade com o código existente
+Tensor = tensor_defs.Tensor
+calcular_passos = tensor_defs.calcular_passos
+preenchido_como = tensor_defs.preenchido_como
 
 
 # Operações tensoriais (forward - propagação direta)
