@@ -11,24 +11,12 @@ fn ler_arquivo_texto(var caminho: String) -> String:
 
 fn ler_arquivo_binario(var caminho: String) -> List[Int]:
     try:
-        var f = open(caminho, "rb")
-        var raw = f.read()
+        var f = open(caminho, "r")
+        var raw = f.read_bytes(-1)
         f.close()
         var out = List[Int]()
-        for ch in raw:
-            try:
-                out.append(Int(ch) & 0xFF)
-            except Exception:
-                out.append(ord(ch) & 0xFF)
+        for by in raw:
+            out.append(Int(by) & 0xFF)
         return out^
     except Exception:
-        try:
-            var f = open(caminho, "r")
-            var raw = f.read()
-            f.close()
-            var out = List[Int]()
-            for ch in raw:
-                out.append(ord(ch) & 0xFF)
-            return out^
-        except Exception:
-            return List[Int]()
+        return List[Int]()

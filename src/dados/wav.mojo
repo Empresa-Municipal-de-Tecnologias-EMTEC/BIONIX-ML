@@ -23,6 +23,9 @@ fn _bytes_to_uint32_le(var b: List[Int], var offset: Int) -> Int:
 fn _bytes_to_uint16_le(var b: List[Int], var offset: Int) -> Int:
     return (b[offset] | (b[offset+1] << 8))
 
+fn _eh_bits_suportado(var bps: Int) -> Bool:
+    return bps == 8 or bps == 16 or bps == 24 or bps == 32
+
 fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
     if len(b) < 44:
         if log:
@@ -33,29 +36,37 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
             print("[diag.wav] inválido: assinatura não é RIFF")
         return False
 
-    var wave_pos = -1
-    if len(b) >= 12 and b[8] == 87 and b[9] == 65 and b[10] == 86 and b[11] == 69:
-        wave_pos = 8
-    else:
-        var max_scan = 16
-        if len(b) < max_scan:
-            max_scan = len(b)
-        for i in range(max_scan - 3):
-            if b[i] == 87 and b[i+1] == 65 and b[i+2] == 86 and b[i+3] == 69:
-                wave_pos = i
-                break
-    if wave_pos == -1:
+    if not (b[8] == 87 and b[9] == 65 and b[10] == 86 and b[11] == 69):
         if log:
             print("[diag.wav] inválido: marcador WAVE não encontrado")
         return False
 
-    var offset = wave_pos + 4
+    var wave_pos = 8
+
+    # caminho canônico usado pela maioria das implementações: fmt em offset 12
+    if not (b[12] == 102 and b[13] == 109 and b[14] == 116 and b[15] == 32):
+        if log:
+            print("[diag.wav] inválido: chunk fmt não está na posição canônica")
+        return False
+
+    var fmt_size = _bytes_to_uint32_le(b, 16)
+    if fmt_size < 16 or 20 + fmt_size > len(b):
+        if log:
+            print("[diag.wav] inválido: tamanho do fmt inconsistente (", fmt_size, ")")
+        return False
+
     var sample_rate = 0
     var num_channels = 0
     var bits_per_sample = 0
+    var block_align = 0
     var data_offset = -1
-    var encontrou_fmt = False
 
+    num_channels = _bytes_to_uint16_le(b, 22)
+    sample_rate = _bytes_to_uint32_le(b, 24)
+    block_align = _bytes_to_uint16_le(b, 32)
+    bits_per_sample = _bytes_to_uint16_le(b, 34)
+
+    var offset = wave_pos + 4
     while offset + 8 <= len(b):
         var chunk_id0 = b[offset]
         var chunk_id1 = b[offset+1]
@@ -63,24 +74,16 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
         var chunk_id3 = b[offset+3]
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
         if chunk_size < 0:
-            if log:
-                print("[diag.wav] inválido: chunk_size negativo")
-            return False
+            break
+        if chunk_id0 == 100 and chunk_id1 == 97 and chunk_id2 == 116 and chunk_id3 == 97:
+            data_offset = offset + 8
+            break
+
         var chunk_data_start = offset + 8
         var chunk_data_end = chunk_data_start + chunk_size
         if chunk_data_end < chunk_data_start or chunk_data_end > len(b):
             if log:
                 print("[diag.wav] aviso: chunk excede tamanho do arquivo; tentando fallback")
-            break
-
-        if chunk_id0 == 102 and chunk_id1 == 109 and chunk_id2 == 116 and chunk_id3 == 32:
-            encontrou_fmt = True
-            if chunk_size >= 16 and offset + 24 <= len(b):
-                num_channels = _bytes_to_uint16_le(b, offset+10)
-                sample_rate = _bytes_to_uint32_le(b, offset+12)
-                bits_per_sample = _bytes_to_uint16_le(b, offset+22)
-        elif chunk_id0 == 100 and chunk_id1 == 97 and chunk_id2 == 116 and chunk_id3 == 97:
-            data_offset = offset + 8
             break
 
         var pad = 0
@@ -91,45 +94,22 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
             break
 
     if data_offset == -1:
-        for i in range(wave_pos + 4, len(b) - 8):
-            if b[i] == 100 and b[i+1] == 97 and b[i+2] == 116 and b[i+3] == 97:
-                data_offset = i + 8
-                break
-        if data_offset == -1:
-            if len(b) > 44:
-                data_offset = 44
-            else:
-                if log:
-                    print("[diag.wav] inválido: chunk data não encontrado")
-                return False
-
-    if not encontrou_fmt:
-        for i in range(wave_pos + 4, len(b) - 24):
-            if b[i] == 102 and b[i+1] == 109 and b[i+2] == 116 and b[i+3] == 32:
-                var fmt_size = _bytes_to_uint32_le(b, i + 4)
-                if fmt_size >= 16 and i + 24 <= len(b):
-                    num_channels = _bytes_to_uint16_le(b, i + 10)
-                    sample_rate = _bytes_to_uint32_le(b, i + 12)
-                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
-                    encontrou_fmt = True
-                    break
+        if log:
+            print("[diag.wav] inválido: chunk data não encontrado")
+        return False
 
     if num_channels <= 0:
         num_channels = 1
-    if bits_per_sample <= 0:
-        bits_per_sample = 16
     if sample_rate <= 0:
         sample_rate = 22050
 
-    if bits_per_sample != 8 and bits_per_sample != 16 and bits_per_sample != 24 and bits_per_sample != 32:
-        if not encontrou_fmt:
-            bits_per_sample = 16
-        else:
-            if log:
-                print("[diag.wav] inválido: bits_per_sample não suportado (", bits_per_sample, ")")
-            return False
+    if not _eh_bits_suportado(bits_per_sample):
+        if block_align > 0 and num_channels > 0:
+            var guessed_bps = (block_align * 8) // num_channels
+            if _eh_bits_suportado(guessed_bps):
+                bits_per_sample = guessed_bps
 
-    if bits_per_sample != 8 and bits_per_sample != 16 and bits_per_sample != 24 and bits_per_sample != 32:
+    if not _eh_bits_suportado(bits_per_sample):
         if log:
             print("[diag.wav] inválido: bits_per_sample não suportado (", bits_per_sample, ")")
         return False
@@ -152,7 +132,7 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
         return False
 
     if log:
-        print("[diag.wav] válido: sr=", sample_rate, " ch=", num_channels, " bps=", bits_per_sample, " off=", data_offset, " frames=", n_frames, " fmt=", encontrou_fmt)
+        print("[diag.wav] válido: sr=", sample_rate, " ch=", num_channels, " bps=", bits_per_sample, " off=", data_offset, " frames=", n_frames)
     return True
 
 fn diagnosticar_wav(var caminho: String) -> Bool:
@@ -165,25 +145,28 @@ fn parse_wav(var caminho: String) -> WAVInfo:
     if not _validar_wav_bytes(b, False):
         return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
 
-    var wave_pos = -1
-    if len(b) >= 12 and b[8] == 87 and b[9] == 65 and b[10] == 86 and b[11] == 69:
-        wave_pos = 8
-    else:
-        var max_scan = 16
-        if len(b) < max_scan:
-            max_scan = len(b)
-        for i in range(max_scan - 3):
-            if b[i] == 87 and b[i+1] == 65 and b[i+2] == 86 and b[i+3] == 69:
-                wave_pos = i
-                break
-    if wave_pos == -1:
+    if not (b[8] == 87 and b[9] == 65 and b[10] == 86 and b[11] == 69):
         return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
-    # Procurar chunk fmt (posição 12 em diante)
-    var offset = wave_pos + 4
+    var wave_pos = 8
+
+    if not (b[12] == 102 and b[13] == 109 and b[14] == 116 and b[15] == 32):
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+    var fmt_size = _bytes_to_uint32_le(b, 16)
+    if fmt_size < 16 or 20 + fmt_size > len(b):
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
     var sample_rate = 0
     var num_channels = 0
     var bits_per_sample = 0
+    var block_align = 0
     var data_offset = -1
+
+    num_channels = _bytes_to_uint16_le(b, 22)
+    sample_rate = _bytes_to_uint32_le(b, 24)
+    block_align = _bytes_to_uint16_le(b, 32)
+    bits_per_sample = _bytes_to_uint16_le(b, 34)
+
+    var offset = wave_pos + 4
+
     while offset + 8 <= len(b):
         var chunk_id0 = b[offset]
         var chunk_id1 = b[offset+1]
@@ -192,52 +175,37 @@ fn parse_wav(var caminho: String) -> WAVInfo:
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
         if chunk_size < 0:
             break
+
+        if chunk_id0 == 100 and chunk_id1 == 97 and chunk_id2 == 116 and chunk_id3 == 97:
+            data_offset = offset + 8
+            break
+
         var chunk_data_start = offset + 8
         var chunk_data_end = chunk_data_start + chunk_size
         if chunk_data_end < chunk_data_start or chunk_data_end > len(b):
             break
 
-        if chunk_id0 == 102 and chunk_id1 == 109 and chunk_id2 == 116 and chunk_id3 == 32:  # 'fmt '
-            if chunk_size >= 16 and offset + 24 <= len(b):
-                num_channels = _bytes_to_uint16_le(b, offset+10)
-                sample_rate = _bytes_to_uint32_le(b, offset+12)
-                bits_per_sample = _bytes_to_uint16_le(b, offset+22)
-        elif chunk_id0 == 100 and chunk_id1 == 97 and chunk_id2 == 116 and chunk_id3 == 97:  # 'data'
-            data_offset = offset + 8
-            break
         var pad = 0
         if (chunk_size & 1) != 0:
             pad = 1
         offset = offset + 8 + chunk_size + pad
         if offset < 0 or offset > len(b):
             break
-    if data_offset == -1:
-        for i in range(wave_pos + 4, len(b) - 8):
-            if b[i] == 100 and b[i+1] == 97 and b[i+2] == 116 and b[i+3] == 97:
-                data_offset = i + 8
-                break
-        if data_offset == -1:
-            if len(b) > 44:
-                data_offset = 44
-            else:
-                return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
 
-    if num_channels <= 0 or bits_per_sample <= 0:
-        for i in range(wave_pos + 4, len(b) - 24):
-            if b[i] == 102 and b[i+1] == 109 and b[i+2] == 116 and b[i+3] == 32:
-                var fmt_size = _bytes_to_uint32_le(b, i + 4)
-                if fmt_size >= 16 and i + 24 <= len(b):
-                    num_channels = _bytes_to_uint16_le(b, i + 10)
-                    sample_rate = _bytes_to_uint32_le(b, i + 12)
-                    bits_per_sample = _bytes_to_uint16_le(b, i + 22)
-                    break
-    if num_channels <= 0 or bits_per_sample <= 0:
+    if data_offset == -1:
+        return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
+
+    if num_channels <= 0:
         num_channels = 1
-        bits_per_sample = 16
-    if bits_per_sample != 8 and bits_per_sample != 16 and bits_per_sample != 24 and bits_per_sample != 32:
-        bits_per_sample = 16
     if sample_rate <= 0:
         sample_rate = 22050
+    if not _eh_bits_suportado(bits_per_sample):
+        if block_align > 0 and num_channels > 0:
+            var guessed_bps = (block_align * 8) // num_channels
+            if _eh_bits_suportado(guessed_bps):
+                bits_per_sample = guessed_bps
+    if not _eh_bits_suportado(bits_per_sample):
+        bits_per_sample = 16
 
     var bytes_per_sample = bits_per_sample // 8
     var frame_bytes = bytes_per_sample * num_channels
