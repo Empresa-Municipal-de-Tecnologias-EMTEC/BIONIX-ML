@@ -59,9 +59,20 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
         var chunk_id2 = b[offset+2]
         var chunk_id3 = b[offset+3]
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
+        if chunk_size < 0:
+            if log:
+                print("[diag.wav] inválido: chunk_size negativo")
+            return False
+        var chunk_data_start = offset + 8
+        var chunk_data_end = chunk_data_start + chunk_size
+        if chunk_data_end < chunk_data_start or chunk_data_end > len(b):
+            if log:
+                print("[diag.wav] inválido: chunk excede tamanho do arquivo")
+            return False
+
         if chunk_id0 == 102 and chunk_id1 == 109 and chunk_id2 == 116 and chunk_id3 == 32:
             encontrou_fmt = True
-            if offset + 24 <= len(b):
+            if chunk_size >= 16 and offset + 24 <= len(b):
                 num_channels = _bytes_to_uint16_le(b, offset+10)
                 sample_rate = _bytes_to_uint32_le(b, offset+12)
                 bits_per_sample = _bytes_to_uint16_le(b, offset+22)
@@ -69,7 +80,10 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
             data_offset = offset + 8
             break
 
-        offset = offset + 8 + chunk_size
+        var pad = 0
+        if (chunk_size & 1) != 0:
+            pad = 1
+        offset = offset + 8 + chunk_size + pad
         if offset < 0 or offset > len(b):
             break
 
@@ -87,6 +101,14 @@ fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
         bits_per_sample = 16
     if sample_rate <= 0:
         sample_rate = 22050
+
+    if bits_per_sample != 8 and bits_per_sample != 16 and bits_per_sample != 24 and bits_per_sample != 32:
+        if not encontrou_fmt:
+            bits_per_sample = 16
+        else:
+            if log:
+                print("[diag.wav] inválido: bits_per_sample não suportado (", bits_per_sample, ")")
+            return False
 
     if bits_per_sample != 8 and bits_per_sample != 16 and bits_per_sample != 24 and bits_per_sample != 32:
         if log:
@@ -146,14 +168,25 @@ fn parse_wav(var caminho: String) -> WAVInfo:
         var chunk_id2 = b[offset+2]
         var chunk_id3 = b[offset+3]
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
+        if chunk_size < 0:
+            break
+        var chunk_data_start = offset + 8
+        var chunk_data_end = chunk_data_start + chunk_size
+        if chunk_data_end < chunk_data_start or chunk_data_end > len(b):
+            break
+
         if chunk_id0 == 102 and chunk_id1 == 109 and chunk_id2 == 116 and chunk_id3 == 32:  # 'fmt '
-            num_channels = _bytes_to_uint16_le(b, offset+10)
-            sample_rate = _bytes_to_uint32_le(b, offset+12)
-            bits_per_sample = _bytes_to_uint16_le(b, offset+22)
+            if chunk_size >= 16 and offset + 24 <= len(b):
+                num_channels = _bytes_to_uint16_le(b, offset+10)
+                sample_rate = _bytes_to_uint32_le(b, offset+12)
+                bits_per_sample = _bytes_to_uint16_le(b, offset+22)
         elif chunk_id0 == 100 and chunk_id1 == 97 and chunk_id2 == 116 and chunk_id3 == 97:  # 'data'
             data_offset = offset + 8
             break
-        offset = offset + 8 + chunk_size
+        var pad = 0
+        if (chunk_size & 1) != 0:
+            pad = 1
+        offset = offset + 8 + chunk_size + pad
         if offset < 0 or offset > len(b):
             break
     if data_offset == -1:
@@ -163,6 +196,8 @@ fn parse_wav(var caminho: String) -> WAVInfo:
             return WAVInfo(0, 0, 0, -1, List[List[Float32]]())^
     if num_channels <= 0 or bits_per_sample <= 0:
         num_channels = 1
+        bits_per_sample = 16
+    if bits_per_sample != 8 and bits_per_sample != 16 and bits_per_sample != 24 and bits_per_sample != 32:
         bits_per_sample = 16
     if sample_rate <= 0:
         sample_rate = 22050
