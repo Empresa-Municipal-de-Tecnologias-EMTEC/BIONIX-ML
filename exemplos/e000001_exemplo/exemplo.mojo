@@ -1,4 +1,5 @@
 import src.dados as dados_pkg
+import src.dados.print_helpers as print_helpers
 import src.nucleo.nucleo as nucleo
 
 def executar_exemplo():
@@ -15,18 +16,10 @@ def executar_exemplo():
 
     print("Fonte CSV:", ("arquivo: " + caminho_csv) if usado_arquivo else "embutido")
     print("Cabeçalho detectado:")
-    if len(parsed.cabecalho) > 0:
-        for i in range(len(parsed.cabecalho)):
-            print(" ", parsed.cabecalho[i])
-    else:
-        print("  (nenhum cabeçalho)")
+    print_helpers.imprimir_cabecalho(parsed.cabecalho)
 
     print("Linhas (raw):")
-    for r in parsed.linhas:
-        var s = ""
-        for f in r:
-            s = s + f + " "
-        print("  ", s)
+    print_helpers.imprimir_linhas_raw(parsed.linhas, 50)
 
     # Converter colunas para Float32 (assume todas as colunas numéricas neste exemplo)
     var dados_numericos = List[List[Float32]]()
@@ -39,44 +32,17 @@ def executar_exemplo():
         dados_numericos.append(linha)
 
     print("Matriz numérica (primeiras linhas):")
-    for i in range(len(dados_numericos)):
-        var l = dados_numericos[i]
-        var out = ""
-        for j in range(len(l)):
-            out = out + str(l[j]) + " "
-        print("  ", out)
+    print_helpers.imprimir_matriz_float(dados_numericos, 50)
 
     # Normalização Min-Max
     var mm = dados_pkg.normalizar_min_max(dados_numericos)
-    print("\nMin-Max: valores normalizados (primeiras linhas):")
-    for i in range(len(mm.dados_normalizados)):
-        var l = mm.dados_normalizados[i]
-        var out = ""
-        for j in range(len(l)):
-            out = out + str(l[j]) + " "
-        print("  ", out)
-    print("Min por coluna:")
-    for v in mm.minimo_por_coluna:
-        print("  ", v)
-    print("Max por coluna:")
-    for v in mm.maximo_por_coluna:
-        print("  ", v)
+    print("\n")
+    print_helpers.imprimir_min_max(mm)
 
     # Normalização Z-Score
     var zs = dados_pkg.normalizar_zscore(dados_numericos)
-    print("\nZ-Score: valores normalizados (primeiras linhas):")
-    for i in range(len(zs.dados_normalizados)):
-        var l = zs.dados_normalizados[i]
-        var out = ""
-        for j in range(len(l)):
-            out = out + str(l[j]) + " "
-        print("  ", out)
-    print("Médias por coluna:")
-    for v in zs.media_por_coluna:
-        print("  ", v)
-    print("Desvios por coluna:")
-    for v in zs.desvio_por_coluna:
-        print("  ", v)
+    print("\n")
+    print_helpers.imprimir_zscore(zs)
 
     # --- Exemplo de imagem ---
     print("\nExemplo de processamento de imagem:")
@@ -107,11 +73,7 @@ def executar_exemplo():
 
     var img_mm = dados_pkg.normalizar_min_max(flat)
     print("Imagem normalizada (Min-Max):")
-    for r in img_mm.dados_normalizados:
-        var out = ""
-        for v in r:
-            out = out + str(v) + " "
-        print("  ", out)
+    print_helpers.imprimir_matriz_float(img_mm.dados_normalizados)
 
     # --- Exemplo de áudio ---
     print("\nExemplo de processamento de áudio:")
@@ -134,11 +96,7 @@ def executar_exemplo():
 
     var audio_zs = dados_pkg.normalizar_zscore(audio_simulado)
     print("Áudio normalizado (Z-Score):")
-    for r in audio_zs.dados_normalizados:
-        var out = ""
-        for v in r:
-            out = out + str(v) + " "
-        print("  ", out)
+    print_helpers.imprimir_matriz_float(audio_zs.dados_normalizados)
 
     print("\n--- Fim do exemplo e000001 ---")
 
