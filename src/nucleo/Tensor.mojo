@@ -74,7 +74,7 @@ fn acumular_gradiente(mut t: Tensor, g: Tensor):
     t.tem_gradiente = True
 
 
-fn somar_elementwise(a: Tensor, b: Tensor) -> Tensor:
+fn somar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
@@ -83,7 +83,7 @@ fn somar_elementwise(a: Tensor, b: Tensor) -> Tensor:
     return saida^
 
 
-fn subtrair_elementwise(a: Tensor, b: Tensor) -> Tensor:
+fn subtrair_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
@@ -92,7 +92,7 @@ fn subtrair_elementwise(a: Tensor, b: Tensor) -> Tensor:
     return saida^
 
 
-fn multiplicar_elementwise(a: Tensor, b: Tensor) -> Tensor:
+fn multiplicar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)

@@ -209,7 +209,7 @@ def executar_exemplo():
     b.dados[2] = -1.0
     b.dados[3] = 2.0
 
-    var soma = tensor_defs.somar_elementwise(a, b)
+    var soma = tensor_defs.somar_elemento_a_elemento(a, b)
     print("resultado da soma no exemplo:")
     for i in range(len(soma.dados)):
         print("  ", soma.dados[i])
