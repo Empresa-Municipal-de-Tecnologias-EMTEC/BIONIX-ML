@@ -9,6 +9,7 @@ import src.dados.conversao as conversao
 alias BMP_MODO_RGB = bmp.BMP_MODO_RGB
 alias BMP_MODO_PRETO_BRANCO = bmp.BMP_MODO_PRETO_BRANCO
 alias BMP_MODO_GRAYSCALE = bmp.BMP_MODO_GRAYSCALE
+alias NormalizacaoPersistida = normalizacao.NormalizacaoPersistida
 
 def carregar_csv_de_texto(var texto: String, var delimitador: String = ",", var detectar_cabecalho: Bool = True) -> csv.CSVData:
     return csv.parse_csv(texto, delimitador, detectar_cabecalho)
@@ -46,6 +47,35 @@ def normalizar_min_max(var dados_numericos: List[List[Float32]]) -> normalizacao
 
 def normalizar_zscore(var dados_numericos: List[List[Float32]]) -> normalizacao.ZScoreResult:
     return normalizacao.z_score_normalize(dados_numericos^)
+
+def criar_normalizacao_persistida(
+    var tipo_entradas: String,
+    var media_entradas: List[Float32],
+    var desvio_entradas: List[Float32],
+    var tipo_alvo: String,
+    var media_alvo: Float32,
+    var desvio_alvo: Float32,
+) -> normalizacao.NormalizacaoPersistida:
+    return normalizacao.criar_normalizacao_persistida(
+        tipo_entradas,
+        media_entradas,
+        desvio_entradas,
+        tipo_alvo,
+        media_alvo,
+        desvio_alvo,
+    )
+
+def salvar_normalizacao_persistida(norm: normalizacao.NormalizacaoPersistida, var caminho: String):
+    normalizacao.salvar_normalizacao_persistida(norm, caminho)
+
+def carregar_normalizacao_persistida(var caminho: String) -> normalizacao.NormalizacaoPersistida:
+    return normalizacao.carregar_normalizacao_persistida(caminho)
+
+def normalizar_amostra_entradas(norm: normalizacao.NormalizacaoPersistida, amostra: List[Float32]) -> List[Float32]:
+    return normalizacao.normalizar_amostra_entradas(norm, amostra)
+
+def desnormalizar_valor_alvo(norm: normalizacao.NormalizacaoPersistida, valor_normalizado: Float32) -> Float32:
+    return normalizacao.desnormalizar_valor_alvo(norm, valor_normalizado)
 
 def bmp_para_tensor(var bmp_info):
     return conversao.bmp_to_tensor(bmp_info)
