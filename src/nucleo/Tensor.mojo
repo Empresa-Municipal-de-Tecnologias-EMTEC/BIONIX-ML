@@ -22,7 +22,11 @@ struct Tensor(Movable, Copyable):
             novo_tensor.dados[i] = self.dados[i]
         return novo_tensor^
 
-
+#É possível calcular os passos a partir do formato, o que é útil para indexação eficiente.
+#Se ainda não entendeu o que são passos, pense neles como o número de elementos que você precisa pular para ir para a próxima posição em cada dimensão.
+#Essa estrutura de tensor controla os dados e o formato, mas os passos são calculados dinamicamente para garantir que estejam sempre corretos, mesmo se o formato for alterado.
+#Dessa forma, caso seja necessário trabalhar com múltiplos backends (Plataforma de hardware), a estrutura do tensor permanece consistente.
+#É possivel inclusive criar parâmetros para controlar paralelismo de tensores (Dividir o tensor em blocos localizados na meória de diferentes dispositivos), como blocos de processamento, mas isso fica para uma implementação futura.
 fn calcular_passos(formato: List[Int]) -> List[Int]:
     var passos = List[Int](len(formato))
     var acumulador: Int = 1
