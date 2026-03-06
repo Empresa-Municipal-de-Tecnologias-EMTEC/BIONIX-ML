@@ -1,11 +1,6 @@
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:17:34: warning: transfer from an owned value has no effect and can be removed
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:21:34: warning: transfer from an owned value has no effect and can be removed
     return wav.parse_wav(caminho)^
-                                 ^
-                                 
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:20:34: warning: transfer from an owned value has no effect and can be removed
-    return bmp.parse_bmp(caminho)^
                                  ^
                                  
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
@@ -122,285 +117,6 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
     imprimir_matriz_float(zs.dados_normalizados, 20)
                             ^
                                                .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:25: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return MinMaxResult(resultado, min_col, max_col)
-                        ^~~~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:25: note: consider transferring the value with '^'
-    return MinMaxResult(resultado, min_col, max_col)
-                        ^
-                                 ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:25: note: you can copy it explicitly with '.copy()'
-    return MinMaxResult(resultado, min_col, max_col)
-                        ^
-                                 .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:36: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return MinMaxResult(resultado, min_col, max_col)
-                                   ^~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:36: note: consider transferring the value with '^'
-    return MinMaxResult(resultado, min_col, max_col)
-                                   ^
-                                          ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:36: note: you can copy it explicitly with '.copy()'
-    return MinMaxResult(resultado, min_col, max_col)
-                                   ^
-                                          .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:45: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return MinMaxResult(resultado, min_col, max_col)
-                                            ^~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:45: note: consider transferring the value with '^'
-    return MinMaxResult(resultado, min_col, max_col)
-                                            ^
-                                                   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:52:45: note: you can copy it explicitly with '.copy()'
-    return MinMaxResult(resultado, min_col, max_col)
-                                            ^
-                                                   .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:25: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return ZScoreResult(resultado, medias, desvios)
-                        ^~~~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:25: note: consider transferring the value with '^'
-    return ZScoreResult(resultado, medias, desvios)
-                        ^
-                                 ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:25: note: you can copy it explicitly with '.copy()'
-    return ZScoreResult(resultado, medias, desvios)
-                        ^
-                                 .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:36: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return ZScoreResult(resultado, medias, desvios)
-                                   ^~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:36: note: consider transferring the value with '^'
-    return ZScoreResult(resultado, medias, desvios)
-                                   ^
-                                         ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:36: note: you can copy it explicitly with '.copy()'
-    return ZScoreResult(resultado, medias, desvios)
-                                   ^
-                                         .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:44: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return ZScoreResult(resultado, medias, desvios)
-                                           ^~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:44: note: consider transferring the value with '^'
-    return ZScoreResult(resultado, medias, desvios)
-                                           ^
-                                                  ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:6:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/normalizacao.mojo:92:44: note: you can copy it explicitly with '.copy()'
-    return ZScoreResult(resultado, medias, desvios)
-                                           ^
-                                                  .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:101:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return _validar_bmp_bytes(b, True)
-                              ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:101:31: note: consider transferring the value with '^'
-    return _validar_bmp_bytes(b, True)
-                              ^
-                               ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:101:31: note: you can copy it explicitly with '.copy()'
-    return _validar_bmp_bytes(b, True)
-                              ^
-                               .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:105:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    if not _validar_bmp_bytes(b, False):
-                              ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:105:31: note: consider transferring the value with '^'
-    if not _validar_bmp_bytes(b, False):
-                              ^
-                               ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:105:31: note: you can copy it explicitly with '.copy()'
-    if not _validar_bmp_bytes(b, False):
-                              ^
-                               .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:106:64: warning: transfer from an owned value has no effect and can be removed
-        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
-                                                               ^
-                                                               
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:107:50: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    var pixel_array_offset = _bytes_to_uint32_le(b, 10)
-                                                 ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:107:50: note: consider transferring the value with '^'
-    var pixel_array_offset = _bytes_to_uint32_le(b, 10)
-                                                 ^
-                                                  ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:107:50: note: you can copy it explicitly with '.copy()'
-    var pixel_array_offset = _bytes_to_uint32_le(b, 10)
-                                                 ^
-                                                  .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:108:36: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    var width = _bytes_to_int32_le(b, 18)
-                                   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:108:36: note: consider transferring the value with '^'
-    var width = _bytes_to_int32_le(b, 18)
-                                   ^
-                                    ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:108:36: note: you can copy it explicitly with '.copy()'
-    var width = _bytes_to_int32_le(b, 18)
-                                   ^
-                                    .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:109:37: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    var height = _bytes_to_int32_le(b, 22)
-                                    ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:109:37: note: consider transferring the value with '^'
-    var height = _bytes_to_int32_le(b, 22)
-                                    ^
-                                     ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:109:37: note: you can copy it explicitly with '.copy()'
-    var height = _bytes_to_int32_le(b, 22)
-                                    ^
-                                     .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:110:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    var bits_per_pixel = _bytes_to_uint16_le(b, 28)
-                                             ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:110:46: note: consider transferring the value with '^'
-    var bits_per_pixel = _bytes_to_uint16_le(b, 28)
-                                             ^
-                                              ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:110:46: note: you can copy it explicitly with '.copy()'
-    var bits_per_pixel = _bytes_to_uint16_le(b, 28)
-                                             ^
-                                              .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:123:64: warning: transfer from an owned value has no effect and can be removed
-        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
-                                                               ^
-                                                               
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:126:64: warning: transfer from an owned value has no effect and can be removed
-        return BMPInfo(0, 0, 0, 0, List[List[List[Float32]]]())^
-                                                               ^
-                                                               
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:160:24: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-            row.append(pixel)
-                       ^~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:160:24: note: consider transferring the value with '^'
-            row.append(pixel)
-                       ^
-                            ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:160:24: note: you can copy it explicitly with '.copy()'
-            row.append(pixel)
-                       ^
-                            .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:161:23: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-        pixels.append(row)
-                      ^~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:161:23: note: consider transferring the value with '^'
-        pixels.append(row)
-                      ^
-                         ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:161:23: note: you can copy it explicitly with '.copy()'
-        pixels.append(row)
-                      ^
-                         .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:163:71: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    return BMPInfo(width, height, bits_per_pixel, pixel_array_offset, pixels)^
-                                                                      ^~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:163:71: note: consider transferring the value with '^'
-    return BMPInfo(width, height, bits_per_pixel, pixel_array_offset, pixels)^
-                                                                      ^
-                                                                            ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:163:71: note: you can copy it explicitly with '.copy()'
-    return BMPInfo(width, height, bits_per_pixel, pixel_array_offset, pixels)^
-                                                                      ^
-                                                                            .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:163:78: warning: transfer from an owned value has no effect and can be removed
-    return BMPInfo(width, height, bits_per_pixel, pixel_array_offset, pixels)^
-                                                                             ^
-                                                                             
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:141:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
@@ -644,103 +360,103 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
                                                                                     
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:10:34: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    var uv = _bytes_to_uint32_le(b, offset)
-                                 ^
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:111:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    return _validar_bmp_bytes(b, True)
+                              ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:10:34: note: consider transferring the value with '^'
-    var uv = _bytes_to_uint32_le(b, offset)
-                                 ^
-                                  ^
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:111:31: note: consider transferring the value with '^'
+    return _validar_bmp_bytes(b, True)
+                              ^
+                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:10:34: note: you can copy it explicitly with '.copy()'
-    var uv = _bytes_to_uint32_le(b, offset)
-                                 ^
-                                  .copy()
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:111:31: note: you can copy it explicitly with '.copy()'
+    return _validar_bmp_bytes(b, True)
+                              ^
+                               .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:42:50: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:194:31: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    if not _validar_bmp_bytes(b, False):
+                              ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:194:31: note: consider transferring the value with '^'
+    if not _validar_bmp_bytes(b, False):
+                              ^
+                               ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:194:31: note: you can copy it explicitly with '.copy()'
+    if not _validar_bmp_bytes(b, False):
+                              ^
+                               .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:197:50: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     var pixel_array_offset = _bytes_to_uint32_le(b, 10)
                                                  ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:42:50: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:197:50: note: consider transferring the value with '^'
     var pixel_array_offset = _bytes_to_uint32_le(b, 10)
                                                  ^
                                                   ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:42:50: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:197:50: note: you can copy it explicitly with '.copy()'
     var pixel_array_offset = _bytes_to_uint32_le(b, 10)
                                                  ^
                                                   .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:43:47: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
-    var dib_header_size = _bytes_to_uint32_le(b, 14)
-                                              ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:43:47: note: consider transferring the value with '^'
-    var dib_header_size = _bytes_to_uint32_le(b, 14)
-                                              ^
-                                               ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:43:47: note: you can copy it explicitly with '.copy()'
-    var dib_header_size = _bytes_to_uint32_le(b, 14)
-                                              ^
-                                               .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:44:36: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:198:36: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     var width = _bytes_to_int32_le(b, 18)
                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:44:36: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:198:36: note: consider transferring the value with '^'
     var width = _bytes_to_int32_le(b, 18)
                                    ^
                                     ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:44:36: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:198:36: note: you can copy it explicitly with '.copy()'
     var width = _bytes_to_int32_le(b, 18)
                                    ^
                                     .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:45:37: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:199:37: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     var height = _bytes_to_int32_le(b, 22)
                                     ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:45:37: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:199:37: note: consider transferring the value with '^'
     var height = _bytes_to_int32_le(b, 22)
                                     ^
                                      ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:45:37: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:199:37: note: you can copy it explicitly with '.copy()'
     var height = _bytes_to_int32_le(b, 22)
                                     ^
                                      .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:46:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:200:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     var bits_per_pixel = _bytes_to_uint16_le(b, 28)
                                              ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:46:46: note: consider transferring the value with '^'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:200:46: note: consider transferring the value with '^'
     var bits_per_pixel = _bytes_to_uint16_le(b, 28)
                                              ^
                                               ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:46:46: note: you can copy it explicitly with '.copy()'
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:200:46: note: you can copy it explicitly with '.copy()'
     var bits_per_pixel = _bytes_to_uint16_le(b, 28)
                                              ^
                                               .copy()
@@ -846,21 +562,113 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
         var chunk_size = _bytes_to_uint32_le(b, offset+4)
                                              ^
                                               .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:10:34: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    var uv = _bytes_to_uint32_le(b, offset)
+                                 ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:10:34: note: consider transferring the value with '^'
+    var uv = _bytes_to_uint32_le(b, offset)
+                                 ^
+                                  ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:10:34: note: you can copy it explicitly with '.copy()'
+    var uv = _bytes_to_uint32_le(b, offset)
+                                 ^
+                                  .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:52:50: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    var pixel_array_offset = _bytes_to_uint32_le(b, 10)
+                                                 ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:52:50: note: consider transferring the value with '^'
+    var pixel_array_offset = _bytes_to_uint32_le(b, 10)
+                                                 ^
+                                                  ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:52:50: note: you can copy it explicitly with '.copy()'
+    var pixel_array_offset = _bytes_to_uint32_le(b, 10)
+                                                 ^
+                                                  .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:53:47: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    var dib_header_size = _bytes_to_uint32_le(b, 14)
+                                              ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:53:47: note: consider transferring the value with '^'
+    var dib_header_size = _bytes_to_uint32_le(b, 14)
+                                              ^
+                                               ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:53:47: note: you can copy it explicitly with '.copy()'
+    var dib_header_size = _bytes_to_uint32_le(b, 14)
+                                              ^
+                                               .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:54:36: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    var width = _bytes_to_int32_le(b, 18)
+                                   ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:54:36: note: consider transferring the value with '^'
+    var width = _bytes_to_int32_le(b, 18)
+                                   ^
+                                    ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:54:36: note: you can copy it explicitly with '.copy()'
+    var width = _bytes_to_int32_le(b, 18)
+                                   ^
+                                    .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:55:37: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    var height = _bytes_to_int32_le(b, 22)
+                                    ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:55:37: note: consider transferring the value with '^'
+    var height = _bytes_to_int32_le(b, 22)
+                                    ^
+                                     ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:55:37: note: you can copy it explicitly with '.copy()'
+    var height = _bytes_to_int32_le(b, 22)
+                                    ^
+                                     .copy()
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:56:46: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
+    var bits_per_pixel = _bytes_to_uint16_le(b, 28)
+                                             ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:56:46: note: consider transferring the value with '^'
+    var bits_per_pixel = _bytes_to_uint16_le(b, 28)
+                                             ^
+                                              ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:56:46: note: you can copy it explicitly with '.copy()'
+    var bits_per_pixel = _bytes_to_uint16_le(b, 28)
+                                             ^
+                                              .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000001_exemplo/exemplo.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/print_helpers.mojo:29:28: warning: assignment to 'linha_prefix' was never used; assign to '_' instead?
         var linha_prefix = "  "
                            ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:148:23: warning: assignment to 'b3' was never used; assign to '_' instead?
-                b3 = b[off + 3]
-                      ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
-/mnt/c/PROJETOS/BIONIX-ML/src/dados/bmp.mojo:142:22: warning: assignment to 'b3' was never used; assign to '_' instead?
-            var b3 = 255
-                     ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:4:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/wav.mojo:58:23: warning: assignment to 'sample_rate' was never used; assign to '_' instead?
@@ -978,11 +786,4493 @@ Desvios por coluna:
 Exemplo de processamento de imagem:
 [diag.bmp] arquivo= exemplos/e000001_exemplo/dados.bmp  bytes= 12342
 [diag.bmp] válido: w= 64  h= 64  bpp= 24  off= 54  rows_disponiveis= 64 / 64
-Arquivo BMP encontrado: exemplos/e000001_exemplo/dados.bmp w= 64 h= 64 bpp= 24
-BMP validado e lido; usando matriz segura para normalização do exemplo
+Arquivo BMP encontrado: exemplos/e000001_exemplo/dados.bmp
+Teste 01 - len(grayscale)= 64
+Teste 02 - y= 0  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.42875818  last_val= 0.3281046
+Teste 07 - appended row y= 0  len(imagem_retangular)= 1
+Teste 02 - y= 1  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.4  last_val= 0.25882354
+Teste 07 - appended row y= 1  len(imagem_retangular)= 2
+Teste 02 - y= 2  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.4013072  last_val= 0.24836601
+Teste 07 - appended row y= 2  len(imagem_retangular)= 3
+Teste 02 - y= 3  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5254902  last_val= 0.34379086
+Teste 07 - appended row y= 3  len(imagem_retangular)= 4
+Teste 02 - y= 4  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.46928105  last_val= 0.19477124
+Teste 07 - appended row y= 4  len(imagem_retangular)= 5
+Teste 02 - y= 5  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.44836605  last_val= 0.03529412
+Teste 07 - appended row y= 5  len(imagem_retangular)= 6
+Teste 02 - y= 6  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.37908498  last_val= 0.09281046
+Teste 07 - appended row y= 6  len(imagem_retangular)= 7
+Teste 02 - y= 7  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.22091503  last_val= 0.081045754
+Teste 07 - appended row y= 7  len(imagem_retangular)= 8
+Teste 02 - y= 8  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.2130719  last_val= 0.10849673
+Teste 07 - appended row y= 8  len(imagem_retangular)= 9
+Teste 02 - y= 9  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.1503268  last_val= 0.23921569
+Teste 07 - appended row y= 9  len(imagem_retangular)= 10
+Teste 02 - y= 10  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.03137255  last_val= 0.3019608
+Teste 07 - appended row y= 10  len(imagem_retangular)= 11
+Teste 02 - y= 11  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.049673203  last_val= 0.303268
+Teste 07 - appended row y= 11  len(imagem_retangular)= 12
+Teste 02 - y= 12  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.18300654  last_val= 0.3503268
+Teste 07 - appended row y= 12  len(imagem_retangular)= 13
+Teste 02 - y= 13  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.46928108  last_val= 0.3542484
+Teste 07 - appended row y= 13  len(imagem_retangular)= 14
+Teste 02 - y= 14  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.37908498  last_val= 0.34248367
+Teste 07 - appended row y= 14  len(imagem_retangular)= 15
+Teste 02 - y= 15  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.39477125  last_val= 0.35424838
+Teste 07 - appended row y= 15  len(imagem_retangular)= 16
+Teste 02 - y= 16  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.49411765  last_val= 0.39215693
+Teste 07 - appended row y= 16  len(imagem_retangular)= 17
+Teste 02 - y= 17  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5908497  last_val= 0.46013072
+Teste 07 - appended row y= 17  len(imagem_retangular)= 18
+Teste 02 - y= 18  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6039216  last_val= 0.49673203
+Teste 07 - appended row y= 18  len(imagem_retangular)= 19
+Teste 02 - y= 19  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.60915035  last_val= 0.43921575
+Teste 07 - appended row y= 19  len(imagem_retangular)= 20
+Teste 02 - y= 20  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5215686  last_val= 0.3398693
+Teste 07 - appended row y= 20  len(imagem_retangular)= 21
+Teste 02 - y= 21  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.42875823  last_val= 0.4
+Teste 07 - appended row y= 21  len(imagem_retangular)= 22
+Teste 02 - y= 22  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5045752  last_val= 0.4535948
+Teste 07 - appended row y= 22  len(imagem_retangular)= 23
+Teste 02 - y= 23  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5398693  last_val= 0.4
+Teste 07 - appended row y= 23  len(imagem_retangular)= 24
+Teste 02 - y= 24  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.38169935  last_val= 0.5189543
+Teste 07 - appended row y= 24  len(imagem_retangular)= 25
+Teste 02 - y= 25  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.3267974  last_val= 0.47189546
+Teste 07 - appended row y= 25  len(imagem_retangular)= 26
+Teste 02 - y= 26  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.36993468  last_val= 0.48366013
+Teste 07 - appended row y= 26  len(imagem_retangular)= 27
+Teste 02 - y= 27  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.4039216  last_val= 0.27058825
+Teste 07 - appended row y= 27  len(imagem_retangular)= 28
+Teste 02 - y= 28  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.43267974  last_val= 0.52418304
+Teste 07 - appended row y= 28  len(imagem_retangular)= 29
+Teste 02 - y= 29  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.40653598  last_val= 0.5045752
+Teste 07 - appended row y= 29  len(imagem_retangular)= 30
+Teste 02 - y= 30  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.3281046  last_val= 0.37124184
+Teste 07 - appended row y= 30  len(imagem_retangular)= 31
+Teste 02 - y= 31  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.38562092  last_val= 0.6836601
+Teste 07 - appended row y= 31  len(imagem_retangular)= 32
+Teste 02 - y= 32  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.4117647  last_val= 0.42745102
+Teste 07 - appended row y= 32  len(imagem_retangular)= 33
+Teste 02 - y= 33  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.3764706  last_val= 0.4627451
+Teste 07 - appended row y= 33  len(imagem_retangular)= 34
+Teste 02 - y= 34  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.3620915  last_val= 0.5934641
+Teste 07 - appended row y= 34  len(imagem_retangular)= 35
+Teste 02 - y= 35  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.37908498  last_val= 0.709804
+Teste 07 - appended row y= 35  len(imagem_retangular)= 36
+Teste 02 - y= 36  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.3882353  last_val= 0.6810458
+Teste 07 - appended row y= 36  len(imagem_retangular)= 37
+Teste 02 - y= 37  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.46143794  last_val= 0.620915
+Teste 07 - appended row y= 37  len(imagem_retangular)= 38
+Teste 02 - y= 38  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.4  last_val= 0.62222225
+Teste 07 - appended row y= 38  len(imagem_retangular)= 39
+Teste 02 - y= 39  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.46405232  last_val= 0.67189545
+Teste 07 - appended row y= 39  len(imagem_retangular)= 40
+Teste 02 - y= 40  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.37254906  last_val= 0.6797386
+Teste 07 - appended row y= 40  len(imagem_retangular)= 41
+Teste 02 - y= 41  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.33594772  last_val= 0.69542486
+Teste 07 - appended row y= 41  len(imagem_retangular)= 42
+Teste 02 - y= 42  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.3934641  last_val= 0.69673205
+Teste 07 - appended row y= 42  len(imagem_retangular)= 43
+Teste 02 - y= 43  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.4862745  last_val= 0.72287583
+Teste 07 - appended row y= 43  len(imagem_retangular)= 44
+Teste 02 - y= 44  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5189543  last_val= 0.7542484
+Teste 07 - appended row y= 44  len(imagem_retangular)= 45
+Teste 02 - y= 45  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5477124  last_val= 0.8
+Teste 07 - appended row y= 45  len(imagem_retangular)= 46
+Teste 02 - y= 46  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.5320261  last_val= 0.69803923
+Teste 07 - appended row y= 46  len(imagem_retangular)= 47
+Teste 02 - y= 47  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.49673203  last_val= 0.34901962
+Teste 07 - appended row y= 47  len(imagem_retangular)= 48
+Teste 02 - y= 48  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.84313727  last_val= 0.09934641
+Teste 07 - appended row y= 48  len(imagem_retangular)= 49
+Teste 02 - y= 49  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.84052295  last_val= 0.100653596
+Teste 07 - appended row y= 49  len(imagem_retangular)= 50
+Teste 02 - y= 50  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.7019608  last_val= 0.048366014
+Teste 07 - appended row y= 50  len(imagem_retangular)= 51
+Teste 02 - y= 51  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.7111111  last_val= 0.03398693
+Teste 07 - appended row y= 51  len(imagem_retangular)= 52
+Teste 02 - y= 52  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.64836603  last_val= 0.003921569
+Teste 07 - appended row y= 52  len(imagem_retangular)= 53
+Teste 02 - y= 53  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.7111111  last_val= 0.011764706
+Teste 07 - appended row y= 53  len(imagem_retangular)= 54
+Teste 02 - y= 54  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.67189545  last_val= 0.0
+Teste 07 - appended row y= 54  len(imagem_retangular)= 55
+Teste 02 - y= 55  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6614379  last_val= 0.27320263
+Teste 07 - appended row y= 55  len(imagem_retangular)= 56
+Teste 02 - y= 56  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.63398695  last_val= 0.724183
+Teste 07 - appended row y= 56  len(imagem_retangular)= 57
+Teste 02 - y= 57  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.52156866  last_val= 0.7307189
+Teste 07 - appended row y= 57  len(imagem_retangular)= 58
+Teste 02 - y= 58  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6653595  last_val= 0.7320261
+Teste 07 - appended row y= 58  len(imagem_retangular)= 59
+Teste 02 - y= 59  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6300654  last_val= 0.6535948
+Teste 07 - appended row y= 59  len(imagem_retangular)= 60
+Teste 02 - y= 60  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.67843133  last_val= 0.69934636
+Teste 07 - appended row y= 60  len(imagem_retangular)= 61
+Teste 02 - y= 61  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6745098  last_val= 0.70718956
+Teste 07 - appended row y= 61  len(imagem_retangular)= 62
+Teste 02 - y= 62  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6771242  last_val= 0.77124184
+Teste 07 - appended row y= 62  len(imagem_retangular)= 63
+Teste 02 - y= 63  len(grayscale)= 64
+Teste 03 - acessando grayscale[y]
+Teste 04 - len(src_row)= 64
+Teste 05 - first_idx= 0  last_idx= 63
+Teste 06 - first_val= 0.6901961  last_val= 0.68888885
+Teste 07 - appended row y= 63  len(imagem_retangular)= 64
+Teste 08 - fim cópia grayscale, len(imagem_retangular)= 64
+Teste 09 - antes da normalização: linhas= 64
+Teste 09.1 - colunas primeira linha= 64
+Teste 10 - após normalização
 Imagem normalizada (Min-Max):
-0.0
-1.0
+0.42875818
+  0.46013072
+  0.44313726
+  0.44313726
+  0.29542485
+  0.47189546
+  0.41830066
+  0.37516344
+  0.3398693
+  0.40261439
+  0.5150327
+  0.46535948
+  0.44836602
+  0.40130723
+  0.41176474
+  0.33071896
+  0.3869281
+  0.5882353
+  0.5542484
+  0.530719
+  0.56209153
+  0.6392157
+  0.5437909
+  0.36470592
+  0.4535948
+  0.5137255
+  0.32418302
+  0.26928106
+  0.2535948
+  0.13333334
+  0.2
+  0.2640523
+  0.29803923
+  0.24575163
+  0.16862746
+  0.15947713
+  0.17124183
+  0.17908497
+  0.14771242
+  0.18954249
+  0.6509804
+  0.28366014
+  0.16601308
+  0.26928106
+  0.42222223
+  0.20522876
+  0.34509805
+  0.46797386
+  0.5803922
+  0.41830066
+  0.47843137
+  0.48496732
+  0.41960788
+  0.33464053
+  0.24052288
+  0.20130719
+  0.21960785
+  0.30980393
+  0.2
+  0.29411766
+  0.36078432
+  0.32026145
+  0.37777779
+  0.3281046
+0.4
+  0.47843137
+  0.3372549
+  0.5124183
+  0.49803925
+  0.5058824
+  0.3869281
+  0.39477125
+  0.30980393
+  0.3908497
+  0.46928108
+  0.46797386
+  0.33333334
+  0.3398693
+  0.23398693
+  0.27450982
+  0.38039216
+  0.59607846
+  0.49934647
+  0.52418304
+  0.48366013
+  0.6601307
+  0.5777778
+  0.3019608
+  0.43267977
+  0.5254902
+  0.36078432
+  0.17777778
+  0.17777778
+  0.12418301
+  0.1764706
+  0.2627451
+  0.23006536
+  0.16862746
+  0.19869281
+  0.18692811
+  0.15294118
+  0.20392157
+  0.16601308
+  0.17777778
+  0.62614375
+  0.24836601
+  0.1385621
+  0.21568628
+  0.44052288
+  0.3281046
+  0.40653598
+  0.36862746
+  0.5542484
+  0.3895425
+  0.45620915
+  0.5267974
+  0.34771243
+  0.24836601
+  0.1751634
+  0.100653596
+  0.21699347
+  0.23660131
+  0.3019608
+  0.31633988
+  0.35686275
+  0.3751634
+  0.27973858
+  0.25882354
+0.4013072
+  0.48496735
+  0.3673203
+  0.5045752
+  0.43529415
+  0.4771242
+  0.47712418
+  0.37777782
+  0.2522876
+  0.43398693
+  0.3633987
+  0.48758173
+  0.31764707
+  0.30457518
+  0.21830065
+  0.23398693
+  0.41045752
+  0.50849676
+  0.3751634
+  0.54640526
+  0.44836605
+  0.5803922
+  0.6575163
+  0.39215687
+  0.475817
+  0.50849676
+  0.31895426
+  0.2379085
+  0.20522876
+  0.13725491
+  0.20392157
+  0.18562092
+  0.17124183
+  0.13464053
+  0.1254902
+  0.19607844
+  0.2901961
+  0.35686275
+  0.22352941
+  0.37124184
+  0.545098
+  0.22352941
+  0.049673203
+  0.13333334
+  0.38562095
+  0.40522876
+  0.3908497
+  0.41960788
+  0.56078434
+  0.48104575
+  0.5267974
+  0.40915033
+  0.28366014
+  0.21176471
+  0.07450981
+  0.16862746
+  0.38300654
+  0.34640524
+  0.36732027
+  0.30718955
+  0.28627452
+  0.33071896
+  0.3137255
+  0.24836601
+0.5254902
+  0.55947715
+  0.47843137
+  0.524183
+  0.3882353
+  0.52287585
+  0.42745102
+  0.22222222
+  0.3019608
+  0.34640527
+  0.36862746
+  0.40130723
+  0.3124183
+  0.35947716
+  0.26928106
+  0.25620916
+  0.43267977
+  0.44836605
+  0.3895425
+  0.5189543
+  0.4248366
+  0.44705883
+  0.57254904
+  0.56209153
+  0.43398693
+  0.5320262
+  0.38039216
+  0.15294118
+  0.12941177
+  0.14509805
+  0.19607844
+  0.27058825
+  0.20130719
+  0.1385621
+  0.082352944
+  0.06143791
+  0.1764706
+  0.1882353
+  0.16732027
+  0.38169935
+  0.3529412
+  0.16862746
+  0.06928105
+  0.06143791
+  0.41830066
+  0.3150327
+  0.12026144
+  0.30849674
+  0.5816994
+  0.42875818
+  0.52941173
+  0.39346406
+  0.3620915
+  0.19477124
+  0.23660131
+  0.26013073
+  0.08888889
+  0.21830065
+  0.2496732
+  0.24313726
+  0.25620916
+  0.28235296
+  0.29673204
+  0.34379086
+0.46928105
+  0.59738564
+  0.3751634
+  0.4627451
+  0.41176474
+  0.4928105
+  0.22745098
+  0.24705882
+  0.31895426
+  0.44052288
+  0.3934641
+  0.303268
+  0.20653595
+  0.24836601
+  0.24313726
+  0.29281047
+  0.4836602
+  0.47450984
+  0.4366013
+  0.5006536
+  0.38562095
+  0.44052288
+  0.48758173
+  0.5529412
+  0.43398693
+  0.5071896
+  0.16732027
+  0.09803922
+  0.10849673
+  0.048366014
+  0.039215688
+  0.09934641
+  0.1503268
+  0.08888889
+  0.11764706
+  0.08496732
+  0.05359477
+  0.07450981
+  0.11895425
+  0.27450982
+  0.21960785
+  0.10980392
+  0.081045754
+  0.048366014
+  0.33594772
+  0.22614379
+  0.11372549
+  0.33333334
+  0.54901963
+  0.37777782
+  0.57124186
+  0.26143792
+  0.2248366
+  0.25490198
+  0.13594772
+  0.047058824
+  0.19215687
+  0.07189543
+  0.081045754
+  0.0875817
+  0.0627451
+  0.14771242
+  0.31633988
+  0.19477124
+0.44836605
+  0.48888895
+  0.43529412
+  0.42222226
+  0.3529412
+  0.39477125
+  0.100653596
+  0.30980393
+  0.18300654
+  0.36862746
+  0.40261439
+  0.29542485
+  0.2535948
+  0.13986929
+  0.27973858
+  0.2
+  0.4392157
+  0.17254902
+  0.4300654
+  0.4039216
+  0.24575163
+  0.23660131
+  0.475817
+  0.5281046
+  0.45882353
+  0.4993464
+  0.20915033
+  0.18169935
+  0.1385621
+  0.016993465
+  0.044444445
+  0.07189543
+  0.1267974
+  0.040522877
+  0.041830067
+  0.043137256
+  0.040522877
+  0.019607844
+  0.05490196
+  0.19607844
+  0.18692811
+  0.07450981
+  0.02875817
+  0.07189543
+  0.34640524
+  0.22875817
+  0.103267975
+  0.17385621
+  0.46143794
+  0.3267974
+  0.56339866
+  0.34379086
+  0.21568628
+  0.10849673
+  0.048366014
+  0.1503268
+  0.022222223
+  0.018300654
+  0.019607844
+  0.0052287583
+  0.0
+  0.14379086
+  0.16078432
+  0.03529412
+0.37908498
+  0.39346406
+  0.54901963
+  0.21960785
+  0.37124184
+  0.35424838
+  0.105882354
+  0.17777778
+  0.06143791
+  0.03398693
+  0.3503268
+  0.38562092
+  0.15816994
+  0.079738565
+  0.31633988
+  0.14379086
+  0.13333334
+  0.06143791
+  0.32941177
+  0.2522876
+  0.11764706
+  0.18039216
+  0.32941177
+  0.42875818
+  0.46535948
+  0.37777779
+  0.07320262
+  0.06405229
+  0.32287583
+  0.1764706
+  0.019607844
+  0.05490196
+  0.05359477
+  0.045751635
+  0.03267974
+  0.022222223
+  0.006535948
+  0.0
+  0.047058824
+  0.06405229
+  0.103267975
+  0.045751635
+  0.011764706
+  0.041830067
+  0.28496733
+  0.17777778
+  0.20915033
+  0.13986929
+  0.26666668
+  0.15294118
+  0.34640524
+  0.27320263
+  0.049673203
+  0.09803922
+  0.1267974
+  0.014379085
+  0.006535948
+  0.024836602
+  0.0052287583
+  0.0026143792
+  0.0
+  0.20392157
+  0.050980393
+  0.09281046
+0.22091503
+  0.3529412
+  0.52679736
+  0.30980393
+  0.18431373
+  0.24575163
+  0.10849673
+  0.09150327
+  0.07189543
+  0.019607844
+  0.22091503
+  0.40522876
+  0.2627451
+  0.1124183
+  0.29411766
+  0.05620915
+  0.047058824
+  0.06797386
+  0.11372549
+  0.10849673
+  0.05359477
+  0.13202615
+  0.06143791
+  0.19215687
+  0.36209154
+  0.24575163
+  0.052287582
+  0.5385621
+  1.0
+  1.0
+  0.22745098
+  0.0
+  0.009150327
+  0.016993465
+  0.11633987
+  0.21437909
+  0.32287583
+  0.47189546
+  0.303268
+  0.15555556
+  0.09803922
+  0.0
+  0.0
+  0.03398693
+  0.103267975
+  0.67843133
+  0.5843138
+  0.16209151
+  0.09281046
+  0.19607844
+  0.19607844
+  0.043137256
+  0.075817
+  0.19346406
+  0.09803922
+  0.045751635
+  0.06928105
+  0.03398693
+  0.03267974
+  0.015686275
+  0.09673203
+  0.17124183
+  0.18300654
+  0.081045754
+0.2130719
+  0.27189544
+  0.37908498
+  0.16209151
+  0.09934641
+  0.13594772
+  0.09673203
+  0.0379085
+  0.03660131
+  0.03398693
+  0.16078432
+  0.38431373
+  0.12418301
+  0.082352944
+  0.22614379
+  0.024836602
+  0.02745098
+  0.06013072
+  0.079738565
+  0.07320262
+  0.048366014
+  0.047058824
+  0.06013072
+  0.12287582
+  0.30457518
+  0.3267974
+  0.13071896
+  0.34379086
+  0.37777779
+  0.3019608
+  0.49411765
+  0.46797386
+  0.36732027
+  0.6156863
+  0.63660127
+  0.6431373
+  0.5137255
+  0.2771242
+  0.53594774
+  0.5777778
+  0.57124186
+  0.5398693
+  0.38431373
+  0.19346406
+  0.47843137
+  0.8261438
+  0.93202615
+  0.59477127
+  0.43137255
+  0.2
+  0.08627451
+  0.05359477
+  0.20653595
+  0.1254902
+  0.09673203
+  0.100653596
+  0.08627451
+  0.043137256
+  0.05882353
+  0.05359477
+  0.20915033
+  0.20522876
+  0.29542485
+  0.10849673
+0.1503268
+  0.2522876
+  0.26928106
+  0.11895425
+  0.06143791
+  0.08627451
+  0.06666667
+  0.049673203
+  0.050980393
+  0.05359477
+  0.12156863
+  0.16862746
+  0.12026144
+  0.06797386
+  0.03267974
+  0.041830067
+  0.03529412
+  0.043137256
+  0.05882353
+  0.014379085
+  0.019607844
+  0.020915033
+  0.020915033
+  0.016993465
+  0.17124183
+  0.44575167
+  0.50849676
+  0.29542485
+  0.58300656
+  0.6928105
+  0.6640523
+  0.38431373
+  0.34771243
+  0.3647059
+  0.35947713
+  0.40261439
+  0.4771242
+  0.34640524
+  0.48366013
+  0.33594772
+  0.47973856
+  0.35947713
+  0.3647059
+  0.58692807
+  0.68235296
+  0.44313726
+  0.3124183
+  0.21830065
+  0.2901961
+  0.31633988
+  0.06666667
+  0.20130719
+  0.19869281
+  0.078431375
+  0.08496732
+  0.09411765
+  0.06013072
+  0.082352944
+  0.09542484
+  0.13594772
+  0.20653595
+  0.26013073
+  0.24313726
+  0.23921569
+0.03137255
+  0.27320263
+  0.09019608
+  0.03529412
+  0.03137255
+  0.07189543
+  0.045751635
+  0.06405229
+  0.09150327
+  0.06535948
+  0.08496732
+  0.12156863
+  0.041830067
+  0.03267974
+  0.0026143792
+  0.007843138
+  0.06405229
+  0.06405229
+  0.048366014
+  0.0
+  0.0026143792
+  0.0026143792
+  0.010457517
+  0.06405229
+  0.14117648
+  0.4627451
+  0.75816995
+  0.6862745
+  0.7176471
+  0.61960787
+  0.27320263
+  0.5294118
+  0.8379085
+  0.6026144
+  0.58954245
+  0.42352942
+  0.19215687
+  0.11111111
+  0.4993464
+  0.6366013
+  0.579085
+  0.60784316
+  0.3019608
+  0.22352941
+  0.34248367
+  0.70718956
+  0.60784316
+  0.5320262
+  0.7424837
+  0.24313726
+  0.15947713
+  0.25490198
+  0.17777778
+  0.20784314
+  0.22222222
+  0.24052288
+  0.23006536
+  0.23137255
+  0.3137255
+  0.33202615
+  0.2901961
+  0.4013072
+  0.34640524
+  0.3019608
+0.049673203
+  0.10718954
+  0.003921569
+  0.003921569
+  0.0026143792
+  0.014379085
+  0.05882353
+  0.100653596
+  0.08496732
+  0.14117648
+  0.050980393
+  0.08366013
+  0.0875817
+  0.06666667
+  0.015686275
+  0.009150327
+  0.06666667
+  0.049673203
+  0.15424837
+  0.03398693
+  0.03137255
+  0.02745098
+  0.040522877
+  0.040522877
+  0.16470589
+  0.2509804
+  0.81830066
+  0.8287582
+  0.7398693
+  0.4366013
+  0.5281046
+  0.45359477
+  0.049673203
+  0.2640523
+  0.34379086
+  0.09542484
+  0.13202615
+  0.20915033
+  0.20653595
+  0.35424838
+  0.14640524
+  0.17385621
+  0.7058824
+  0.5150327
+  0.4392157
+  0.5673203
+  0.7647059
+  0.6745098
+  0.73333335
+  0.2627451
+  0.2640523
+  0.24705882
+  0.2771242
+  0.29934642
+  0.351634
+  0.3908497
+  0.40784314
+  0.40522876
+  0.39738563
+  0.37254906
+  0.36601308
+  0.34509805
+  0.32287583
+  0.303268
+0.18300654
+  0.06013072
+  0.06013072
+  0.013071896
+  0.0052287583
+  0.018300654
+  0.09281046
+  0.19477124
+  0.25490198
+  0.22745098
+  0.2653595
+  0.22614379
+  0.16862746
+  0.19084968
+  0.047058824
+  0.003921569
+  0.0875817
+  0.1764706
+  0.24313726
+  0.13071896
+  0.03006536
+  0.023529412
+  0.14901961
+  0.22222222
+  0.2496732
+  0.047058824
+  0.49803922
+  0.76993466
+  0.5712418
+  0.10718954
+  0.69803923
+  0.42745102
+  0.8169935
+  0.8156863
+  0.76993466
+  0.56993467
+  0.31764707
+  0.2875817
+  0.30588236
+  0.64967316
+  0.8287582
+  0.503268
+  0.077124186
+  0.7098039
+  0.28366014
+  0.5503268
+  0.77385616
+  0.7176471
+  0.75555563
+  0.3882353
+  0.23921569
+  0.3006536
+  0.28366014
+  0.3137255
+  0.3869281
+  0.3869281
+  0.37516344
+  0.3281046
+  0.40392157
+  0.36732027
+  0.31764707
+  0.2901961
+  0.3150327
+  0.3503268
+0.46928108
+  0.18300654
+  0.19869281
+  0.17124183
+  0.09019608
+  0.15424837
+  0.2640523
+  0.24052288
+  0.26928106
+  0.26928106
+  0.3281046
+  0.3372549
+  0.22745098
+  0.27189544
+  0.2130719
+  0.12287582
+  0.24705882
+  0.24444444
+  0.24183007
+  0.28235296
+  0.22875817
+  0.22745098
+  0.38823533
+  0.43137255
+  0.46797386
+  0.13594772
+  0.3267974
+  0.6954248
+  0.27450982
+  0.2771242
+  0.7411764
+  0.90588236
+  0.20653595
+  0.0
+  0.06666667
+  0.42745102
+  0.45359477
+  0.34771243
+  0.50849676
+  0.10849673
+  0.24183007
+  0.7006536
+  0.83398694
+  0.66928107
+  0.23529412
+  0.2640523
+  0.7098039
+  0.4640523
+  0.45620918
+  0.3150327
+  0.23921569
+  0.2640523
+  0.2496732
+  0.38300654
+  0.3934641
+  0.39346406
+  0.4797386
+  0.46666667
+  0.5647059
+  0.45620915
+  0.4771242
+  0.41960785
+  0.40784314
+  0.3542484
+0.37908498
+  0.46405232
+  0.28235296
+  0.26797387
+  0.29934642
+  0.5045752
+  0.29411766
+  0.26666668
+  0.303268
+  0.31895426
+  0.29673204
+  0.27450982
+  0.26143792
+  0.33202615
+  0.37777782
+  0.39738563
+  0.36209154
+  0.28627452
+  0.32418302
+  0.40784314
+  0.4366013
+  0.34901965
+  0.32156864
+  0.48366013
+  0.5150327
+  0.34248367
+  0.44313726
+  0.5947712
+  0.6300654
+  0.4771242
+  0.8522876
+  0.94248366
+  0.9411765
+  0.8457516
+  0.59869284
+  0.5686275
+  0.2130719
+  0.5385621
+  0.5803922
+  0.5254902
+  0.70718956
+  0.44313726
+  0.9490196
+  0.8013072
+  0.59607846
+  0.5568628
+  0.5424837
+  0.6535948
+  0.43398693
+  0.43790853
+  0.48104575
+  0.44705883
+  0.41830066
+  0.42091504
+  0.44444445
+  0.47581705
+  0.5673203
+  0.6039216
+  0.47843137
+  0.45620918
+  0.4862745
+  0.4496732
+  0.40130723
+  0.34248367
+0.39477125
+  0.59607846
+  0.3764706
+  0.3019608
+  0.41045752
+  0.5071896
+  0.3503268
+  0.29934642
+  0.23660131
+  0.24705882
+  0.3124183
+  0.35555557
+  0.3372549
+  0.36862746
+  0.39477125
+  0.3398693
+  0.42745102
+  0.475817
+  0.4039216
+  0.40392157
+  0.43267974
+  0.3503268
+  0.3542484
+  0.39346406
+  0.49803925
+  0.44836605
+  0.56993467
+  0.62352943
+  0.4431373
+  0.13725491
+  0.84444445
+  0.47320262
+  0.3372549
+  0.38039216
+  0.6052288
+  0.24705882
+  0.43529415
+  0.16078432
+  0.49803925
+  0.4627451
+  0.5895425
+  0.7124183
+  0.55947715
+  0.89411765
+  0.11503268
+  0.5542484
+  0.5385621
+  0.7490196
+  0.5529412
+  0.54640526
+  0.48496735
+  0.4627451
+  0.503268
+  0.5163399
+  0.5281046
+  0.55947715
+  0.5869281
+  0.49803922
+  0.4130719
+  0.41307196
+  0.38823533
+  0.4039216
+  0.36601308
+  0.35424838
+0.49411765
+  0.6013072
+  0.43529412
+  0.3267974
+  0.42222223
+  0.39477125
+  0.34509805
+  0.3372549
+  0.28496733
+  0.32026145
+  0.3895425
+  0.36601308
+  0.3281046
+  0.29150328
+  0.31764707
+  0.4392157
+  0.530719
+  0.38823533
+  0.38823533
+  0.40653595
+  0.40522876
+  0.35816994
+  0.3633987
+  0.37908498
+  0.46013072
+  0.8418301
+  0.3908497
+  0.7019608
+  0.69542486
+  0.4117647
+  0.7738562
+  0.12941177
+  0.5764706
+  0.7019608
+  0.29542485
+  0.40915036
+  0.28104577
+  0.4627451
+  0.21045752
+  0.8784313
+  0.6013072
+  0.1764706
+  0.34379086
+  0.72549015
+  0.07058824
+  0.46535948
+  0.69673205
+  0.29542485
+  0.8522876
+  0.55816996
+  0.48235297
+  0.43267974
+  0.49673203
+  0.5320261
+  0.5882353
+  0.5673203
+  0.53986925
+  0.41699347
+  0.5673203
+  0.42614386
+  0.35947716
+  0.42222226
+  0.37908498
+  0.39215693
+0.5908497
+  0.530719
+  0.42875818
+  0.46274516
+  0.4535948
+  0.47973856
+  0.3882353
+  0.29411766
+  0.35947716
+  0.34248367
+  0.32026145
+  0.33464053
+  0.42091504
+  0.3882353
+  0.4405229
+  0.41568628
+  0.40522876
+  0.32156864
+  0.44836605
+  0.40522876
+  0.39346406
+  0.3633987
+  0.34509805
+  0.4928105
+  0.8091504
+  0.71895427
+  0.5803922
+  0.31633988
+  0.4888889
+  0.27320263
+  0.70718956
+  0.5176471
+  0.41960785
+  0.75816995
+  0.19084968
+  0.30718955
+  0.32941177
+  0.33071896
+  0.17385621
+  0.72287583
+  0.3895425
+  0.5071896
+  0.85490197
+  0.5071896
+  0.60915035
+  0.2653595
+  0.6732026
+  0.3895425
+  0.7019608
+  0.8013072
+  0.5908497
+  0.5189543
+  0.5633987
+  0.57254904
+  0.5424836
+  0.50849676
+  0.530719
+  0.4771242
+  0.5908497
+  0.4039216
+  0.44313726
+  0.44444445
+  0.39346406
+  0.46013072
+0.6039216
+  0.4470589
+  0.48888895
+  0.57124186
+  0.3882353
+  0.38300654
+  0.36862746
+  0.37516344
+  0.37385622
+  0.4130719
+  0.4535948
+  0.43137255
+  0.46797392
+  0.4470589
+  0.34379086
+  0.40522876
+  0.40915036
+  0.39869282
+  0.46797386
+  0.3267974
+  0.34509805
+  0.33594775
+  0.43267977
+  0.6117647
+  0.94640523
+  0.43006536
+  0.6666667
+  0.13725491
+  0.7215686
+  0.4392157
+  0.41699347
+  0.3124183
+  0.26666668
+  0.52156866
+  0.21960785
+  0.38300657
+  0.3150327
+  0.41960788
+  0.23529412
+  0.40522876
+  0.4392157
+  0.24313726
+  0.22745098
+  0.22875817
+  0.61307186
+  0.09411765
+  0.49281046
+  0.42745098
+  0.49281046
+  0.8666666
+  0.7647059
+  0.5071896
+  0.55294114
+  0.53594774
+  0.49803922
+  0.43137255
+  0.44183007
+  0.50849676
+  0.47450984
+  0.46013072
+  0.5045752
+  0.49542487
+  0.49411765
+  0.49673203
+0.60915035
+  0.47058824
+  0.5189542
+  0.52156866
+  0.41045752
+  0.45359477
+  0.46928108
+  0.47189546
+  0.48888895
+  0.4627451
+  0.40915033
+  0.3882353
+  0.4771242
+  0.52418304
+  0.4614379
+  0.39346406
+  0.39084968
+  0.3869281
+  0.38300657
+  0.39084968
+  0.40522876
+  0.46013072
+  0.45620918
+  0.8156862
+  0.9019608
+  0.5124183
+  0.84705883
+  0.40653598
+  0.503268
+  0.303268
+  0.4862745
+  0.38431373
+  0.14509805
+  0.5320262
+  0.30457518
+  0.43267977
+  0.3019608
+  0.40261439
+  0.21568628
+  0.6169935
+  0.21176471
+  0.4
+  0.6183007
+  0.33071896
+  0.43267977
+  0.49803925
+  0.3620915
+  0.4379085
+  0.40915033
+  0.9006536
+  0.7908497
+  0.5816994
+  0.56078434
+  0.59607846
+  0.46013078
+  0.45882353
+  0.46928105
+  0.5150327
+  0.45228759
+  0.42352942
+  0.4300654
+  0.5045752
+  0.48758173
+  0.43921575
+0.5215686
+  0.47058824
+  0.53594774
+  0.46928108
+  0.54509807
+  0.47712418
+  0.4117647
+  0.41045752
+  0.4392157
+  0.44836605
+  0.4130719
+  0.38431373
+  0.4431373
+  0.5124183
+  0.42091504
+  0.40653598
+  0.46535948
+  0.43137255
+  0.36601308
+  0.4640523
+  0.50849676
+  0.4535948
+  0.50065357
+  0.861438
+  0.9411764
+  0.5267974
+  0.89411765
+  0.7019608
+  0.7124183
+  0.22614379
+  0.2901961
+  0.44705883
+  0.551634
+  0.14509805
+  0.42091504
+  0.5385621
+  0.42222226
+  0.45098043
+  0.33464053
+  0.14901961
+  0.30588236
+  0.52156866
+  0.26013073
+  0.31895426
+  0.3895425
+  0.7163399
+  0.4379085
+  0.79477125
+  0.4875817
+  0.90326804
+  0.8078432
+  0.5921568
+  0.4993464
+  0.46405232
+  0.4575164
+  0.47450984
+  0.51111114
+  0.530719
+  0.47058824
+  0.39607847
+  0.35555557
+  0.43137255
+  0.34248367
+  0.3398693
+0.42875823
+  0.59477127
+  0.50326794
+  0.48235297
+  0.43137255
+  0.48496735
+  0.4261438
+  0.42745102
+  0.40130723
+  0.39738563
+  0.4888889
+  0.43137255
+  0.42745098
+  0.47320268
+  0.44575167
+  0.44052288
+  0.43137255
+  0.37254903
+  0.35816994
+  0.39215687
+  0.47320262
+  0.38169935
+  0.6
+  0.9163399
+  0.89411765
+  0.17385621
+  0.40261439
+  0.22614379
+  0.6
+  0.1385621
+  0.36993465
+  0.49150327
+  0.38823533
+  0.35555557
+  0.503268
+  0.67189545
+  0.5503268
+  0.5751634
+  0.39084968
+  0.14379086
+  0.6614379
+  0.46013072
+  0.37516344
+  0.32156864
+  0.6261438
+  0.772549
+  0.67843133
+  0.6366013
+  0.44444445
+  0.9098039
+  0.861438
+  0.6248366
+  0.3503268
+  0.40784314
+  0.46928108
+  0.4810458
+  0.4248366
+  0.4039216
+  0.41437912
+  0.40653598
+  0.40915036
+  0.4967321
+  0.43398693
+  0.4
+0.5045752
+  0.60915035
+  0.4496732
+  0.3385621
+  0.37908498
+  0.43267977
+  0.45490196
+  0.44836605
+  0.4300654
+  0.40522876
+  0.4797386
+  0.4431373
+  0.41699347
+  0.44183013
+  0.46797392
+  0.47843143
+  0.47058824
+  0.40522876
+  0.31633988
+  0.42875818
+  0.44183007
+  0.41045752
+  0.7895425
+  0.9450981
+  0.96732026
+  0.8196079
+  0.25620916
+  0.35555557
+  0.5803922
+  0.675817
+  0.4431373
+  0.5071896
+  0.47450984
+  0.49673203
+  0.606536
+  0.64836603
+  0.6745098
+  0.6509804
+  0.44183007
+  0.43137255
+  0.48235294
+  0.47320262
+  0.28104577
+  0.28366014
+  0.5751634
+  0.06143791
+  0.0013071896
+  0.05882353
+  0.075817
+  0.8653595
+  0.79738563
+  0.7398693
+  0.31633988
+  0.39215687
+  0.4444445
+  0.48235297
+  0.5124183
+  0.4771242
+  0.4
+  0.3398693
+  0.35816994
+  0.50326794
+  0.49673203
+  0.4535948
+0.5398693
+  0.53333336
+  0.41176474
+  0.2653595
+  0.3398693
+  0.40653598
+  0.48496735
+  0.41045752
+  0.30588236
+  0.41699347
+  0.4431373
+  0.4313726
+  0.4117647
+  0.45620915
+  0.51111114
+  0.43529415
+  0.4431373
+  0.43267977
+  0.42222223
+  0.4431373
+  0.4862745
+  0.4666667
+  0.88758177
+  0.9490196
+  0.84313727
+  0.76993466
+  0.4143791
+  0.8418301
+  0.9333334
+  0.4392157
+  0.5006536
+  0.5294118
+  0.58562094
+  0.4405229
+  0.654902
+  0.67450976
+  0.69673205
+  0.669281
+  0.4862745
+  0.4862745
+  0.52287585
+  0.49411765
+  0.32026145
+  0.6732026
+  0.7542484
+  0.83267975
+  0.6771242
+  0.044444445
+  0.70718956
+  0.90718955
+  0.82483655
+  0.7673202
+  0.42352942
+  0.39738563
+  0.3633987
+  0.40392157
+  0.4405229
+  0.40261439
+  0.43790853
+  0.36993465
+  0.38169935
+  0.47450984
+  0.53464055
+  0.4
+0.38169935
+  0.34509805
+  0.44705883
+  0.25751636
+  0.34771243
+  0.48496732
+  0.37254906
+  0.3751634
+  0.33333337
+  0.37254906
+  0.36732027
+  0.3503268
+  0.29542485
+  0.34248367
+  0.40784314
+  0.39346406
+  0.5111111
+  0.42091504
+  0.40784314
+  0.47973856
+  0.4169935
+  0.5176471
+  0.9594771
+  0.93202615
+  0.9098039
+  0.93071896
+  0.682353
+  0.40653595
+  0.5320262
+  0.48235297
+  0.29673204
+  0.5869281
+  0.5189543
+  0.54901963
+  0.70065355
+  0.69542486
+  0.7202615
+  0.64705884
+  0.5111111
+  0.48235294
+  0.55947715
+  0.36993465
+  0.5424837
+  0.6300654
+  0.60915035
+  0.5934641
+  0.28627452
+  0.56209153
+  0.94248366
+  0.9738562
+  0.9281046
+  0.7647059
+  0.27189544
+  0.39869285
+  0.4535948
+  0.46928105
+  0.44183007
+  0.34509805
+  0.5267974
+  0.3542484
+  0.3372549
+  0.36470592
+  0.37908498
+  0.5189543
+0.3267974
+  0.30457518
+  0.4444445
+  0.3633987
+  0.50980395
+  0.27058825
+  0.34248367
+  0.3019608
+  0.27189544
+  0.3385621
+  0.31895426
+  0.2248366
+  0.23529412
+  0.24575163
+  0.33464053
+  0.4209151
+  0.5529412
+  0.33202615
+  0.26797387
+  0.503268
+  0.28104577
+  0.49673203
+  0.8915033
+  0.84313727
+  0.84705883
+  0.8522876
+  0.8104575
+  0.4013072
+  0.53333336
+  0.4248366
+  0.61045754
+  0.6183007
+  0.54640526
+  0.59607846
+  0.70849675
+  0.6836601
+  0.69542486
+  0.6771242
+  0.57385623
+  0.43137255
+  0.5267974
+  0.5111111
+  0.048366014
+  0.45882356
+  0.5764706
+  0.3006536
+  0.21176471
+  0.7385621
+  0.88758165
+  0.9019608
+  0.951634
+  0.7908497
+  0.49803925
+  0.5006536
+  0.5111111
+  0.45098043
+  0.48496735
+  0.33464053
+  0.34248367
+  0.47712418
+  0.34640524
+  0.33464053
+  0.475817
+  0.47189546
+0.36993468
+  0.3895425
+  0.5568628
+  0.5071896
+  0.3372549
+  0.22745098
+  0.28627452
+  0.29803923
+  0.32287583
+  0.30588236
+  0.4169935
+  0.36078432
+  0.30718955
+  0.35424838
+  0.4366013
+  0.45490196
+  0.55947715
+  0.38300654
+  0.43529415
+  0.4862745
+  0.27320263
+  0.5385621
+  0.74771243
+  0.8784314
+  0.8169935
+  0.7764706
+  0.7660131
+  0.6300654
+  0.1503268
+  0.6143791
+  0.4771242
+  0.67843145
+  0.67189545
+  0.56339866
+  0.69542486
+  0.6797386
+  0.58562094
+  0.6522876
+  0.52156866
+  0.6418301
+  0.61960787
+  0.4169935
+  0.6039216
+  0.56993467
+  0.05882353
+  0.29411766
+  0.6509804
+  0.7673202
+  0.8457516
+  0.83267975
+  0.8091504
+  0.83529407
+  0.56993467
+  0.4535948
+  0.5084967
+  0.54901963
+  0.5529412
+  0.47973856
+  0.49411765
+  0.5254902
+  0.5045752
+  0.34248367
+  0.39869285
+  0.48366013
+0.4039216
+  0.37908498
+  0.4771242
+  0.3019608
+  0.29542485
+  0.27450982
+  0.23921569
+  0.39346406
+  0.34379086
+  0.38169935
+  0.32941177
+  0.46535948
+  0.3895425
+  0.32287583
+  0.3895425
+  0.5006536
+  0.5346405
+  0.35163403
+  0.58692807
+  0.46143794
+  0.35555557
+  0.28235296
+  0.6679738
+  0.7843137
+  0.85882354
+  0.7869281
+  0.7921569
+  0.75816995
+  0.59738564
+  0.40915033
+  0.6732027
+  0.42745102
+  0.74379086
+  0.33594772
+  0.53594774
+  0.606536
+  0.60915035
+  0.49673203
+  0.27058825
+  0.7895425
+  0.4117647
+  0.3882353
+  0.49542487
+  0.19869281
+  0.045751635
+  0.5189542
+  0.82875824
+  0.89673203
+  0.730719
+  0.83006543
+  0.7424837
+  0.779085
+  0.4261438
+  0.57254904
+  0.5686274
+  0.5150327
+  0.7830066
+  0.35424838
+  0.48496735
+  0.77777785
+  0.7411764
+  0.5555555
+  0.61045754
+  0.27058825
+0.43267974
+  0.40392157
+  0.41830066
+  0.38562095
+  0.24444444
+  0.3385621
+  0.3869281
+  0.41568628
+  0.38431373
+  0.46666667
+  0.34248367
+  0.33464053
+  0.44836605
+  0.43529415
+  0.5124183
+  0.38300654
+  0.5137255
+  0.3372549
+  0.6366013
+  0.41045752
+  0.24575163
+  0.28496733
+  0.73202616
+  0.793464
+  0.7764706
+  0.75163394
+  0.69803923
+  0.8183007
+  0.88758177
+  0.7869281
+  0.45490196
+  0.5529412
+  0.7111111
+  0.96732026
+  0.20653595
+  0.4
+  0.22745098
+  0.2901961
+  0.972549
+  0.53464055
+  0.7529412
+  0.654902
+  0.47320262
+  0.75816995
+  0.83006543
+  0.84705883
+  0.7124183
+  0.7398693
+  0.58562094
+  0.6509804
+  0.83398694
+  0.48366013
+  0.47189546
+  0.29150328
+  0.530719
+  0.5254902
+  0.5437909
+  0.74379086
+  0.16470589
+  0.5921569
+  0.73594767
+  0.6509804
+  0.5529412
+  0.52418304
+0.40653598
+  0.43529415
+  0.34771243
+  0.33071896
+  0.37254903
+  0.40130723
+  0.37516344
+  0.45751634
+  0.36732027
+  0.3869281
+  0.40784314
+  0.37385622
+  0.41960788
+  0.47189546
+  0.4862745
+  0.44444445
+  0.5647059
+  0.40130723
+  0.5633987
+  0.39346406
+  0.35947716
+  0.47581705
+  0.53464055
+  0.6405229
+  0.7660131
+  0.7633987
+  0.7294118
+  0.5660131
+  0.42222223
+  0.58954245
+  0.51633984
+  0.6052287
+  0.5281046
+  0.6771242
+  0.7738562
+  0.20915033
+  0.46405232
+  0.90457517
+  0.5777778
+  0.38039216
+  0.48235294
+  0.45228759
+  0.7359478
+  0.6718955
+  0.65882355
+  0.69803923
+  0.6810458
+  0.7163399
+  0.6653595
+  0.45751634
+  0.6117647
+  0.45751634
+  0.44836602
+  0.3267974
+  0.30588236
+  0.5281046
+  0.44575164
+  0.69542486
+  0.52026147
+  0.12156863
+  0.7542484
+  0.73725486
+  0.5424837
+  0.5045752
+0.3281046
+  0.34248367
+  0.34771243
+  0.32156864
+  0.39738563
+  0.5019608
+  0.49019608
+  0.45751634
+  0.43790853
+  0.39607844
+  0.5150327
+  0.44575167
+  0.4431373
+  0.5124183
+  0.43790853
+  0.36470592
+  0.39738563
+  0.48366013
+  0.45228759
+  0.39215687
+  0.43267977
+  0.47058824
+  0.47450984
+  0.42222223
+  0.74379086
+  0.8104575
+  0.69673205
+  0.5921569
+  0.52287585
+  0.45490196
+  0.4509804
+  0.27973858
+  0.43137255
+  0.5424837
+  0.5869281
+  0.30980393
+  0.63267976
+  0.5019608
+  0.57124186
+  0.57254904
+  0.42091504
+  0.36862746
+  0.6928105
+  0.72287583
+  0.7006536
+  0.79607844
+  0.75947714
+  0.7202614
+  0.779085
+  0.56339866
+  0.30980393
+  0.33594775
+  0.49411765
+  0.31633988
+  0.17124183
+  0.5816993
+  0.41437912
+  0.5660131
+  0.7163399
+  0.30588236
+  0.44313726
+  0.72287583
+  0.75947714
+  0.37124184
+0.38562092
+  0.34901965
+  0.36862746
+  0.38169935
+  0.3398693
+  0.37254903
+  0.43529415
+  0.5019608
+  0.47058824
+  0.43529415
+  0.47058824
+  0.5058823
+  0.5163399
+  0.43529415
+  0.37908498
+  0.3803922
+  0.3803922
+  0.40261439
+  0.32287583
+  0.40261439
+  0.53725493
+  0.48104575
+  0.54901963
+  0.44313726
+  0.5281046
+  0.6614379
+  0.48496732
+  0.6117647
+  0.4248366
+  0.38562092
+  0.55817
+  0.36601308
+  0.1267974
+  0.43137255
+  0.2653595
+  0.30588236
+  0.18169935
+  0.35555557
+  0.21568628
+  0.048366014
+  0.3633987
+  0.6300654
+  0.5320261
+  0.6496732
+  0.8261438
+  0.7411764
+  0.81830066
+  0.6810458
+  0.6052287
+  0.4888889
+  0.46013072
+  0.44052288
+  0.41699347
+  0.44444445
+  0.16862746
+  0.47843137
+  0.42091504
+  0.6117647
+  0.6117647
+  0.6143791
+  0.24836601
+  0.7490196
+  0.6130719
+  0.6836601
+0.4117647
+  0.32941177
+  0.30718955
+  0.3895425
+  0.4496732
+  0.37908498
+  0.40522876
+  0.42091504
+  0.41045752
+  0.48888895
+  0.47189546
+  0.46535948
+  0.4313726
+  0.33464053
+  0.3385621
+  0.3254902
+  0.35555557
+  0.2535948
+  0.31633988
+  0.5189543
+  0.5398693
+  0.3803922
+  0.67189545
+  0.3620915
+  0.5176471
+  0.5137255
+  0.5385621
+  0.40392157
+  0.2379085
+  0.48235294
+  0.18431373
+  0.34248367
+  0.4366013
+  0.78169936
+  0.41699347
+  0.6875817
+  0.61568624
+  0.36993465
+  0.6614379
+  0.27189544
+  0.17908497
+  0.5320262
+  0.5398693
+  0.57254904
+  0.63398695
+  0.5437909
+  0.6209151
+  0.6522876
+  0.5712418
+  0.5686275
+  0.29542485
+  0.56209153
+  0.44052288
+  0.5137255
+  0.3150327
+  0.45228759
+  0.40261439
+  0.5647059
+  0.5267974
+  0.64575166
+  0.29281047
+  0.6928105
+  0.71503264
+  0.42745102
+0.3764706
+  0.30849674
+  0.3372549
+  0.34640527
+  0.35555557
+  0.37516344
+  0.37124184
+  0.45228759
+  0.530719
+  0.42091504
+  0.41568628
+  0.40130723
+  0.36993468
+  0.35555557
+  0.32941177
+  0.37516344
+  0.34771243
+  0.303268
+  0.42352948
+  0.43790853
+  0.3882353
+  0.39607844
+  0.78823537
+  0.38300654
+  0.3150327
+  0.606536
+  0.38169935
+  0.4
+  0.2771242
+  0.4509804
+  0.36078432
+  0.5581699
+  0.44705883
+  0.7111111
+  0.75947714
+  0.75816995
+  0.69934636
+  0.7490196
+  0.69934636
+  0.38039216
+  0.3385621
+  0.39738563
+  0.3882353
+  0.15947713
+  0.5071896
+  0.38169935
+  0.54901963
+  0.49019608
+  0.5934641
+  0.54640526
+  0.49542484
+  0.503268
+  0.4169935
+  0.530719
+  0.39215687
+  0.43267974
+  0.44183007
+  0.4928105
+  0.46535948
+  0.5816994
+  0.4130719
+  0.5150327
+  0.7215686
+  0.4627451
+0.3620915
+  0.29934642
+  0.41960785
+  0.36601308
+  0.33464053
+  0.34509805
+  0.34117648
+  0.3803922
+  0.4705883
+  0.39607847
+  0.44183007
+  0.38823533
+  0.47189546
+  0.3633987
+  0.32941177
+  0.41176474
+  0.33071896
+  0.37254903
+  0.35555557
+  0.27973858
+  0.29411766
+  0.6026144
+  0.7869281
+  0.6248366
+  0.151634
+  0.5437909
+  0.6248366
+  0.38431373
+  0.40130723
+  0.4797386
+  0.58431375
+  0.5921569
+  0.4797386
+  0.42352942
+  0.551634
+  0.37254903
+  0.37254903
+  0.42222226
+  0.39869282
+  0.38431373
+  0.3803922
+  0.13725491
+  0.16993465
+  0.41176474
+  0.32941177
+  0.49411765
+  0.36862746
+  0.4862745
+  0.48366013
+  0.62222225
+  0.38300657
+  0.551634
+  0.43529412
+  0.5660131
+  0.43267977
+  0.4117647
+  0.43529415
+  0.45882353
+  0.5411765
+  0.44705883
+  0.53333336
+  0.3764706
+  0.71895427
+  0.5934641
+0.37908498
+  0.45490196
+  0.39869282
+  0.42875818
+  0.35686275
+  0.34771243
+  0.32156864
+  0.34640527
+  0.50980395
+  0.46535948
+  0.33071896
+  0.36732027
+  0.44183007
+  0.38562095
+  0.3398693
+  0.48366013
+  0.42091504
+  0.34901962
+  0.33464053
+  0.3372549
+  0.3150327
+  0.7424837
+  0.70849675
+  0.81437904
+  0.17385621
+  0.1633987
+  0.7490196
+  0.46797386
+  0.36078432
+  0.55032677
+  0.72549015
+  0.4862745
+  0.5398693
+  0.56078434
+  0.0
+  0.0
+  0.31111112
+  0.44444445
+  0.41960785
+  0.23398693
+  0.14640524
+  0.38431373
+  0.41176474
+  0.39215687
+  0.33333337
+  0.39738563
+  0.45490196
+  0.38562095
+  0.5529412
+  0.44052288
+  0.56078434
+  0.45751634
+  0.4039216
+  0.5751634
+  0.47189543
+  0.3869281
+  0.46013072
+  0.5137255
+  0.6235294
+  0.3137255
+  0.57124186
+  0.5189542
+  0.6797386
+  0.709804
+0.3882353
+  0.4431373
+  0.3895425
+  0.45620918
+  0.4444445
+  0.4627451
+  0.4405229
+  0.47450984
+  0.524183
+  0.54509807
+  0.4928105
+  0.42222226
+  0.3620915
+  0.4013072
+  0.3895425
+  0.49673203
+  0.46535948
+  0.44705883
+  0.36601308
+  0.41568628
+  0.49150327
+  0.7058824
+  0.63529414
+  0.8013072
+  0.5320261
+  0.077124186
+  0.46013072
+  0.77777785
+  0.18169935
+  0.7267974
+  0.4
+  0.7124183
+  0.5934641
+  0.0
+  0.06535948
+  0.5882353
+  0.58562094
+  0.30718955
+  0.24444444
+  0.4
+  0.45228759
+  0.4496732
+  0.4
+  0.23137255
+  0.46666667
+  0.3764706
+  0.4627451
+  0.45228759
+  0.44575164
+  0.39215687
+  0.5254902
+  0.36078432
+  0.52287585
+  0.5176471
+  0.44836602
+  0.3647059
+  0.41960785
+  0.5385621
+  0.64705884
+  0.1751634
+  0.58300656
+  0.64836603
+  0.6601307
+  0.6810458
+0.46143794
+  0.40130723
+  0.3751634
+  0.47973856
+  0.49803925
+  0.4862745
+  0.52941173
+  0.49150327
+  0.48235297
+  0.49673203
+  0.41176474
+  0.34640527
+  0.38169935
+  0.4117647
+  0.32156864
+  0.27189544
+  0.44444445
+  0.33856213
+  0.4366013
+  0.5058824
+  0.56078434
+  0.6745098
+  0.6496732
+  0.7620916
+  0.77124184
+  0.14117648
+  0.32026145
+  0.78039217
+  0.46013072
+  0.69542486
+  0.84444445
+  0.53986925
+  0.05882353
+  0.12418301
+  0.74117655
+  0.58431375
+  0.3267974
+  0.5124183
+  0.5137255
+  0.48235294
+  0.48758173
+  0.30457518
+  0.17777778
+  0.36078432
+  0.3882353
+  0.41960788
+  0.42352942
+  0.49542484
+  0.475817
+  0.39215687
+  0.5084967
+  0.3006536
+  0.475817
+  0.42222226
+  0.46535948
+  0.3869281
+  0.4392157
+  0.524183
+  0.6248366
+  0.24444444
+  0.3411765
+  0.67843133
+  0.66013074
+  0.620915
+0.4
+  0.46535948
+  0.40653598
+  0.52287585
+  0.5045752
+  0.48496735
+  0.5816994
+  0.4509804
+  0.4130719
+  0.5150327
+  0.34771243
+  0.29934642
+  0.3895425
+  0.3385621
+  0.36862746
+  0.37124184
+  0.3254902
+  0.35947716
+  0.32156864
+  0.3751634
+  0.7424837
+  0.6379085
+  0.7058824
+  0.6797385
+  0.8392157
+  0.45228759
+  0.104575165
+  0.5686274
+  0.74771243
+  0.87712413
+  0.54901963
+  0.29934642
+  0.2130719
+  0.8562092
+  0.57254904
+  0.49803922
+  0.60784316
+  0.5385621
+  0.5764706
+  0.42222223
+  0.1254902
+  0.24183007
+  0.38169935
+  0.37254906
+  0.42745098
+  0.39084968
+  0.39607844
+  0.48366013
+  0.53594774
+  0.40392157
+  0.30457518
+  0.35947713
+  0.530719
+  0.4130719
+  0.42875818
+  0.4248366
+  0.43267974
+  0.5254902
+  0.6117647
+  0.3503268
+  0.13202615
+  0.6836601
+  0.6653595
+  0.62222225
+0.46405232
+  0.42483664
+  0.40653595
+  0.5124183
+  0.4705883
+  0.4967321
+  0.54901963
+  0.38169935
+  0.45490196
+  0.42091504
+  0.22352941
+  0.21437909
+  0.32941177
+  0.29673204
+  0.27973858
+  0.32026145
+  0.27973858
+  0.39738563
+  0.35947713
+  0.35686275
+  0.8640523
+  0.43790853
+  0.8562091
+  0.54901963
+  0.80522877
+  0.8117647
+  0.12026144
+  0.3254902
+  0.8601307
+  0.6313726
+  0.5882353
+  0.40392157
+  0.89803916
+  0.6928105
+  0.6732026
+  0.6562092
+  0.67843133
+  0.6522876
+  0.2640523
+  0.14640524
+  0.42745098
+  0.34379086
+  0.38300654
+  0.46535948
+  0.41699347
+  0.43267977
+  0.4901961
+  0.5163399
+  0.50849676
+  0.36470592
+  0.2771242
+  0.43529412
+  0.49803922
+  0.3529412
+  0.44575164
+  0.43529412
+  0.43398693
+  0.5189543
+  0.61960787
+  0.41568628
+  0.006535948
+  0.5869281
+  0.6431373
+  0.67189545
+0.37254906
+  0.38169935
+  0.36078432
+  0.4797386
+  0.4967321
+  0.40522876
+  0.34640524
+  0.44183013
+  0.5398693
+  0.32418302
+  0.31111112
+  0.31764707
+  0.36078432
+  0.41176474
+  0.43790853
+  0.42875818
+  0.43790853
+  0.4117647
+  0.351634
+  0.49673203
+  0.8862745
+  0.16862746
+  0.84313727
+  0.6771242
+  0.75163394
+  0.8457517
+  0.4405229
+  0.15424837
+  0.80784315
+  0.779085
+  0.5411765
+  0.9111111
+  0.81437916
+  0.7542484
+  0.78431374
+  0.78169936
+  0.44313726
+  0.049673203
+  0.39477125
+  0.61307186
+  0.39477125
+  0.4261438
+  0.4535948
+  0.48104575
+  0.5006536
+  0.50980395
+  0.4888889
+  0.53725493
+  0.33856213
+  0.37385622
+  0.46405232
+  0.45098043
+  0.45228759
+  0.40261439
+  0.4143791
+  0.52287585
+  0.4627451
+  0.5803922
+  0.61960787
+  0.44836602
+  0.003921569
+  0.5437909
+  0.64575166
+  0.6797386
+0.33594772
+  0.43137255
+  0.39869285
+  0.4
+  0.4797386
+  0.4366013
+  0.40261439
+  0.5633987
+  0.53594774
+  0.52418304
+  0.52026147
+  0.52287585
+  0.5294118
+  0.45620915
+  0.38300657
+  0.39215687
+  0.4
+  0.36078432
+  0.37254903
+  0.7307189
+  0.90718955
+  0.31764707
+  0.5751634
+  0.8352942
+  0.74771243
+  0.7921569
+  0.8287582
+  0.25490198
+  0.8130719
+  0.6797386
+  0.87973857
+  0.85098046
+  0.8732026
+  0.85751635
+  0.49673203
+  0.006535948
+  0.049673203
+  0.6104575
+  0.70849675
+  0.5189542
+  0.4614379
+  0.47712418
+  0.48496735
+  0.45359477
+  0.51633984
+  0.49411765
+  0.47973856
+  0.46928108
+  0.29803923
+  0.37908498
+  0.4627451
+  0.4627451
+  0.44052288
+  0.4496732
+  0.36078432
+  0.53594774
+  0.44575164
+  0.5633987
+  0.6026144
+  0.5019608
+  0.0013071896
+  0.45751634
+  0.675817
+  0.69542486
+0.3934641
+  0.3869281
+  0.28496733
+  0.38562092
+  0.4627451
+  0.38431373
+  0.551634
+  0.41960785
+  0.48627457
+  0.5124183
+  0.45882356
+  0.41568628
+  0.3542484
+  0.41176474
+  0.45359477
+  0.54640526
+  0.6013072
+  0.44705883
+  0.46405232
+  0.74509805
+  0.8928104
+  0.8366013
+  0.151634
+  0.88366014
+  0.82091504
+  0.7921569
+  0.8862745
+  0.5058824
+  0.7424836
+  0.8640523
+  0.8784314
+  0.9450981
+  0.7398693
+  0.11895425
+  0.15424837
+  0.52418304
+  0.80653596
+  0.72287583
+  0.63267976
+  0.5411765
+  0.46535948
+  0.40653598
+  0.47450984
+  0.5006536
+  0.45490196
+  0.46535948
+  0.503268
+  0.21437909
+  0.43267974
+  0.35816994
+  0.4261438
+  0.46928108
+  0.34509805
+  0.5215686
+  0.34509805
+  0.55947715
+  0.3895425
+  0.6039216
+  0.6143791
+  0.5176471
+  0.0
+  0.45228759
+  0.6875817
+  0.69673205
+0.4862745
+  0.5111111
+  0.47189546
+  0.49803922
+  0.49673203
+  0.5411765
+  0.38823533
+  0.46274516
+  0.3895425
+  0.4300654
+  0.4797386
+  0.433987
+  0.44967327
+  0.45359477
+  0.43398693
+  0.32941177
+  0.351634
+  0.37385622
+  0.7607843
+  0.6666667
+  0.84313727
+  0.90718955
+  0.48366013
+  0.3019608
+  0.86797386
+  0.79607844
+  0.84313727
+  0.79607844
+  0.75163394
+  0.91372556
+  0.9490196
+  0.6261439
+  0.29934642
+  0.6614379
+  0.78823537
+  0.7542484
+  0.675817
+  0.60915035
+  0.5568628
+  0.4875817
+  0.4130719
+  0.4431373
+  0.49150327
+  0.52156866
+  0.48496732
+  0.49803922
+  0.33071896
+  0.3620915
+  0.34509805
+  0.34509805
+  0.42091504
+  0.52156866
+  0.32026145
+  0.49150327
+  0.32026145
+  0.53333336
+  0.43790853
+  0.6039216
+  0.6130719
+  0.5647059
+  0.011764706
+  0.4431373
+  0.68888897
+  0.72287583
+0.5189543
+  0.6026144
+  0.57385623
+  0.5777778
+  0.6235294
+  0.5816994
+  0.5267974
+  0.42745102
+  0.31633988
+  0.46013072
+  0.39607847
+  0.41568628
+  0.4627451
+  0.44444445
+  0.49411765
+  0.530719
+  0.46928108
+  0.6732026
+  0.80653596
+  0.66797394
+  0.68888897
+  0.8235294
+  0.89673203
+  0.40261439
+  0.34248367
+  0.84052295
+  0.8130719
+  0.79607844
+  0.7607843
+  0.93333334
+  0.71372557
+  0.7124183
+  0.7895425
+  0.73333335
+  0.75163394
+  0.7490196
+  0.7019608
+  0.6640523
+  0.58300656
+  0.4261438
+  0.4300654
+  0.46666667
+  0.44575164
+  0.45751634
+  0.49411765
+  0.45359477
+  0.34771243
+  0.39215687
+  0.26928106
+  0.44052288
+  0.4496732
+  0.45751634
+  0.39215687
+  0.45751634
+  0.38169935
+  0.5150327
+  0.4
+  0.5882353
+  0.627451
+  0.54509807
+  0.006535948
+  0.43529412
+  0.6810458
+  0.7542484
+0.5477124
+  0.5921569
+  0.55947715
+  0.5934641
+  0.4261438
+  0.3647059
+  0.5751634
+  0.39215687
+  0.38300654
+  0.39346406
+  0.46928105
+  0.44705883
+  0.4928105
+  0.47189543
+  0.50980395
+  0.4901961
+  0.5934641
+  0.80653596
+  0.7490196
+  0.73464054
+  0.47712418
+  0.6732027
+  0.77777785
+  0.8287582
+  0.47058824
+  0.29542485
+  0.7908497
+  0.7163399
+  0.7986929
+  0.92156863
+  0.8862745
+  0.7281046
+  0.5254902
+  0.6993465
+  0.675817
+  0.64575166
+  0.6143791
+  0.64836603
+  0.53333336
+  0.4169935
+  0.36470592
+  0.40261439
+  0.47058824
+  0.49542487
+  0.49150327
+  0.40261439
+  0.36862746
+  0.39084968
+  0.23267974
+  0.46535948
+  0.4509804
+  0.44052288
+  0.44313726
+  0.35686275
+  0.5058824
+  0.5542484
+  0.20130719
+  0.5267974
+  0.6379085
+  0.60784316
+  0.014379085
+  0.52679736
+  0.5398693
+  0.8
+0.5320261
+  0.47843137
+  0.5385621
+  0.6
+  0.5751634
+  0.5385621
+  0.5633987
+  0.50980395
+  0.4875817
+  0.47843137
+  0.42091504
+  0.33333334
+  0.44183013
+  0.3281046
+  0.38562095
+  0.40522876
+  0.7281046
+  0.7398693
+  0.7385621
+  0.6732026
+  0.65882355
+  0.20784314
+  0.63267976
+  0.606536
+  0.6470588
+  0.66013074
+  0.45359477
+  0.6797386
+  0.73464054
+  0.9294117
+  0.8457517
+  0.68496734
+  0.57385623
+  0.63921565
+  0.68496734
+  0.6810458
+  0.6509804
+  0.54771245
+  0.4143791
+  0.11764706
+  0.28496733
+  0.41960788
+  0.44705883
+  0.46666667
+  0.42091504
+  0.3633987
+  0.41830066
+  0.21960785
+  0.30588236
+  0.43006536
+  0.43267974
+  0.4
+  0.5320262
+  0.35947713
+  0.530719
+  0.60784316
+  0.18954249
+  0.53725487
+  0.67843133
+  0.654902
+  0.050980393
+  0.503268
+  0.34771243
+  0.69803923
+0.49673203
+  0.5816994
+  0.6405229
+  0.63529414
+  0.6183007
+  0.6130719
+  0.69019604
+  0.6117647
+  0.6392157
+  0.6771242
+  0.72287583
+  0.65228766
+  0.7124183
+  0.71503276
+  0.7254903
+  0.6745098
+  0.72287583
+  0.7385621
+  0.7006536
+  0.5084967
+  0.61045754
+  0.4745098
+  0.010457517
+  0.40261439
+  0.29542485
+  0.6627452
+  0.67843133
+  0.3267974
+  0.60522884
+  0.89542484
+  0.7908497
+  0.6248366
+  0.5816994
+  0.07189543
+  0.07450981
+  0.30457518
+  0.44444445
+  0.26666668
+  0.25620916
+  0.5019608
+  0.5058823
+  0.5058824
+  0.49150327
+  0.42091504
+  0.26666668
+  0.3908497
+  0.303268
+  0.21176471
+  0.31633988
+  0.46797386
+  0.5385621
+  0.42091504
+  0.5921569
+  0.3019608
+  0.6156863
+  0.6130719
+  0.16862746
+  0.627451
+  0.7137255
+  0.74771243
+  0.09411765
+  0.5503268
+  0.275817
+  0.34901962
+0.84313727
+  0.8496732
+  0.7973857
+  0.71503276
+  0.7450981
+  0.7254903
+  0.77124184
+  0.7660131
+  0.7320261
+  0.7529412
+  0.78169936
+  0.7529412
+  0.7751634
+  0.56339866
+  0.64575166
+  0.724183
+  0.67843145
+  0.65882355
+  0.54901963
+  0.4392157
+  0.4013072
+  0.5137255
+  0.19215687
+  0.0
+  0.2888889
+  0.36862746
+  0.53594774
+  0.40915033
+  0.30457518
+  0.8522876
+  0.7202615
+  0.64575166
+  0.4640523
+  0.6862745
+  0.6
+  0.32026145
+  0.27450982
+  0.49803925
+  0.56078434
+  0.5019608
+  0.38431373
+  0.35947713
+  0.3006536
+  0.3281046
+  0.37385622
+  0.30457518
+  0.11503268
+  0.32941177
+  0.34379086
+  0.4797386
+  0.52679736
+  0.5058824
+  0.59869284
+  0.27973858
+  0.64705884
+  0.675817
+  0.14640524
+  0.57124186
+  0.7647059
+  0.7921569
+  0.18562092
+  0.503268
+  0.11764706
+  0.09934641
+0.84052295
+  0.8026144
+  0.79477125
+  0.7869281
+  0.7372549
+  0.7529412
+  0.7529412
+  0.7542484
+  0.76862747
+  0.76209146
+  0.7751634
+  0.7450981
+  0.7006536
+  0.7111111
+  0.72549015
+  0.6901961
+  0.7281046
+  0.6810458
+  0.67843133
+  0.44575167
+  0.46143794
+  0.5477124
+  0.31633988
+  0.29673204
+  0.0052287583
+  0.44705883
+  0.69673205
+  0.6928105
+  0.81830066
+  0.7568628
+  0.7176471
+  0.6535948
+  0.7019608
+  0.7019608
+  0.6261438
+  0.6300654
+  0.5320261
+  0.49673203
+  0.48366013
+  0.39869285
+  0.40784314
+  0.41830066
+  0.40784314
+  0.3803922
+  0.29411766
+  0.14901961
+  0.3633987
+  0.23137255
+  0.31633988
+  0.4862745
+  0.5320261
+  0.5921569
+  0.5869281
+  0.20522876
+  0.6797386
+  0.7124183
+  0.12026144
+  0.35555557
+  0.82222223
+  0.8169935
+  0.28235296
+  0.46928108
+  0.18169935
+  0.100653596
+0.7019608
+  0.5568628
+  0.58300656
+  0.67189545
+  0.70718956
+  0.6993465
+  0.71111107
+  0.69803923
+  0.70457524
+  0.70326805
+  0.73202616
+  0.7647059
+  0.7176471
+  0.7503268
+  0.6496732
+  0.7673202
+  0.76993466
+  0.7176471
+  0.80784315
+  0.6130719
+  0.3398693
+  0.7385621
+  0.730719
+  0.7660131
+  0.8169935
+  0.7464052
+  0.6941176
+  0.6509804
+  0.6156863
+  0.56078434
+  0.54771245
+  0.5908497
+  0.6130719
+  0.57908493
+  0.59738564
+  0.5398693
+  0.5267974
+  0.5267974
+  0.5189543
+  0.5346405
+  0.45228759
+  0.35947716
+  0.37385622
+  0.24836601
+  0.17385621
+  0.39869282
+  0.2248366
+  0.25751636
+  0.42875818
+  0.4496732
+  0.6052288
+  0.58692807
+  0.5424837
+  0.26928106
+  0.7163399
+  0.69542486
+  0.09281046
+  0.21045752
+  0.82091504
+  0.84052295
+  0.22091503
+  0.42091504
+  0.20653595
+  0.048366014
+0.7111111
+  0.73464054
+  0.7464052
+  0.7869281
+  0.779085
+  0.7281046
+  0.7346406
+  0.80653596
+  0.772549
+  0.75947714
+  0.7529412
+  0.7424837
+  0.7124183
+  0.6418301
+  0.59738564
+  0.5660131
+  0.54901963
+  0.93071896
+  0.8653595
+  0.8235294
+  0.7607843
+  0.67843133
+  0.65882355
+  0.6143791
+  0.5751634
+  0.5660131
+  0.5686275
+  0.530719
+  0.4901961
+  0.49542484
+  0.5137255
+  0.49281046
+  0.44836605
+  0.4509804
+  0.49673203
+  0.53725493
+  0.55032677
+  0.54640526
+  0.5006536
+  0.49673203
+  0.40392157
+  0.33464053
+  0.23660131
+  0.26013073
+  0.34117648
+  0.23006536
+  0.21437909
+  0.38169935
+  0.48235294
+  0.48235294
+  0.59869284
+  0.606536
+  0.39346406
+  0.42222223
+  0.7751634
+  0.66928107
+  0.10980392
+  0.11503268
+  0.793464
+  0.78039217
+  0.3503268
+  0.5568628
+  0.26666668
+  0.03398693
+0.64836603
+  0.7163399
+  0.7294118
+  0.7058824
+  0.7006536
+  0.75555557
+  0.7176471
+  0.70718956
+  0.7254903
+  0.7124183
+  0.627451
+  0.68496734
+  0.73333335
+  0.6549019
+  0.6771242
+  0.5267974
+  0.4013072
+  0.5934641
+  0.7202614
+  0.58562094
+  0.64836603
+  0.606536
+  0.5908497
+  0.5777778
+  0.53333336
+  0.5320262
+  0.52287585
+  0.5424837
+  0.5189543
+  0.5424837
+  0.530719
+  0.49803925
+  0.5163399
+  0.5150327
+  0.5045752
+  0.53333336
+  0.47973856
+  0.48104575
+  0.46405232
+  0.4666667
+  0.37777779
+  0.3281046
+  0.3019608
+  0.36470592
+  0.26666668
+  0.16862746
+  0.26928106
+  0.40784314
+  0.47058824
+  0.50980395
+  0.5764706
+  0.54771245
+  0.3006536
+  0.5542484
+  0.74771243
+  0.64575166
+  0.08496732
+  0.03660131
+  0.7163399
+  0.7986929
+  0.6379085
+  0.68496734
+  0.35686275
+  0.003921569
+0.7111111
+  0.69934636
+  0.6653595
+  0.6862745
+  0.6562092
+  0.75555557
+  0.76993466
+  0.82222223
+  0.7202614
+  0.675817
+  0.627451
+  0.7163399
+  0.7633987
+  0.7058824
+  0.49542484
+  0.5176471
+  0.56993467
+  0.43398693
+  0.5764706
+  0.5673203
+  0.5869281
+  0.5673203
+  0.55032677
+  0.5294118
+  0.5254902
+  0.5058824
+  0.5294118
+  0.5320262
+  0.53986925
+  0.5058823
+  0.4928105
+  0.4862745
+  0.49019608
+  0.47058824
+  0.4496732
+  0.46535948
+  0.43398693
+  0.44444445
+  0.4248366
+  0.41045752
+  0.41830066
+  0.31764707
+  0.3398693
+  0.31633988
+  0.18169935
+  0.20261438
+  0.3254902
+  0.4039216
+  0.3908497
+  0.5006536
+  0.5529412
+  0.52156866
+  0.60915035
+  0.6862745
+  0.7359478
+  0.58431375
+  0.06535948
+  0.009150327
+  0.6026144
+  0.76862747
+  0.72287583
+  0.6679738
+  0.27058825
+  0.011764706
+0.67189545
+  0.6496732
+  0.5568628
+  0.71372557
+  0.7163399
+  0.68888885
+  0.84444445
+  0.8535948
+  0.7986929
+  0.7764706
+  0.7111111
+  0.606536
+  0.68235296
+  0.8091504
+  0.61960787
+  0.5921569
+  0.7137255
+  0.5686275
+  0.09803922
+  0.55816996
+  0.46928105
+  0.44705883
+  0.5163399
+  0.52941173
+  0.5006536
+  0.5071896
+  0.49803925
+  0.49150327
+  0.50326794
+  0.5281046
+  0.53464055
+  0.49542487
+  0.48366013
+  0.43790853
+  0.4130719
+  0.3647059
+  0.39738563
+  0.3620915
+  0.3503268
+  0.36993465
+  0.351634
+  0.31895426
+  0.34771243
+  0.1882353
+  0.33202615
+  0.15947713
+  0.41960785
+  0.52026147
+  0.3019608
+  0.475817
+  0.5189543
+  0.5882353
+  0.75555557
+  0.6509804
+  0.6470589
+  0.4993464
+  0.06535948
+  0.0013071896
+  0.5437909
+  0.6797385
+  0.551634
+  0.46535948
+  0.30980393
+  0.0
+0.6614379
+  0.64836603
+  0.70457524
+  0.6862745
+  0.7267974
+  0.4862745
+  0.8130719
+  0.7294118
+  0.848366
+  0.71503276
+  0.7751634
+  0.69803923
+  0.6666667
+  0.68888897
+  0.7895425
+  0.65228754
+  0.7921569
+  0.3908497
+  0.39215687
+  0.49803925
+  0.475817
+  0.4745098
+  0.48496732
+  0.47712418
+  0.5019608
+  0.5006536
+  0.5267974
+  0.5058824
+  0.5215686
+  0.52026147
+  0.49542484
+  0.48104575
+  0.47843137
+  0.45620915
+  0.40784314
+  0.3764706
+  0.32418302
+  0.3633987
+  0.32026145
+  0.303268
+  0.3150327
+  0.38823533
+  0.3006536
+  0.3124183
+  0.28235296
+  0.20653595
+  0.31764707
+  0.47450984
+  0.2901961
+  0.16078432
+  0.45490196
+  0.6013072
+  0.70718956
+  0.57254904
+  0.47320262
+  0.45751634
+  0.16078432
+  0.2875817
+  0.37908498
+  0.5281046
+  0.3882353
+  0.29150328
+  0.2509804
+  0.27320263
+0.63398695
+  0.64705884
+  0.5189543
+  0.5869281
+  0.6117647
+  0.68888885
+  0.654902
+  0.6901961
+  0.8130719
+  0.5254902
+  0.70849675
+  0.8379085
+  0.53333336
+  0.5071896
+  0.78823537
+  0.703268
+  0.45620918
+  0.3934641
+  0.4392157
+  0.5019608
+  0.46928108
+  0.50849676
+  0.42875818
+  0.50849676
+  0.503268
+  0.50980395
+  0.4862745
+  0.4627451
+  0.42745102
+  0.36209154
+  0.34771243
+  0.32026145
+  0.29542485
+  0.24705882
+  0.275817
+  0.2888889
+  0.24705882
+  0.23267974
+  0.2509804
+  0.23137255
+  0.25490198
+  0.27320263
+  0.22091503
+  0.27189544
+  0.22745098
+  0.24836601
+  0.21176471
+  0.2509804
+  0.42091504
+  0.52418304
+  0.6130719
+  0.6183007
+  0.5921569
+  0.579085
+  0.52287585
+  0.5934641
+  0.59869284
+  0.5503268
+  0.5673203
+  0.5895425
+  0.6013072
+  0.6496732
+  0.7372549
+  0.724183
+0.52156866
+  0.6614379
+  0.6614379
+  0.74771243
+  0.84444445
+  0.7137255
+  0.56993467
+  0.49150327
+  0.7869281
+  0.41568628
+  0.43267974
+  0.7869281
+  0.8039215
+  0.54771245
+  0.54509807
+  0.43006536
+  0.27320263
+  0.4431373
+  0.50849676
+  0.5045752
+  0.5215686
+  0.5215686
+  0.52026147
+  0.46666667
+  0.3895425
+  0.2248366
+  0.25620916
+  0.23660131
+  0.20784314
+  0.19607844
+  0.18954249
+  0.16732027
+  0.17908497
+  0.19869281
+  0.18169935
+  0.1267974
+  0.09411765
+  0.16862746
+  0.33202615
+  0.2653595
+  0.42091504
+  0.55947715
+  0.5777778
+  0.5660131
+  0.60784316
+  0.55816996
+  0.59869284
+  0.6248366
+  0.6300654
+  0.60915035
+  0.5816994
+  0.6496732
+  0.6640523
+  0.64444447
+  0.654902
+  0.6431373
+  0.69803923
+  0.71372557
+  0.71372557
+  0.6535948
+  0.7124183
+  0.67058825
+  0.5764706
+  0.7307189
+0.6653595
+  0.61960787
+  0.6405229
+  0.88104576
+  0.88758165
+  0.8352942
+  0.6679738
+  0.48758173
+  0.46535948
+  0.46928105
+  0.05751634
+  0.8013072
+  0.80522877
+  0.0627451
+  0.09673203
+  0.26013073
+  0.44444445
+  0.47058824
+  0.4496732
+  0.34117648
+  0.25751636
+  0.21568628
+  0.13725491
+  0.12287582
+  0.16601308
+  0.2
+  0.052287582
+  0.06797386
+  0.19607844
+  0.16601308
+  0.14901961
+  0.1124183
+  0.05620915
+  0.14379086
+  0.33594772
+  0.3633987
+  0.3882353
+  0.5006536
+  0.5777778
+  0.6313725
+  0.56209153
+  0.5816993
+  0.5908497
+  0.60915035
+  0.6104575
+  0.627451
+  0.6143791
+  0.5921569
+  0.5320262
+  0.5895425
+  0.6039216
+  0.6143791
+  0.69934636
+  0.6248366
+  0.6875817
+  0.6732027
+  0.6405229
+  0.6287582
+  0.6941176
+  0.6535948
+  0.55816996
+  0.59999996
+  0.6313725
+  0.7320261
+0.6300654
+  0.64836603
+  0.6732027
+  0.72287583
+  0.6862745
+  0.80392164
+  0.60915035
+  0.42352942
+  0.579085
+  0.7568627
+  0.32156864
+  0.22091503
+  0.25882354
+  0.06013072
+  0.22745098
+  0.47843137
+  0.3633987
+  0.21176471
+  0.42875818
+  0.42091504
+  0.4614379
+  0.06928105
+  0.14248367
+  0.2627451
+  0.15294118
+  0.09150327
+  0.12810458
+  0.0
+  0.013071896
+  0.007843138
+  0.023529412
+  0.13202615
+  0.24836601
+  0.2771242
+  0.50326794
+  0.530719
+  0.7424837
+  0.6901961
+  0.5647059
+  0.654902
+  0.6366013
+  0.65228766
+  0.6117647
+  0.65751636
+  0.6496732
+  0.6915033
+  0.6575163
+  0.66013074
+  0.6928105
+  0.6562092
+  0.64836603
+  0.6535948
+  0.6183007
+  0.66013074
+  0.6261438
+  0.66274506
+  0.6901961
+  0.6169935
+  0.6248366
+  0.64444447
+  0.64444447
+  0.61960787
+  0.6392157
+  0.6535948
+0.67843133
+  0.7503268
+  0.6431373
+  0.6013072
+  0.7751634
+  0.7895425
+  0.7058824
+  0.32026145
+  0.47058824
+  0.7346406
+  0.6379085
+  0.34379086
+  0.24444444
+  0.18954249
+  0.26143792
+  0.31633988
+  0.36601308
+  0.39607847
+  0.48366013
+  0.44836602
+  0.59477127
+  0.42091504
+  0.57124186
+  0.61960787
+  0.64183
+  0.5542484
+  0.303268
+  0.14640524
+  0.18039216
+  0.28627452
+  0.3895425
+  0.52026147
+  0.5973856
+  0.61045754
+  0.6013072
+  0.6130719
+  0.63267976
+  0.6509804
+  0.6640523
+  0.654902
+  0.6653595
+  0.74509805
+  0.63267976
+  0.6640523
+  0.6666667
+  0.7058824
+  0.70326805
+  0.6862745
+  0.654902
+  0.6771242
+  0.67843145
+  0.6666667
+  0.64575166
+  0.6496732
+  0.64836603
+  0.64836603
+  0.6287582
+  0.703268
+  0.6666667
+  0.6405229
+  0.703268
+  0.70718956
+  0.66797394
+  0.69934636
+0.6745098
+  0.5843137
+  0.4993464
+  0.60784316
+  0.6143791
+  0.7137255
+  0.6810458
+  0.105882354
+  0.5163399
+  0.3751634
+  0.40392157
+  0.46143794
+  0.19869281
+  0.19215687
+  0.32418302
+  0.37124184
+  0.45098043
+  0.46666667
+  0.45228759
+  0.5124183
+  0.46797386
+  0.50065357
+  0.6013072
+  0.7281046
+  0.64575166
+  0.6836602
+  0.65228766
+  0.6928105
+  0.55947715
+  0.47450984
+  0.5124183
+  0.59869284
+  0.6313726
+  0.4967321
+  0.4862745
+  0.57254904
+  0.5019608
+  0.5568628
+  0.6653595
+  0.6143791
+  0.6993465
+  0.6261438
+  0.6771242
+  0.6810458
+  0.6392157
+  0.6732026
+  0.7045751
+  0.7163399
+  0.65882355
+  0.60915035
+  0.64836603
+  0.6379085
+  0.68888897
+  0.6653595
+  0.6875817
+  0.60784316
+  0.71503276
+  0.7281046
+  0.7058824
+  0.71895427
+  0.69542486
+  0.7411764
+  0.7320261
+  0.70718956
+0.6771242
+  0.4745098
+  0.530719
+  0.4169935
+  0.47058824
+  0.60915035
+  0.66013074
+  0.46928105
+  0.4496732
+  0.18169935
+  0.23267974
+  0.4862745
+  0.5150327
+  0.5647059
+  0.4993464
+  0.5882353
+  0.50980395
+  0.5777778
+  0.5803922
+  0.6117647
+  0.6013072
+  0.627451
+  0.58562094
+  0.6745098
+  0.71503276
+  0.7137255
+  0.7124183
+  0.76993466
+  0.74379086
+  0.67843145
+  0.6431373
+  0.6052287
+  0.6745098
+  0.70065355
+  0.6143791
+  0.65228766
+  0.68496734
+  0.5529412
+  0.6
+  0.6026144
+  0.53464055
+  0.6300654
+  0.6313725
+  0.62091506
+  0.72156864
+  0.6797385
+  0.6679738
+  0.6614379
+  0.69934636
+  0.7202615
+  0.59738564
+  0.724183
+  0.6614379
+  0.7398693
+  0.72549015
+  0.7267974
+  0.6993465
+  0.68888885
+  0.73464054
+  0.6928105
+  0.7202615
+  0.7202614
+  0.7045751
+  0.77124184
+0.6901961
+  0.69803923
+  0.60915035
+  0.6915033
+  0.6300654
+  0.6862745
+  0.6405229
+  0.56209153
+  0.54640526
+  0.46535948
+  0.6248366
+  0.6143791
+  0.55816996
+  0.5882353
+  0.5633987
+  0.6640523
+  0.74379086
+  0.66928107
+  0.70457524
+  0.75816995
+  0.76993466
+  0.73464054
+  0.7424837
+  0.7568627
+  0.6862745
+  0.66928107
+  0.73202616
+  0.64183
+  0.6836602
+  0.654902
+  0.6797386
+  0.71503276
+  0.6379085
+  0.63398695
+  0.64183015
+  0.6431373
+  0.52679736
+  0.6052288
+  0.6810458
+  0.50980395
+  0.44444445
+  0.46797386
+  0.4875817
+  0.5673203
+  0.54771245
+  0.5882353
+  0.6522876
+  0.69803923
+  0.6875817
+  0.71111107
+  0.6183007
+  0.6679738
+  0.58562094
+  0.59869284
+  0.606536
+  0.76732034
+  0.5398693
+  0.6470588
+  0.54901963
+  0.6405229
+  0.654902
+  0.64836603
+  0.6535948
+  0.68888885
 
 Exemplo de processamento de áudio:
 [diag.wav] arquivo= exemplos/e000001_exemplo/dados.wav  bytes= 150990

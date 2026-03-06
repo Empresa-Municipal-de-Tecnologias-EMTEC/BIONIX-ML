@@ -62,6 +62,41 @@ fn _parse_float_ascii(var texto: String) -> Float32:
 
     return sinal * (inteiro + (frac / base))
 
+fn _normalizar_imagem_min_max_global(var matriz: List[List[Float32]]) -> List[List[Float32]]:
+    if len(matriz) == 0:
+        return List[List[Float32]]()
+
+    var first_found = False
+    var min_v: Float32 = 0.0
+    var max_v: Float32 = 0.0
+
+    for row in matriz:
+        for v in row:
+            if not first_found:
+                min_v = v
+                max_v = v
+                first_found = True
+            else:
+                if v < min_v:
+                    min_v = v
+                if v > max_v:
+                    max_v = v
+
+    if not first_found:
+        return List[List[Float32]]()
+
+    var denom = max_v - min_v
+    var out = List[List[Float32]]()
+    for row in matriz:
+        var row_out = List[Float32]()
+        for v in row:
+            if denom == 0.0:
+                row_out.append(0.0)
+            else:
+                row_out.append((v - min_v) / denom)
+        out.append(row_out^)
+    return out^
+
 def executar_exemplo():
     print("--- Exemplo e000001: leitura e normalização de dados ---")
 
@@ -134,20 +169,42 @@ def executar_exemplo():
     # Tenta carregar BMP a partir do pacote `dados`
     var caminho_bmp = "exemplos/e000001_exemplo/dados.bmp"
     var bmp_diag_ok = dados_pkg.diagnosticar_bmp(caminho_bmp)
-    var bmp_info = dados_pkg.carregar_bmp(caminho_bmp)
+    var grayscale_matriz = dados_pkg.carregar_bmp_grayscale_matriz(caminho_bmp)
 
-    var imagem_para_normalizar = List[List[Float32]]()
-    if bmp_diag_ok and bmp_info.width > 0 and bmp_info.height > 0 and len(bmp_info.pixels) > 0:
-        print("Arquivo BMP encontrado:", caminho_bmp, "w=", bmp_info.width, "h=", bmp_info.height, "bpp=", bmp_info.bits_per_pixel)
-        print("BMP validado e lido; usando matriz segura para normalização do exemplo")
-        var row1 = List[Float32]()
-        row1.append(0.0)
-        row1.append(128.0)
-        var row2 = List[Float32]()
-        row2.append(255.0)
-        row2.append(64.0)
-        imagem_para_normalizar.append(row1^)
-        imagem_para_normalizar.append(row2^)
+    var imagem_retangular = List[List[Float32]]()
+    if bmp_diag_ok and len(grayscale_matriz) > 0:
+        print("Arquivo BMP encontrado:", caminho_bmp)
+        print("Teste 01 - len(grayscale)=", len(grayscale_matriz))
+        for y in range(len(grayscale_matriz)):
+            print("Teste 02 - y=", y, " len(grayscale)=", len(grayscale_matriz))
+            if y < 0 or y >= len(grayscale_matriz):
+                print("ERRO INDICE Y - fora do limite: y=", y, " len=", len(grayscale_matriz))
+                break
+
+            print("Teste 03 - acessando grayscale[y]")
+            var src_row = grayscale_matriz[y].copy()
+            print("Teste 04 - len(src_row)=", len(src_row))
+
+            if len(src_row) > 0:
+                var first_idx = 0
+                var last_idx = len(src_row) - 1
+                print("Teste 05 - first_idx=", first_idx, " last_idx=", last_idx)
+                print("Teste 06 - first_val=", src_row[first_idx], " last_val=", src_row[last_idx])
+
+            imagem_retangular.append(src_row^)
+            print("Teste 07 - appended row y=", y, " len(imagem_retangular)=", len(imagem_retangular))
+
+        print("Teste 08 - fim cópia grayscale, len(imagem_retangular)=", len(imagem_retangular))
+        if len(imagem_retangular) == 0:
+            print("BMP sem pixels utilizáveis — usando imagem simulada")
+            var row1 = List[Float32]()
+            row1.append(0.0)
+            row1.append(128.0)
+            var row2 = List[Float32]()
+            row2.append(255.0)
+            row2.append(64.0)
+            imagem_retangular.append(row1^)
+            imagem_retangular.append(row2^)
     else:
         print("Arquivo BMP não encontrado ou inválido — usando imagem simulada")
         var row1 = List[Float32]()
@@ -156,38 +213,16 @@ def executar_exemplo():
         var row2 = List[Float32]()
         row2.append(255.0)
         row2.append(64.0)
-        imagem_para_normalizar.append(row1^)
-        imagem_para_normalizar.append(row2^)
-
-    var imagem_retangular = List[List[Float32]]()
-    var min_cols_img = 0
-    if len(imagem_para_normalizar) > 0:
-        min_cols_img = len(imagem_para_normalizar[0])
-        for i in range(len(imagem_para_normalizar)):
-            var row_len = len(imagem_para_normalizar[i])
-            if row_len < min_cols_img:
-                min_cols_img = row_len
-
-    if min_cols_img <= 0:
-        var row1 = List[Float32]()
-        row1.append(0.0)
-        row1.append(128.0)
-        var row2 = List[Float32]()
-        row2.append(255.0)
-        row2.append(64.0)
         imagem_retangular.append(row1^)
         imagem_retangular.append(row2^)
-    else:
-        for i in range(len(imagem_para_normalizar)):
-            var row_in = imagem_para_normalizar[i].copy()
-            var row_out = List[Float32]()
-            for j in range(min_cols_img):
-                row_out.append(row_in[j])
-            imagem_retangular.append(row_out^)
 
-    var img_mm = dados_pkg.normalizar_min_max(imagem_retangular.copy())
+    print("Teste 09 - antes da normalização: linhas=", len(imagem_retangular))
+    if len(imagem_retangular) > 0:
+        print("Teste 09.1 - colunas primeira linha=", len(imagem_retangular[0]))
+    var img_mm_matriz = _normalizar_imagem_min_max_global(imagem_retangular^)
+    print("Teste 10 - após normalização")
     print("Imagem normalizada (Min-Max):")
-    print_helpers.imprimir_matriz_float(img_mm.dados_normalizados.copy())
+    print_helpers.imprimir_matriz_float(img_mm_matriz.copy())
 
     # --- Exemplo de áudio ---
     print("\nExemplo de processamento de áudio:")

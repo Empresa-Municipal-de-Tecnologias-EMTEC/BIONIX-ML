@@ -48,8 +48,8 @@ fn min_max_normalize(var dados: List[List[Float32]]) -> MinMaxResult:
                 linha_norm[j] = 0.0
             else:
                 linha_norm[j] = (dados[i][j] - min_col[j]) / denom
-        resultado.append(linha_norm.copy())
-    return MinMaxResult(resultado, min_col, max_col)
+        resultado.append(linha_norm^)
+    return MinMaxResult(resultado^, min_col^, max_col^)
 
 fn z_score_normalize(var dados: List[List[Float32]]) -> ZScoreResult:
     if len(dados) == 0:
@@ -87,6 +87,6 @@ fn z_score_normalize(var dados: List[List[Float32]]) -> ZScoreResult:
                 linha_norm[j] = 0.0
             else:
                 linha_norm[j] = (dados[i][j] - medias[j]) / desvios[j]
-        resultado.append(linha_norm.copy())
+        resultado.append(linha_norm^)
 
-    return ZScoreResult(resultado, medias, desvios)
+    return ZScoreResult(resultado^, medias^, desvios^)
