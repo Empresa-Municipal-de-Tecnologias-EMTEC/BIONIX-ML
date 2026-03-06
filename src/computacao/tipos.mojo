@@ -12,6 +12,10 @@ fn backend_rocm_id() -> Int:
     return 2
 
 
+fn backend_cuda_id() -> Int:
+    return 3
+
+
 fn _normalizar_nome_interno(var nome: String) -> String:
     var n = nome.strip()
     if n == "cpu" or n == "CPU" or n == "Cpu" or n == "cPu" or n == "cpU" or n == "CPu" or n == "cPU":
@@ -20,6 +24,8 @@ fn _normalizar_nome_interno(var nome: String) -> String:
         return "vulkan"
     if n == "rocm" or n == "ROCM" or n == "Rocm":
         return "rocm"
+    if n == "cuda" or n == "CUDA" or n == "Cuda":
+        return "cuda"
     var out = ""
     for i in range(len(n)):
         out = out + n[i:i+1]
@@ -34,6 +40,8 @@ fn backend_id_de_nome(var nome: String) -> Int:
         return backend_vulkan_id()
     if n == "rocm":
         return backend_rocm_id()
+    if n == "cuda":
+        return backend_cuda_id()
     return -1
 
 
@@ -44,6 +52,8 @@ fn backend_nome_de_id(var backend_id: Int) -> String:
         return "vulkan"
     if backend_id == backend_rocm_id():
         return "rocm"
+    if backend_id == backend_cuda_id():
+        return "cuda"
     return "desconhecido"
 
 
@@ -55,7 +65,7 @@ fn backend_nome_normalizado(var nome: String) -> String:
 
 
 fn backend_id_valido(var backend_id: Int) -> Bool:
-    return backend_id == backend_cpu_id() or backend_id == backend_vulkan_id() or backend_id == backend_rocm_id()
+    return backend_id == backend_cpu_id() or backend_id == backend_vulkan_id() or backend_id == backend_rocm_id() or backend_id == backend_cuda_id()
 
 
 fn backend_nome_valido(var nome: String) -> Bool:

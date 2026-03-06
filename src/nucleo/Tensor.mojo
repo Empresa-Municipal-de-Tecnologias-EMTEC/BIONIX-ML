@@ -96,6 +96,8 @@ fn _backend_execucao_efetivo(var id_backend: Int) -> Int:
         return backend_tipos.backend_cpu_id()
     if id_backend == backend_tipos.backend_rocm_id():
         return backend_tipos.backend_cpu_id()
+    if id_backend == backend_tipos.backend_cuda_id():
+        return backend_tipos.backend_cpu_id()
     return backend_tipos.backend_cpu_id()
 
 
