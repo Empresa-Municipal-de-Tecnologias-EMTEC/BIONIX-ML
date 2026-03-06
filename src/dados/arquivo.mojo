@@ -1,13 +1,8 @@
 # Utilitários de I/O de arquivos (texto e binário)
+import src.uteis.arquivo as uteis_arquivo
 
 fn ler_arquivo_texto(var caminho: String) -> String:
-    try:
-        var f = open(caminho, "r")
-        var conteudo = f.read()
-        f.close()
-        return conteudo
-    except Exception:
-        return ""
+    return uteis_arquivo.ler_texto_seguro(caminho)
 
 fn ler_arquivo_binario(var caminho: String) -> List[Int]:
     try:

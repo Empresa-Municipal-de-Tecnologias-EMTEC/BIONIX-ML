@@ -1,4 +1,5 @@
 import src.nucleo.Tensor as tensor_defs
+import src.uteis as uteis
 
 struct CamadaLinear(Movable, Copyable):
     var pesos: tensor_defs.Tensor
@@ -27,68 +28,6 @@ struct CamadaLinear(Movable, Copyable):
         nova.pesos = self.pesos.copy()
         nova.bias = self.bias.copy()
         return nova^
-
-
-fn _digit_value(var ch: String) -> Int:
-    if ch == "0":
-        return 0
-    if ch == "1":
-        return 1
-    if ch == "2":
-        return 2
-    if ch == "3":
-        return 3
-    if ch == "4":
-        return 4
-    if ch == "5":
-        return 5
-    if ch == "6":
-        return 6
-    if ch == "7":
-        return 7
-    if ch == "8":
-        return 8
-    if ch == "9":
-        return 9
-    return -1
-
-
-fn _parse_float_ascii(var texto: String) -> Float32:
-    var s = texto.strip().replace(",", ".")
-    if len(s) == 0:
-        return 0.0
-
-    var sinal: Float32 = 1.0
-    var i: Int = 0
-    if s[0:1] == "-":
-        sinal = -1.0
-        i = 1
-    elif s[0:1] == "+":
-        i = 1
-
-    var inteiro: Float32 = 0.0
-    while i < len(s):
-        var ch = s[i:i+1]
-        if ch == ".":
-            i = i + 1
-            break
-        var d = _digit_value(ch)
-        if d < 0:
-            return sinal * inteiro
-        inteiro = inteiro * 10.0 + Float32(d)
-        i = i + 1
-
-    var frac: Float32 = 0.0
-    var base: Float32 = 1.0
-    while i < len(s):
-        var d = _digit_value(s[i:i+1])
-        if d < 0:
-            break
-        frac = frac * 10.0 + Float32(d)
-        base = base * 10.0
-        i = i + 1
-
-    return sinal * (inteiro + (frac / base))
 
 
 fn prever(camada: CamadaLinear, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -143,106 +82,34 @@ fn treinar(
     return loss_final
 
 
-fn _float_list_para_texto(valores: List[Float32]) -> String:
-    var out = ""
-    for i in range(len(valores)):
-        out = out + String(valores[i])
-        if i < len(valores) - 1:
-            out = out + ","
-    return out
-
-
 fn salvar_pesos(camada: CamadaLinear, var caminho: String):
-    try:
-        var f = open(caminho, "w")
-        f.write("tipo=" + camada.tipo_computacao + "\n")
-        f.write("num_entradas=" + String(camada.pesos.formato[0]) + "\n")
-        f.write("pesos=" + _float_list_para_texto(camada.pesos.dados.copy()) + "\n")
-        f.write("bias=" + String(camada.bias.dados[0]) + "\n")
-        f.close()
-    except Exception:
-        pass
-
-
-fn _parse_linha_chave_valor(var linha: String) -> List[String]:
-    var idx: Int = -1
-    for i in range(len(linha)):
-        if linha[i:i+1] == "=":
-            idx = i
-            break
-    var out = List[String]()
-    if idx < 0:
-        out.append(linha)
-        out.append("")
-        return out^
-    out.append(linha[0:idx])
-    out.append(linha[idx + 1:len(linha)])
-    return out^
-
-
-fn _split_csv_simples(var texto: String) -> List[String]:
-    var itens = List[String]()
-    var buffer = ""
-    for i in range(len(texto)):
-        var c = texto[i:i+1]
-        if c == ",":
-            itens.append(buffer)
-            buffer = ""
-        else:
-            buffer = buffer + c
-    itens.append(buffer)
-    return itens^
+    var chaves = List[String]()
+    var valores = List[String]()
+    chaves.append("tipo")
+    valores.append(camada.tipo_computacao)
+    chaves.append("num_entradas")
+    valores.append(String(camada.pesos.formato[0]))
+    chaves.append("pesos")
+    valores.append(uteis.float_list_para_csv(camada.pesos.dados.copy()))
+    chaves.append("bias")
+    valores.append(String(camada.bias.dados[0]))
+    _ = uteis.salvar_kv_arquivo_seguro(caminho, chaves, valores)
 
 
 fn carregar_pesos(var caminho: String, var tipo_computacao_padrao: String = "cpu") -> CamadaLinear:
-    var conteudo = ""
-    try:
-        var f = open(caminho, "r")
-        conteudo = f.read()
-        f.close()
-    except Exception:
+    var kv = uteis.carregar_kv_arquivo_seguro(caminho)
+    if len(kv.chaves) == 0:
         return CamadaLinear(1, tipo_computacao_padrao)^
 
-    var tipo = tipo_computacao_padrao
-    var num_entradas: Int = 0
+    var tipo = uteis.obter_valor_ou_padrao(kv, "tipo", tipo_computacao_padrao)
+    var num_entradas: Int = Int(uteis.parse_float_ascii(uteis.obter_valor_ou_padrao(kv, "num_entradas", "0")))
     var pesos_lidos = List[Float32]()
-    var bias_lido: Float32 = 0.0
-
-    var linha = ""
-    for i in range(len(conteudo)):
-        var c = conteudo[i:i+1]
-        if c == "\n":
-            var kv = _parse_linha_chave_valor(linha)
-            if len(kv) == 2:
-                if kv[0] == "tipo":
-                    tipo = kv[1]
-                elif kv[0] == "num_entradas":
-                    num_entradas = Int(_parse_float_ascii(kv[1]))
-                elif kv[0] == "pesos":
-                    var itens = _split_csv_simples(kv[1])
-                    for it in itens:
-                        if len(it.strip()) > 0:
-                            pesos_lidos.append(_parse_float_ascii(it))
-                elif kv[0] == "bias":
-                    bias_lido = _parse_float_ascii(kv[1])
-            linha = ""
-        else:
-            linha = linha + c
-
-    if linha != "":
-        var kv_last = _parse_linha_chave_valor(linha)
-        if len(kv_last) == 2:
-            if kv_last[0] == "tipo":
-                tipo = kv_last[1]
-            elif kv_last[0] == "num_entradas":
-                num_entradas = Int(_parse_float_ascii(kv_last[1]))
-            elif kv_last[0] == "pesos":
-                var itens_last = _split_csv_simples(kv_last[1])
-                for it in itens_last:
-                    if len(it.strip()) > 0:
-                        pesos_lidos.append(_parse_float_ascii(it))
-            elif kv_last[0] == "bias":
-                bias_lido = _parse_float_ascii(kv_last[1])
+    var pesos_csv = uteis.obter_valor_ou_padrao(kv, "pesos", "")
+    var itens = uteis.split_csv_simples(pesos_csv)
+    for it in itens:
+        if len(it.strip()) > 0:
+            pesos_lidos.append(uteis.parse_float_ascii(it))
+    var bias_lido: Float32 = uteis.parse_float_ascii(uteis.obter_valor_ou_padrao(kv, "bias", "0"))
 
     if num_entradas <= 0:
         num_entradas = len(pesos_lidos)

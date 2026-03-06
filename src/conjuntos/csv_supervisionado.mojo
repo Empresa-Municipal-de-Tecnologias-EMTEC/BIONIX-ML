@@ -1,6 +1,7 @@
 import src.dados as dados_pkg
 import src.dados.csv as csv_mod
 import src.nucleo.Tensor as tensor_defs
+import src.uteis as uteis
 import math
 
 struct ConjuntoSupervisionado(Movable, Copyable):
@@ -52,68 +53,6 @@ struct ConjuntoSupervisionado(Movable, Copyable):
             self.media_alvo,
             self.desvio_alvo,
         )^
-
-
-fn _digit_value(var ch: String) -> Int:
-    if ch == "0":
-        return 0
-    if ch == "1":
-        return 1
-    if ch == "2":
-        return 2
-    if ch == "3":
-        return 3
-    if ch == "4":
-        return 4
-    if ch == "5":
-        return 5
-    if ch == "6":
-        return 6
-    if ch == "7":
-        return 7
-    if ch == "8":
-        return 8
-    if ch == "9":
-        return 9
-    return -1
-
-
-fn _parse_float_ascii(var texto: String) -> Float32:
-    var s = texto.strip().replace(",", ".")
-    if len(s) == 0:
-        return 0.0
-
-    var sinal: Float32 = 1.0
-    var i: Int = 0
-    if s[0:1] == "-":
-        sinal = -1.0
-        i = 1
-    elif s[0:1] == "+":
-        i = 1
-
-    var inteiro: Float32 = 0.0
-    while i < len(s):
-        var ch = s[i:i+1]
-        if ch == ".":
-            i = i + 1
-            break
-        var d = _digit_value(ch)
-        if d < 0:
-            return sinal * inteiro
-        inteiro = inteiro * 10.0 + Float32(d)
-        i = i + 1
-
-    var frac: Float32 = 0.0
-    var base: Float32 = 1.0
-    while i < len(s):
-        var d = _digit_value(s[i:i+1])
-        if d < 0:
-            break
-        frac = frac * 10.0 + Float32(d)
-        base = base * 10.0
-        i = i + 1
-
-    return sinal * (inteiro + (frac / base))
 
 
 fn _conjunto_vazio(var tipo_computacao: String) -> ConjuntoSupervisionado:
@@ -186,7 +125,7 @@ fn carregar_csv_supervisionado(
             if len(campo.strip()) == 0:
                 linha_ok = False
                 break
-            var v = _parse_float_ascii(campo)
+            var v = uteis.parse_float_ascii(campo)
             if j == idx_alvo:
                 alvo_linha = v
             else:

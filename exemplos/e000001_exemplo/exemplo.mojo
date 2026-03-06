@@ -1,66 +1,7 @@
 import src.dados as dados_pkg
 import src.dados.print_helpers as print_helpers
 import src.nucleo.nucleo as nucleo
-
-fn _digit_value(var ch: String) -> Int:
-    if ch == "0":
-        return 0
-    if ch == "1":
-        return 1
-    if ch == "2":
-        return 2
-    if ch == "3":
-        return 3
-    if ch == "4":
-        return 4
-    if ch == "5":
-        return 5
-    if ch == "6":
-        return 6
-    if ch == "7":
-        return 7
-    if ch == "8":
-        return 8
-    if ch == "9":
-        return 9
-    return -1
-
-fn _parse_float_ascii(var texto: String) -> Float32:
-    var s = texto.strip().replace(",", ".")
-    if len(s) == 0:
-        return 0.0
-
-    var sinal: Float32 = 1.0
-    var i: Int = 0
-    if s[0:1] == "-":
-        sinal = -1.0
-        i = 1
-    elif s[0:1] == "+":
-        i = 1
-
-    var inteiro: Float32 = 0.0
-    while i < len(s):
-        var ch = s[i:i+1]
-        if ch == ".":
-            i = i + 1
-            break
-        var d = _digit_value(ch)
-        if d < 0:
-            return sinal * inteiro
-        inteiro = inteiro * 10.0 + Float32(d)
-        i = i + 1
-
-    var frac: Float32 = 0.0
-    var base: Float32 = 1.0
-    while i < len(s):
-        var d = _digit_value(s[i:i+1])
-        if d < 0:
-            break
-        frac = frac * 10.0 + Float32(d)
-        base = base * 10.0
-        i = i + 1
-
-    return sinal * (inteiro + (frac / base))
+import src.uteis as uteis
 
 fn _normalizar_imagem_min_max_global(var matriz: List[List[Float32]]) -> List[List[Float32]]:
     if len(matriz) == 0:
@@ -148,7 +89,7 @@ def executar_exemplo():
         for j in range(len(r)):
             var campo = r[j].strip()
             var campo_clean = campo.replace(",", ".")
-            linha[j] = _parse_float_ascii(campo_clean)
+            linha[j] = uteis.parse_float_ascii(campo_clean)
         dados_numericos.append(linha.copy())
 
     print("Matriz numérica (primeiras linhas):")

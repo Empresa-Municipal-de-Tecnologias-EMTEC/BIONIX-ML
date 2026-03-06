@@ -2,6 +2,7 @@ import src.camadas.linear as linear_pkg
 import src.conjuntos as conjuntos_pkg
 import src.conjuntos.csv_supervisionado as conjuntos_csv
 import src.nucleo.Tensor as tensor_defs
+import src.uteis as uteis
 
 struct NormalizacaoPersistida(Movable, Copyable):
     var tipo_entradas: String
@@ -28,128 +29,20 @@ struct NormalizacaoPersistida(Movable, Copyable):
         self.desvio_alvo = desvio_alvo_in
 
 
-fn _digit_value(var ch: String) -> Int:
-    if ch == "0":
-        return 0
-    if ch == "1":
-        return 1
-    if ch == "2":
-        return 2
-    if ch == "3":
-        return 3
-    if ch == "4":
-        return 4
-    if ch == "5":
-        return 5
-    if ch == "6":
-        return 6
-    if ch == "7":
-        return 7
-    if ch == "8":
-        return 8
-    if ch == "9":
-        return 9
-    return -1
-
-
-fn _parse_float_ascii(var texto: String) -> Float32:
-    var s = texto.strip().replace(",", ".")
-    if len(s) == 0:
-        return 0.0
-
-    var sinal: Float32 = 1.0
-    var i: Int = 0
-    if s[0:1] == "-":
-        sinal = -1.0
-        i = 1
-    elif s[0:1] == "+":
-        i = 1
-
-    var inteiro: Float32 = 0.0
-    while i < len(s):
-        var ch = s[i:i+1]
-        if ch == ".":
-            i = i + 1
-            break
-        var d = _digit_value(ch)
-        if d < 0:
-            return sinal * inteiro
-        inteiro = inteiro * 10.0 + Float32(d)
-        i = i + 1
-
-    var frac: Float32 = 0.0
-    var base: Float32 = 1.0
-    while i < len(s):
-        var d = _digit_value(s[i:i+1])
-        if d < 0:
-            break
-        frac = frac * 10.0 + Float32(d)
-        base = base * 10.0
-        i = i + 1
-
-    return sinal * (inteiro + (frac / base))
-
-
-fn _float_list_para_texto(valores: List[Float32]) -> String:
-    var out = ""
-    for i in range(len(valores)):
-        out = out + String(valores[i])
-        if i < len(valores) - 1:
-            out = out + ","
-    return out
-
-
-fn _split_csv_simples(var texto: String) -> List[String]:
-    var itens = List[String]()
-    var buffer = ""
-    for i in range(len(texto)):
-        var c = texto[i:i+1]
-        if c == ",":
-            itens.append(buffer)
-            buffer = ""
-        else:
-            buffer = buffer + c
-    itens.append(buffer)
-    return itens^
-
-
-fn _parse_linha_chave_valor(var linha: String) -> List[String]:
-    var idx: Int = -1
-    for i in range(len(linha)):
-        if linha[i:i+1] == "=":
-            idx = i
-            break
-    var out = List[String]()
-    if idx < 0:
-        out.append(linha)
-        out.append("")
-        return out^
-    out.append(linha[0:idx])
-    out.append(linha[idx + 1:len(linha)])
-    return out^
-
-
 fn salvar_normalizacao(conjunto: conjuntos_csv.ConjuntoSupervisionado, var caminho: String):
-    try:
-        var f = open(caminho, "w")
-        f.write("tipo_entradas=" + conjunto.tipo_normalizacao_entradas + "\n")
-        f.write("media_entradas=" + _float_list_para_texto(conjunto.media_entradas.copy()) + "\n")
-        f.write("desvio_entradas=" + _float_list_para_texto(conjunto.desvio_entradas.copy()) + "\n")
-        f.write("tipo_alvo=" + conjunto.tipo_normalizacao_alvo + "\n")
-        f.write("media_alvo=" + String(conjunto.media_alvo) + "\n")
-        f.write("desvio_alvo=" + String(conjunto.desvio_alvo) + "\n")
-        f.close()
-    except Exception:
-        pass
+    var conteudo = ""
+    conteudo = conteudo + "tipo_entradas=" + conjunto.tipo_normalizacao_entradas + "\n"
+    conteudo = conteudo + "media_entradas=" + uteis.float_list_para_csv(conjunto.media_entradas.copy()) + "\n"
+    conteudo = conteudo + "desvio_entradas=" + uteis.float_list_para_csv(conjunto.desvio_entradas.copy()) + "\n"
+    conteudo = conteudo + "tipo_alvo=" + conjunto.tipo_normalizacao_alvo + "\n"
+    conteudo = conteudo + "media_alvo=" + String(conjunto.media_alvo) + "\n"
+    conteudo = conteudo + "desvio_alvo=" + String(conjunto.desvio_alvo) + "\n"
+    _ = uteis.gravar_texto_seguro(caminho, conteudo)
 
 
 fn carregar_normalizacao(var caminho: String) -> NormalizacaoPersistida:
-    var conteudo = ""
-    try:
-        var f = open(caminho, "r")
-        conteudo = f.read()
-        f.close()
-    except Exception:
+    var conteudo = uteis.ler_texto_seguro(caminho)
+    if len(conteudo) == 0:
         return NormalizacaoPersistida("nenhuma", List[Float32](), List[Float32](), "nenhuma", 0.0, 1.0)^
 
     var tipo_entradas = "nenhuma"
@@ -163,26 +56,26 @@ fn carregar_normalizacao(var caminho: String) -> NormalizacaoPersistida:
     for i in range(len(conteudo)):
         var c = conteudo[i:i+1]
         if c == "\n":
-            var kv = _parse_linha_chave_valor(linha)
+            var kv = uteis.parse_linha_chave_valor(linha)
             if len(kv) == 2:
                 if kv[0] == "tipo_entradas":
                     tipo_entradas = kv[1]
                 elif kv[0] == "media_entradas":
-                    var itens = _split_csv_simples(kv[1])
+                    var itens = uteis.split_csv_simples(kv[1])
                     for it in itens:
                         if len(it.strip()) > 0:
-                            medias.append(_parse_float_ascii(it))
+                            medias.append(uteis.parse_float_ascii(it))
                 elif kv[0] == "desvio_entradas":
-                    var itens_d = _split_csv_simples(kv[1])
+                    var itens_d = uteis.split_csv_simples(kv[1])
                     for it in itens_d:
                         if len(it.strip()) > 0:
-                            desvios.append(_parse_float_ascii(it))
+                            desvios.append(uteis.parse_float_ascii(it))
                 elif kv[0] == "tipo_alvo":
                     tipo_alvo = kv[1]
                 elif kv[0] == "media_alvo":
-                    media_alvo = _parse_float_ascii(kv[1])
+                    media_alvo = uteis.parse_float_ascii(kv[1])
                 elif kv[0] == "desvio_alvo":
-                    desvio_alvo = _parse_float_ascii(kv[1])
+                    desvio_alvo = uteis.parse_float_ascii(kv[1])
             linha = ""
         else:
             linha = linha + c
