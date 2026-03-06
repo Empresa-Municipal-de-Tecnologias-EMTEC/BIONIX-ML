@@ -1,4 +1,5 @@
 import src.dados as dados_pkg
+import src.dados.tipos_normalizacao as norm_tipos
 import src.dados.csv as csv_mod
 import src.nucleo.Tensor as tensor_defs
 import src.uteis as uteis
@@ -9,10 +10,10 @@ struct ConjuntoSupervisionado(Movable, Copyable):
     var alvos: tensor_defs.Tensor
     var cabecalho: List[String]
     var indice_alvo: Int
-    var tipo_normalizacao_entradas: String
+    var tipo_normalizacao_entradas_id: Int
     var media_entradas: List[Float32]
     var desvio_entradas: List[Float32]
-    var tipo_normalizacao_alvo: String
+    var tipo_normalizacao_alvo_id: Int
     var media_alvo: Float32
     var desvio_alvo: Float32
 
@@ -22,10 +23,10 @@ struct ConjuntoSupervisionado(Movable, Copyable):
         var alvos_in: tensor_defs.Tensor,
         var cabecalho_in: List[String],
         var indice_alvo_in: Int,
-        var tipo_normalizacao_entradas_in: String,
+        var tipo_normalizacao_entradas_id_in: Int,
         var media_entradas_in: List[Float32],
         var desvio_entradas_in: List[Float32],
-        var tipo_normalizacao_alvo_in: String,
+        var tipo_normalizacao_alvo_id_in: Int,
         var media_alvo_in: Float32,
         var desvio_alvo_in: Float32,
     ):
@@ -33,10 +34,10 @@ struct ConjuntoSupervisionado(Movable, Copyable):
         self.alvos = alvos_in^
         self.cabecalho = cabecalho_in^
         self.indice_alvo = indice_alvo_in
-        self.tipo_normalizacao_entradas = tipo_normalizacao_entradas_in^
+        self.tipo_normalizacao_entradas_id = tipo_normalizacao_entradas_id_in
         self.media_entradas = media_entradas_in^
         self.desvio_entradas = desvio_entradas_in^
-        self.tipo_normalizacao_alvo = tipo_normalizacao_alvo_in^
+        self.tipo_normalizacao_alvo_id = tipo_normalizacao_alvo_id_in
         self.media_alvo = media_alvo_in
         self.desvio_alvo = desvio_alvo_in
 
@@ -46,10 +47,10 @@ struct ConjuntoSupervisionado(Movable, Copyable):
             self.alvos.copy(),
             self.cabecalho.copy(),
             self.indice_alvo,
-            self.tipo_normalizacao_entradas,
+            self.tipo_normalizacao_entradas_id,
             self.media_entradas.copy(),
             self.desvio_entradas.copy(),
-            self.tipo_normalizacao_alvo,
+            self.tipo_normalizacao_alvo_id,
             self.media_alvo,
             self.desvio_alvo,
         )^
@@ -67,10 +68,10 @@ fn _conjunto_vazio(var tipo_computacao: String) -> ConjuntoSupervisionado:
         tensor_defs.Tensor(formato_y_vazio^, tipo_computacao),
         List[String](),
         0,
-        "nenhuma",
+        norm_tipos.normalizacao_nenhuma_id(),
         List[Float32](),
         List[Float32](),
-        "nenhuma",
+        norm_tipos.normalizacao_nenhuma_id(),
         0.0,
         1.0,
     )^
@@ -82,8 +83,8 @@ fn carregar_csv_supervisionado(
     var delimitador: String = ",",
     var detectar_cabecalho: Bool = True,
     var tipo_computacao: String = "cpu",
-    var normalizacao_entradas: String = "zscore",
-    var normalizacao_alvo: String = "zscore",
+    var normalizacao_entradas_id: Int = norm_tipos.normalizacao_zscore_id(),
+    var normalizacao_alvo_id: Int = norm_tipos.normalizacao_zscore_id(),
 ) -> ConjuntoSupervisionado:
     #print("[debug csv_sup] inicio")
     var parsed = csv_mod.CSVData(List[String](), List[List[String]](), "")
@@ -138,26 +139,26 @@ fn carregar_csv_supervisionado(
 
     #print("[debug csv_sup] linhas_validas=", linhas_validas)
 
-    var tipo_norm = "nenhuma"
+    var tipo_norm_id = norm_tipos.normalizacao_nenhuma_id()
     var medias = List[Float32]()
     var desvios = List[Float32]()
-    if normalizacao_entradas == "zscore" and len(entradas_matriz) > 0 and len(entradas_matriz[0]) > 0:
+    if normalizacao_entradas_id == norm_tipos.normalizacao_zscore_id() and len(entradas_matriz) > 0 and len(entradas_matriz[0]) > 0:
         #print("[debug csv_sup] iniciando zscore entradas")
         try:
             var norm = dados_pkg.normalizar_zscore(entradas_matriz.copy())
             entradas_matriz = norm.dados_normalizados.copy()
             medias = norm.media_por_coluna.copy()
             desvios = norm.desvio_por_coluna.copy()
-            tipo_norm = "zscore"
+            tipo_norm_id = norm_tipos.normalizacao_zscore_id()
             #print("[debug csv_sup] zscore entradas ok")
         except Exception:
             #print("[debug csv_sup] zscore entradas falhou")
-            tipo_norm = "nenhuma"
+            tipo_norm_id = norm_tipos.normalizacao_nenhuma_id()
 
-    var tipo_norm_alvo = "nenhuma"
+    var tipo_norm_alvo_id = norm_tipos.normalizacao_nenhuma_id()
     var media_alvo: Float32 = 0.0
     var desvio_alvo: Float32 = 1.0
-    if normalizacao_alvo == "zscore" and len(alvos_flat) > 0:
+    if normalizacao_alvo_id == norm_tipos.normalizacao_zscore_id() and len(alvos_flat) > 0:
         #print("[debug csv_sup] iniciando zscore alvo")
         var soma_alvo: Float32 = 0.0
         for i in range(len(alvos_flat)):
@@ -177,7 +178,7 @@ fn carregar_csv_supervisionado(
         else:
             for i in range(len(alvos_flat)):
                 alvos_flat[i] = (alvos_flat[i] - media_alvo) / desvio_alvo
-        tipo_norm_alvo = "zscore"
+        tipo_norm_alvo_id = norm_tipos.normalizacao_zscore_id()
         #print("[debug csv_sup] zscore alvo ok")
 
     var entradas_flat = List[Float32]()
@@ -208,17 +209,17 @@ fn carregar_csv_supervisionado(
         y^,
         parsed.cabecalho.copy(),
         idx_alvo,
-        tipo_norm,
+        tipo_norm_id,
         medias^,
         desvios^,
-        tipo_norm_alvo,
+        tipo_norm_alvo_id,
         media_alvo,
         desvio_alvo,
     )^
 
 
 fn normalizar_amostra_entradas(conjunto: ConjuntoSupervisionado, amostra: List[Float32]) -> List[Float32]:
-    if conjunto.tipo_normalizacao_entradas != "zscore":
+    if conjunto.tipo_normalizacao_entradas_id != norm_tipos.normalizacao_zscore_id():
         return amostra.copy()
 
     var out = List[Float32]()
@@ -235,6 +236,6 @@ fn normalizar_amostra_entradas(conjunto: ConjuntoSupervisionado, amostra: List[F
 
 
 fn desnormalizar_valor_alvo(conjunto: ConjuntoSupervisionado, valor_normalizado: Float32) -> Float32:
-    if conjunto.tipo_normalizacao_alvo != "zscore":
+    if conjunto.tipo_normalizacao_alvo_id != norm_tipos.normalizacao_zscore_id():
         return valor_normalizado
     return valor_normalizado * conjunto.desvio_alvo + conjunto.media_alvo

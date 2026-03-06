@@ -1,4 +1,5 @@
 import src.conjuntos.csv_supervisionado as csv_supervisionado
+import src.dados.tipos_normalizacao as norm_tipos
 
 def carregar_csv_supervisionado(
     var caminho: String,
@@ -6,8 +7,8 @@ def carregar_csv_supervisionado(
     var delimitador: String = ",",
     var detectar_cabecalho: Bool = True,
     var tipo_computacao: String = "cpu",
-    var normalizacao_entradas: String = "zscore",
-    var normalizacao_alvo: String = "zscore",
+    var normalizacao_entradas_id: Int = norm_tipos.normalizacao_zscore_id(),
+    var normalizacao_alvo_id: Int = norm_tipos.normalizacao_zscore_id(),
 ) -> csv_supervisionado.ConjuntoSupervisionado:
     return csv_supervisionado.carregar_csv_supervisionado(
         caminho,
@@ -15,8 +16,8 @@ def carregar_csv_supervisionado(
         delimitador,
         detectar_cabecalho,
         tipo_computacao,
-        normalizacao_entradas,
-        normalizacao_alvo,
+        normalizacao_entradas_id,
+        normalizacao_alvo_id,
     )
 
 

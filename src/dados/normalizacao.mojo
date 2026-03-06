@@ -1,5 +1,6 @@
 # Normalizações: Min-Max e Z-Score (padronização)
 import src.uteis as uteis
+import src.dados.tipos_normalizacao as norm_tipos
 
 struct MinMaxResult(Movable, Copyable):
     var dados_normalizados: List[List[Float32]]
@@ -23,35 +24,35 @@ struct ZScoreResult(Movable, Copyable):
 
 
 struct NormalizacaoPersistida(Movable, Copyable):
-    var tipo_entradas: String
+    var tipo_entradas_id: Int
     var media_entradas: List[Float32]
     var desvio_entradas: List[Float32]
-    var tipo_alvo: String
+    var tipo_alvo_id: Int
     var media_alvo: Float32
     var desvio_alvo: Float32
 
     fn __init__(
         out self,
-        var tipo_entradas_in: String,
+        var tipo_entradas_id_in: Int,
         var media_entradas_in: List[Float32],
         var desvio_entradas_in: List[Float32],
-        var tipo_alvo_in: String,
+        var tipo_alvo_id_in: Int,
         var media_alvo_in: Float32,
         var desvio_alvo_in: Float32,
     ):
-        self.tipo_entradas = tipo_entradas_in^
+        self.tipo_entradas_id = tipo_entradas_id_in
         self.media_entradas = media_entradas_in^
         self.desvio_entradas = desvio_entradas_in^
-        self.tipo_alvo = tipo_alvo_in^
+        self.tipo_alvo_id = tipo_alvo_id_in
         self.media_alvo = media_alvo_in
         self.desvio_alvo = desvio_alvo_in
 
     fn copy(self) -> NormalizacaoPersistida:
         return NormalizacaoPersistida(
-            self.tipo_entradas,
+            self.tipo_entradas_id,
             self.media_entradas.copy(),
             self.desvio_entradas.copy(),
-            self.tipo_alvo,
+            self.tipo_alvo_id,
             self.media_alvo,
             self.desvio_alvo,
         )
@@ -59,18 +60,18 @@ struct NormalizacaoPersistida(Movable, Copyable):
 import math
 
 fn criar_normalizacao_persistida(
-    var tipo_entradas: String,
+    var tipo_entradas_id: Int,
     var media_entradas: List[Float32],
     var desvio_entradas: List[Float32],
-    var tipo_alvo: String,
+    var tipo_alvo_id: Int,
     var media_alvo: Float32,
     var desvio_alvo: Float32,
 ) -> NormalizacaoPersistida:
     return NormalizacaoPersistida(
-        tipo_entradas,
+        tipo_entradas_id,
         media_entradas^,
         desvio_entradas^,
-        tipo_alvo,
+        tipo_alvo_id,
         media_alvo,
         desvio_alvo,
     )
@@ -79,14 +80,14 @@ fn criar_normalizacao_persistida(
 fn salvar_normalizacao_persistida(norm: NormalizacaoPersistida, var caminho: String):
     var chaves = List[String]()
     var valores = List[String]()
-    chaves.append("tipo_entradas")
-    valores.append(norm.tipo_entradas)
+    chaves.append("tipo_entradas_id")
+    valores.append(String(norm.tipo_entradas_id))
     chaves.append("media_entradas")
     valores.append(uteis.float_list_para_csv(norm.media_entradas.copy()))
     chaves.append("desvio_entradas")
     valores.append(uteis.float_list_para_csv(norm.desvio_entradas.copy()))
-    chaves.append("tipo_alvo")
-    valores.append(norm.tipo_alvo)
+    chaves.append("tipo_alvo_id")
+    valores.append(String(norm.tipo_alvo_id))
     chaves.append("media_alvo")
     valores.append(String(norm.media_alvo))
     chaves.append("desvio_alvo")
@@ -97,12 +98,31 @@ fn salvar_normalizacao_persistida(norm: NormalizacaoPersistida, var caminho: Str
 fn carregar_normalizacao_persistida(var caminho: String) -> NormalizacaoPersistida:
     var kv = uteis.carregar_kv_arquivo_seguro(caminho)
     if len(kv.chaves) == 0:
-        return NormalizacaoPersistida("nenhuma", List[Float32](), List[Float32](), "nenhuma", 0.0, 1.0)
+        return NormalizacaoPersistida(
+            norm_tipos.normalizacao_nenhuma_id(),
+            List[Float32](),
+            List[Float32](),
+            norm_tipos.normalizacao_nenhuma_id(),
+            0.0,
+            1.0,
+        )
 
-    var tipo_entradas = uteis.obter_valor_ou_padrao(kv, "tipo_entradas", "nenhuma")
+    var tipo_entradas_id = Int(uteis.parse_float_ascii(uteis.obter_valor_ou_padrao(kv, "tipo_entradas_id", "-1")))
+    if not norm_tipos.normalizacao_id_valido(tipo_entradas_id):
+        var tipo_entradas_legado = uteis.obter_valor_ou_padrao(kv, "tipo_entradas", "nenhuma")
+        tipo_entradas_id = norm_tipos.normalizacao_id_de_nome(tipo_entradas_legado)
+    if not norm_tipos.normalizacao_id_valido(tipo_entradas_id):
+        tipo_entradas_id = norm_tipos.normalizacao_nenhuma_id()
+
     var medias = List[Float32]()
     var desvios = List[Float32]()
-    var tipo_alvo = uteis.obter_valor_ou_padrao(kv, "tipo_alvo", "nenhuma")
+    var tipo_alvo_id = Int(uteis.parse_float_ascii(uteis.obter_valor_ou_padrao(kv, "tipo_alvo_id", "-1")))
+    if not norm_tipos.normalizacao_id_valido(tipo_alvo_id):
+        var tipo_alvo_legado = uteis.obter_valor_ou_padrao(kv, "tipo_alvo", "nenhuma")
+        tipo_alvo_id = norm_tipos.normalizacao_id_de_nome(tipo_alvo_legado)
+    if not norm_tipos.normalizacao_id_valido(tipo_alvo_id):
+        tipo_alvo_id = norm_tipos.normalizacao_nenhuma_id()
+
     var media_alvo = uteis.parse_float_ascii(uteis.obter_valor_ou_padrao(kv, "media_alvo", "0"))
     var desvio_alvo = uteis.parse_float_ascii(uteis.obter_valor_ou_padrao(kv, "desvio_alvo", "1"))
 
@@ -116,11 +136,11 @@ fn carregar_normalizacao_persistida(var caminho: String) -> NormalizacaoPersisti
         if len(it.strip()) > 0:
             desvios.append(uteis.parse_float_ascii(it))
 
-    return NormalizacaoPersistida(tipo_entradas, medias^, desvios^, tipo_alvo, media_alvo, desvio_alvo)
+    return NormalizacaoPersistida(tipo_entradas_id, medias^, desvios^, tipo_alvo_id, media_alvo, desvio_alvo)
 
 
 fn normalizar_amostra_entradas(norm: NormalizacaoPersistida, amostra: List[Float32]) -> List[Float32]:
-    if norm.tipo_entradas != "zscore":
+    if norm.tipo_entradas_id != norm_tipos.normalizacao_zscore_id():
         return amostra.copy()
     var out = List[Float32]()
     for i in range(len(amostra)):
@@ -136,7 +156,7 @@ fn normalizar_amostra_entradas(norm: NormalizacaoPersistida, amostra: List[Float
 
 
 fn desnormalizar_valor_alvo(norm: NormalizacaoPersistida, valor_normalizado: Float32) -> Float32:
-    if norm.tipo_alvo != "zscore":
+    if norm.tipo_alvo_id != norm_tipos.normalizacao_zscore_id():
         return valor_normalizado
     return valor_normalizado * norm.desvio_alvo + norm.media_alvo
 

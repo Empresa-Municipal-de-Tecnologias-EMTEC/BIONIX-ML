@@ -4,6 +4,7 @@ import src.dados.arquivo as arquivo
 import src.dados.wav as wav
 import src.dados.bmp as bmp
 import src.dados.normalizacao as normalizacao
+import src.dados.tipos_normalizacao as tipos_normalizacao
 import src.dados.conversao as conversao
 
 alias BMP_MODO_RGB = bmp.BMP_MODO_RGB
@@ -49,21 +50,39 @@ def normalizar_zscore(var dados_numericos: List[List[Float32]]) -> normalizacao.
     return normalizacao.z_score_normalize(dados_numericos^)
 
 def criar_normalizacao_persistida(
-    var tipo_entradas: String,
+    var tipo_entradas_id: Int,
     var media_entradas: List[Float32],
     var desvio_entradas: List[Float32],
-    var tipo_alvo: String,
+    var tipo_alvo_id: Int,
     var media_alvo: Float32,
     var desvio_alvo: Float32,
 ) -> normalizacao.NormalizacaoPersistida:
     return normalizacao.criar_normalizacao_persistida(
-        tipo_entradas,
+        tipo_entradas_id,
         media_entradas,
         desvio_entradas,
-        tipo_alvo,
+        tipo_alvo_id,
         media_alvo,
         desvio_alvo,
     )
+
+def normalizacao_nenhuma_id() -> Int:
+    return tipos_normalizacao.normalizacao_nenhuma_id()
+
+def normalizacao_minmax_id() -> Int:
+    return tipos_normalizacao.normalizacao_minmax_id()
+
+def normalizacao_zscore_id() -> Int:
+    return tipos_normalizacao.normalizacao_zscore_id()
+
+def normalizacao_nome_de_id(var normalizacao_id: Int) -> String:
+    return tipos_normalizacao.normalizacao_nome_de_id(normalizacao_id)
+
+def normalizacao_id_de_nome(var nome: String) -> Int:
+    return tipos_normalizacao.normalizacao_id_de_nome(nome)
+
+def normalizacao_id_valido(var normalizacao_id: Int) -> Bool:
+    return tipos_normalizacao.normalizacao_id_valido(normalizacao_id)
 
 def salvar_normalizacao_persistida(norm: normalizacao.NormalizacaoPersistida, var caminho: String):
     normalizacao.salvar_normalizacao_persistida(norm, caminho)
