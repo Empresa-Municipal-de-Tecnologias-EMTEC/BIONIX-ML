@@ -171,40 +171,11 @@ def executar_exemplo():
     var bmp_diag_ok = dados_pkg.diagnosticar_bmp(caminho_bmp)
     var grayscale_matriz = dados_pkg.carregar_bmp_grayscale_matriz(caminho_bmp)
 
-    var imagem_retangular = List[List[Float32]]()
+    print("\nExemplo de processamento de imagem (GRAYSCALE):")
+    var img_mm_matriz = List[List[Float32]]()
     if bmp_diag_ok and len(grayscale_matriz) > 0:
-        print("Arquivo BMP encontrado:", caminho_bmp)
-        print("Teste 01 - len(grayscale)=", len(grayscale_matriz))
-        for y in range(len(grayscale_matriz)):
-            print("Teste 02 - y=", y, " len(grayscale)=", len(grayscale_matriz))
-            if y < 0 or y >= len(grayscale_matriz):
-                print("ERRO INDICE Y - fora do limite: y=", y, " len=", len(grayscale_matriz))
-                break
-
-            print("Teste 03 - acessando grayscale[y]")
-            var src_row = grayscale_matriz[y].copy()
-            print("Teste 04 - len(src_row)=", len(src_row))
-
-            if len(src_row) > 0:
-                var first_idx = 0
-                var last_idx = len(src_row) - 1
-                print("Teste 05 - first_idx=", first_idx, " last_idx=", last_idx)
-                print("Teste 06 - first_val=", src_row[first_idx], " last_val=", src_row[last_idx])
-
-            imagem_retangular.append(src_row^)
-            print("Teste 07 - appended row y=", y, " len(imagem_retangular)=", len(imagem_retangular))
-
-        print("Teste 08 - fim cópia grayscale, len(imagem_retangular)=", len(imagem_retangular))
-        if len(imagem_retangular) == 0:
-            print("BMP sem pixels utilizáveis — usando imagem simulada")
-            var row1 = List[Float32]()
-            row1.append(0.0)
-            row1.append(128.0)
-            var row2 = List[Float32]()
-            row2.append(255.0)
-            row2.append(64.0)
-            imagem_retangular.append(row1^)
-            imagem_retangular.append(row2^)
+        print("Arquivo BMP encontrado:", caminho_bmp, "h=", len(grayscale_matriz), "w=", len(grayscale_matriz[0]))
+        img_mm_matriz = _normalizar_imagem_min_max_global(grayscale_matriz^)
     else:
         print("Arquivo BMP não encontrado ou inválido — usando imagem simulada")
         var row1 = List[Float32]()
@@ -213,16 +184,35 @@ def executar_exemplo():
         var row2 = List[Float32]()
         row2.append(255.0)
         row2.append(64.0)
-        imagem_retangular.append(row1^)
-        imagem_retangular.append(row2^)
+        var fallback_img = List[List[Float32]]()
+        fallback_img.append(row1^)
+        fallback_img.append(row2^)
+        img_mm_matriz = _normalizar_imagem_min_max_global(fallback_img^)
 
-    print("Teste 09 - antes da normalização: linhas=", len(imagem_retangular))
-    if len(imagem_retangular) > 0:
-        print("Teste 09.1 - colunas primeira linha=", len(imagem_retangular[0]))
-    var img_mm_matriz = _normalizar_imagem_min_max_global(imagem_retangular^)
-    print("Teste 10 - após normalização")
     print("Imagem normalizada (Min-Max):")
     print_helpers.imprimir_matriz_float(img_mm_matriz.copy())
+
+    print("\nExemplo de processamento de imagem (RGB):")
+    var bmp_rgb = dados_pkg.carregar_bmp_rgb(caminho_bmp)
+    if bmp_rgb.width > 0 and bmp_rgb.height > 0 and len(bmp_rgb.pixels) > 0 and len(bmp_rgb.pixels[0]) > 0 and len(bmp_rgb.pixels[0][0]) >= 3:
+        print("RGB carregado: w=", bmp_rgb.width, "h=", bmp_rgb.height)
+        var p0 = bmp_rgb.pixels[0][0]
+        print("Primeiro pixel RGB (normalizado): R=", p0[0], " G=", p0[1], " B=", p0[2])
+    else:
+        print("BMP RGB não encontrado ou inválido")
+
+    print("\nExemplo de processamento de imagem (Preto e Branco):")
+    var bmp_pb = dados_pkg.carregar_bmp_preto_branco(caminho_bmp)
+    if bmp_pb.width > 0 and bmp_pb.height > 0 and len(bmp_pb.preto_branco) > 0 and len(bmp_pb.preto_branco[0]) > 0:
+        print("PB carregado: w=", bmp_pb.width, "h=", bmp_pb.height)
+        print("Primeiro pixel PB:", bmp_pb.preto_branco[0][0])
+        var ativos_primeira_linha = 0
+        for v in bmp_pb.preto_branco[0]:
+            if v >= 0.5:
+                ativos_primeira_linha = ativos_primeira_linha + 1
+        print("Pixels ativos na 1a linha:", ativos_primeira_linha, "/", len(bmp_pb.preto_branco[0]))
+    else:
+        print("BMP preto e branco não encontrado ou inválido")
 
     # --- Exemplo de áudio ---
     print("\nExemplo de processamento de áudio:")
