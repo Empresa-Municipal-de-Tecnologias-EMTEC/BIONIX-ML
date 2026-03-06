@@ -1,6 +1,6 @@
 import src.dados as dados_pkg
 import src.dados.print_helpers as print_helpers
-import src.nucleo.nucleo as nucleo
+import src.nucleo.Tensor as tensor_defs
 import src.uteis as uteis
 
 fn _normalizar_imagem_min_max_global(var matriz: List[List[Float32]]) -> List[List[Float32]]:
@@ -198,8 +198,8 @@ def executar_exemplo():
     var formato_b = List[Int]()
     formato_b.append(2)
     formato_b.append(2)
-    var a = nucleo.Tensor(formato_a^)
-    var b = nucleo.Tensor(formato_b^)
+    var a = tensor_defs.Tensor(formato_a^)
+    var b = tensor_defs.Tensor(formato_b^)
     a.dados[0] = 1.0
     a.dados[1] = 2.0
     a.dados[2] = 3.0
@@ -209,7 +209,7 @@ def executar_exemplo():
     b.dados[2] = -1.0
     b.dados[3] = 2.0
 
-    var soma = nucleo.somar(a, b)
+    var soma = tensor_defs.somar_elementwise(a, b)
     print("resultado da soma no exemplo:")
     for i in range(len(soma.dados)):
         print("  ", soma.dados[i])
