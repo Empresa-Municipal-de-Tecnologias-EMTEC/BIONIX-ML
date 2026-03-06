@@ -4,10 +4,12 @@ struct Tensor(Movable, Copyable):
     var dados: List[Float32]
     var formato: List[Int]
     var passos: List[Int]
+    var tipo_computacao: String
 
-    fn __init__(out self, var formato: List[Int]):
+    fn __init__(out self, var formato: List[Int], var tipo_computacao: String = "cpu"):
         self.formato = formato^
         self.passos = calcular_passos(self.formato)
+        self.tipo_computacao = tipo_computacao^
         var total: Int = 1
         for i in range(len(self.formato)):
             total = total * self.formato[i]
@@ -17,7 +19,7 @@ struct Tensor(Movable, Copyable):
 
     fn copy(self) -> Tensor:
         var novo_formato = self.formato.copy()
-        var novo_tensor = Tensor(novo_formato^)
+        var novo_tensor = Tensor(novo_formato^, self.tipo_computacao)
         for i in range(len(self.dados)):
             novo_tensor.dados[i] = self.dados[i]
         return novo_tensor^

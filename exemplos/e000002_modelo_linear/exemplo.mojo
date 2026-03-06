@@ -1,0 +1,50 @@
+import src.camadas.linear as linear_pkg
+import src.conjuntos as conjuntos_pkg
+import src.nucleo.Tensor as tensor_defs
+
+fn _criar_tensor_uma_linha(var valores: List[Float32], var tipo_computacao: String) -> tensor_defs.Tensor:
+    var formato = List[Int]()
+    formato.append(1)
+    formato.append(len(valores))
+    var t = tensor_defs.Tensor(formato^, tipo_computacao)
+    for i in range(len(valores)):
+        t.dados[i] = valores[i]
+    return t^
+
+
+def executar_exemplo():
+    print("--- Exemplo e000002: modelo linear com Tensor parametrizável ---")
+
+    var tipo_computacao = "cpu"
+    var caminho_csv = "exemplos/e000002_modelo_linear/dados.csv"
+    var caminho_pesos = "exemplos/e000002_modelo_linear/pesos_linear.txt"
+
+    var conjunto = conjuntos_pkg.carregar_csv_supervisionado(caminho_csv, -1, ",", True, tipo_computacao)
+    if len(conjunto.entradas.dados) == 0 or conjunto.entradas.formato[1] == 0:
+        print("Falha ao carregar conjunto supervisionado do CSV:", caminho_csv)
+        return
+
+    print("Tipo de computação do tensor:", conjunto.entradas.tipo_computacao)
+    print("Amostras:", conjunto.entradas.formato[0], "| Features:", conjunto.entradas.formato[1])
+
+    var camada = linear_pkg.CamadaLinear(conjunto.entradas.formato[1], tipo_computacao)
+
+    print("Treinando modelo linear...")
+    var loss_final = linear_pkg.treinar(camada, conjunto.entradas, conjunto.alvos, 0.0001, 4000, 500)
+    print("Loss final:", loss_final)
+
+    linear_pkg.salvar_pesos(camada, caminho_pesos)
+    print("Pesos salvos em:", caminho_pesos)
+
+    var modelo_carregado = linear_pkg.carregar_pesos(caminho_pesos, tipo_computacao)
+    print("Modelo recarregado. Bias:", modelo_carregado.bias.dados[0])
+
+    var amostra = List[Float32]()
+    amostra.append(78.0)
+    amostra.append(3.0)
+    amostra.append(2.0)
+    var entrada_nova = _criar_tensor_uma_linha(amostra^, tipo_computacao)
+    var pred = linear_pkg.inferir(modelo_carregado, entrada_nova)
+
+    print("Inferência para [area=78, quartos=3, idade=2]:", pred.dados[0])
+    print("--- Fim do exemplo e000002 ---")

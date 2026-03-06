@@ -18,3 +18,5 @@ export Malloc=libc
 pixi run mojo run exemplos/principal.mojo > exemplos/pixi_run.log 2>&1
 
 pixi run mojo run exemplos/principal.mojo > exemplos/pixi_run.log 2>&1 -debug-level=line-tables
+
+pixi run mojo run exemplos/principal.mojo > exemplos/e000002_modelo_linear/log.log 2>&1 -debug-level=line-tables
