@@ -27,37 +27,37 @@ fn carregar_csv_supervisionado(
    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:182:17: error: cannot call function that may raise in a context that cannot raise
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:156:17: error: cannot call function that may raise in a context that cannot raise
     var f = open(caminho, "w")
             ~~~~^~~~~~~~~~~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:182:17: note: try surrounding the call in a 'try' block
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:156:17: note: try surrounding the call in a 'try' block
     var f = open(caminho, "w")
                 ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:181:4: note: or mark surrounding function as 'raises'
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:155:4: note: or mark surrounding function as 'raises'
 fn salvar_pesos(camada: CamadaLinear, var caminho: String):
    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:221:17: error: cannot call function that may raise in a context that cannot raise
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:195:17: error: cannot call function that may raise in a context that cannot raise
     var f = open(caminho, "r")
             ~~~~^~~~~~~~~~~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:221:17: note: try surrounding the call in a 'try' block
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:195:17: note: try surrounding the call in a 'try' block
     var f = open(caminho, "r")
                 ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:220:4: note: or mark surrounding function as 'raises'
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:194:4: note: or mark surrounding function as 'raises'
 fn carregar_pesos(var caminho: String, var tipo_computacao_padrao: String = "cpu") -> CamadaLinear:
    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:261:38: error: cannot implicitly convert 'String' value to 'StringSlice[__origin_of((muttoimm itens_last))]'
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:235:38: error: cannot implicitly convert 'String' value to 'StringSlice[__origin_of((muttoimm itens_last))]'
                     if it.strip() != "":
                                      ^~
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
@@ -146,4 +146,11 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
         )^
          ^
          
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/nucleo/Tensor.mojo:3:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/tipos.mojo:11:12: error: cannot implicitly convert 'StringSlice[__origin_of((muttoimm nome))]' value to 'String'
+    return n
+           ^
 /mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/bin/mojo: error: failed to parse the provided Mojo source module

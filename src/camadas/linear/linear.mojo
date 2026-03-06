@@ -94,20 +94,8 @@ fn _parse_float_ascii(var texto: String) -> Float32:
 fn prever(camada: CamadaLinear, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
     debug_assert(len(entradas.formato) == 2, "entradas deve ser tensor 2D")
     debug_assert(entradas.formato[1] == camada.pesos.formato[0], "número de features incompatível")
-
-    var amostras = entradas.formato[0]
-    var features = entradas.formato[1]
-    var formato_saida = List[Int]()
-    formato_saida.append(amostras)
-    formato_saida.append(1)
-    var saida = tensor_defs.Tensor(formato_saida^, camada.tipo_computacao)
-
-    for i in range(amostras):
-        var soma: Float32 = camada.bias.dados[0]
-        for j in range(features):
-            soma = soma + entradas.dados[i * features + j] * camada.pesos.dados[j]
-        saida.dados[i] = soma
-    return saida^
+    var projecao = tensor_defs.multiplicar_matrizes(entradas, camada.pesos)
+    return tensor_defs.adicionar_bias_coluna(projecao, camada.bias)
 
 
 fn inferir(camada: CamadaLinear, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -115,14 +103,7 @@ fn inferir(camada: CamadaLinear, entradas: tensor_defs.Tensor) -> tensor_defs.Te
 
 
 fn erro_quadratico_medio(predicoes: tensor_defs.Tensor, alvos: tensor_defs.Tensor) -> Float32:
-    debug_assert(len(predicoes.dados) == len(alvos.dados), "predições e alvos devem ter mesmo tamanho")
-    if len(predicoes.dados) == 0:
-        return 0.0
-    var soma: Float32 = 0.0
-    for i in range(len(predicoes.dados)):
-        var d = predicoes.dados[i] - alvos.dados[i]
-        soma = soma + d * d
-    return soma / Float32(len(predicoes.dados))
+    return tensor_defs.erro_quadratico_medio_escalar(predicoes, alvos)
 
 
 fn treinar(
@@ -147,20 +128,13 @@ fn treinar(
         var pred = prever(camada, entradas)
         loss_final = erro_quadratico_medio(pred, alvos)
 
-        var grad_w = List[Float32]()
-        for _ in range(features):
-            grad_w.append(0.0)
-        var grad_b: Float32 = 0.0
-
-        for i in range(amostras):
-            var erro = pred.dados[i] - alvos.dados[i]
-            var grad_pred = 2.0 * erro / n
-            grad_b = grad_b + grad_pred
-            for j in range(features):
-                grad_w[j] = grad_w[j] + grad_pred * entradas.dados[i * features + j]
+        var grad_pred = tensor_defs.gradiente_mse(pred, alvos)
+        var x_t = tensor_defs.transpor(entradas)
+        var grad_w = tensor_defs.multiplicar_matrizes(x_t, grad_pred)
+        var grad_b = tensor_defs.soma_total(grad_pred)
 
         for j in range(features):
-            camada.pesos.dados[j] = camada.pesos.dados[j] - taxa_aprendizado * grad_w[j]
+            camada.pesos.dados[j] = camada.pesos.dados[j] - taxa_aprendizado * grad_w.dados[j]
         camada.bias.dados[0] = camada.bias.dados[0] - taxa_aprendizado * grad_b
 
         if imprimir_cada > 0 and (epoca % imprimir_cada == 0 or epoca == epocas - 1):
