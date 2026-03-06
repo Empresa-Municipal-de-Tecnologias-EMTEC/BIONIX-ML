@@ -27,11 +27,11 @@ fn min_max_normalize(var dados: List[List[Float32]]) -> MinMaxResult:
         return MinMaxResult(List[List[Float32]](), List[Float32](), List[Float32]())
     var n_linhas = len(dados)
     var n_cols = len(dados[0])
-    var min_col = List[Float32](n_cols)
-    var max_col = List[Float32](n_cols)
+    var min_col = List[Float32]()
+    var max_col = List[Float32]()
     for j in range(n_cols):
-        min_col[j] = dados[0][j]
-        max_col[j] = dados[0][j]
+        min_col.append(dados[0][j])
+        max_col.append(dados[0][j])
     for i in range(n_linhas):
         for j in range(n_cols):
             if dados[i][j] < min_col[j]:
@@ -41,13 +41,13 @@ fn min_max_normalize(var dados: List[List[Float32]]) -> MinMaxResult:
 
     var resultado = List[List[Float32]]()
     for i in range(n_linhas):
-        var linha_norm = List[Float32](n_cols)
+        var linha_norm = List[Float32]()
         for j in range(n_cols):
             var denom: Float32 = max_col[j] - min_col[j]
             if denom == 0.0:
-                linha_norm[j] = 0.0
+                linha_norm.append(0.0)
             else:
-                linha_norm[j] = (dados[i][j] - min_col[j]) / denom
+                linha_norm.append((dados[i][j] - min_col[j]) / denom)
         resultado.append(linha_norm^)
     return MinMaxResult(resultado^, min_col^, max_col^)
 
@@ -56,11 +56,11 @@ fn z_score_normalize(var dados: List[List[Float32]]) -> ZScoreResult:
         return ZScoreResult(List[List[Float32]](), List[Float32](), List[Float32]())
     var n_linhas = len(dados)
     var n_cols = len(dados[0])
-    var medias = List[Float32](n_cols)
-    var variancias = List[Float32](n_cols)
+    var medias = List[Float32]()
+    var variancias = List[Float32]()
     for j in range(n_cols):
-        medias[j] = 0.0
-        variancias[j] = 0.0
+        medias.append(0.0)
+        variancias.append(0.0)
 
     for i in range(n_linhas):
         for j in range(n_cols):
@@ -75,18 +75,18 @@ fn z_score_normalize(var dados: List[List[Float32]]) -> ZScoreResult:
     for j in range(n_cols):
         variancias[j] = variancias[j] / Float32(n_linhas)
 
-    var desvios = List[Float32](n_cols)
+    var desvios = List[Float32]()
     for j in range(n_cols):
-        desvios[j] = Float32(math.sqrt(variancias[j]))
+        desvios.append(Float32(math.sqrt(variancias[j])))
 
     var resultado = List[List[Float32]]()
     for i in range(n_linhas):
-        var linha_norm = List[Float32](n_cols)
+        var linha_norm = List[Float32]()
         for j in range(n_cols):
             if desvios[j] == 0.0:
-                linha_norm[j] = 0.0
+                linha_norm.append(0.0)
             else:
-                linha_norm[j] = (dados[i][j] - medias[j]) / desvios[j]
+                linha_norm.append((dados[i][j] - medias[j]) / desvios[j])
         resultado.append(linha_norm^)
 
     return ZScoreResult(resultado^, medias^, desvios^)

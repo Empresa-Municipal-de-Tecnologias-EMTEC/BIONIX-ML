@@ -9,8 +9,8 @@ def main():
     #print("\n[1/2] Exemplo 1: Testes do Núcleo (exemplo)...")
     #exemplo.executar_exemplo()
 
-    print("\n[2/2] Exemplo 2: Modelo Linear com CSV e persistência...")
-    exemplo_linear.executar_exemplo()
+    #print("\n[2/2] Exemplo 2: Modelo Linear com CSV e persistência...")
+    #exemplo_linear.executar_exemplo()
 
     print("\n" + "="*60)
     print("CONCLUÍDO: EXEMPLOS")
