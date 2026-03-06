@@ -27,7 +27,9 @@ def executar_exemplo():
     print("Tipo de computação do tensor:", conjunto.entradas.tipo_computacao)
     print("Amostras:", conjunto.entradas.formato[0], "| Features:", conjunto.entradas.formato[1])
 
+    print("[debug] Criando camada linear...")
     var camada = linear_pkg.CamadaLinear(conjunto.entradas.formato[1], tipo_computacao)
+    print("[debug] Camada criada. Iniciando treinamento...")
 
     print("Treinando modelo linear...")
     var loss_final = linear_pkg.treinar(camada, conjunto.entradas, conjunto.alvos, 0.0001, 4000, 500)

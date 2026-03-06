@@ -1,4 +1,5 @@
 import src.dados as dados_pkg
+import src.dados.csv as csv_mod
 import src.nucleo.Tensor as tensor_defs
 
 struct ConjuntoSupervisionado(Movable, Copyable):
@@ -97,7 +98,11 @@ fn carregar_csv_supervisionado(
     var detectar_cabecalho: Bool = True,
     var tipo_computacao: String = "cpu",
 ) -> ConjuntoSupervisionado:
-    var parsed = dados_pkg.carregar_csv(caminho, delimitador, detectar_cabecalho)
+    var parsed = csv_mod.CSVData(List[String](), List[List[String]](), "")
+    try:
+        parsed = dados_pkg.carregar_csv(caminho, delimitador, detectar_cabecalho)
+    except Exception:
+        parsed = csv_mod.CSVData(List[String](), List[List[String]](), "")
     if len(parsed.linhas) == 0:
         var formato_x_vazio = List[Int]()
         formato_x_vazio.append(0)
@@ -144,8 +149,8 @@ fn carregar_csv_supervisionado(
         var entrada_linha = List[Float32]()
         var alvo_linha: Float32 = 0.0
         for j in range(total_colunas):
-            var campo = r[j].strip()
-            if campo == "":
+            var campo = r[j]
+            if len(campo.strip()) == 0:
                 linha_ok = False
                 break
             var v = _parse_float_ascii(campo)

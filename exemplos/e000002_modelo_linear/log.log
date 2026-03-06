@@ -1,156 +1,170 @@
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:13:5: error: argument type must be specified
-    entradas,
-    ^~~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:14:5: error: argument type must be specified
-    alvos,
-    ^~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:8:35: error: argument type must be specified
-def inferir(camada: CamadaLinear, entradas):
-                                  ^~~~~~~~
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:100:40: error: cannot call function that may raise in a context that cannot raise
-    var parsed = dados_pkg.carregar_csv(caminho, delimitador, detectar_cabecalho)
-                 ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:118:10: warning: transfer from an owned value has no effect and can be removed
+        )^
+         ^
+         
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:100:40: note: try surrounding the call in a 'try' block
-    var parsed = dados_pkg.carregar_csv(caminho, delimitador, detectar_cabecalho)
-                                       ^
+/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:133:10: warning: transfer from an owned value has no effect and can be removed
+        )^
+         ^
+         
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:93:4: note: or mark surrounding function as 'raises'
-fn carregar_csv_supervisionado(
-   ^
+/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:183:77: warning: transfer from an owned value has no effect and can be removed
+    return ConjuntoSupervisionado(x^, y^, parsed.cabecalho.copy(), idx_alvo)^
+                                                                            ^
+                                                                            
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:156:17: error: cannot call function that may raise in a context that cannot raise
-    var f = open(caminho, "w")
-            ~~~~^~~~~~~~~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:156:17: note: try surrounding the call in a 'try' block
-    var f = open(caminho, "w")
-                ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:155:4: note: or mark surrounding function as 'raises'
-fn salvar_pesos(camada: CamadaLinear, var caminho: String):
-   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:195:17: error: cannot call function that may raise in a context that cannot raise
-    var f = open(caminho, "r")
-            ~~~~^~~~~~~~~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:195:17: note: try surrounding the call in a 'try' block
-    var f = open(caminho, "r")
-                ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:194:4: note: or mark surrounding function as 'raises'
-fn carregar_pesos(var caminho: String, var tipo_computacao_padrao: String = "cpu") -> CamadaLinear:
-   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:235:38: error: cannot implicitly convert 'String' value to 'StringSlice[__origin_of((muttoimm itens_last))]'
-                    if it.strip() != "":
-                                     ^~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:204:55: warning: transfer from an owned value has no effect and can be removed
+        return CamadaLinear(1, tipo_computacao_padrao)^
+                                                      ^
+                                                      
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:85:24: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
         return CSVData(cab, List[List[String]](), texto)^
                        ^~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:85:24: note: consider transferring the value with '^'
         return CSVData(cab, List[List[String]](), texto)^
                        ^
                           ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:85:24: note: you can copy it explicitly with '.copy()'
         return CSVData(cab, List[List[String]](), texto)^
                        ^
                           .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:85:57: warning: transfer from an owned value has no effect and can be removed
         return CSVData(cab, List[List[String]](), texto)^
                                                         ^
                                                         
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:89:44: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
         if detectar_cabecalho_por_conteudo(possivel):
                                            ^~~~~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:89:44: note: consider transferring the value with '^'
         if detectar_cabecalho_por_conteudo(possivel):
                                            ^
                                                    ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:89:44: note: you can copy it explicitly with '.copy()'
         if detectar_cabecalho_por_conteudo(possivel):
                                            ^
                                                    .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:20: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     return CSVData(cab, dados, texto)^
                    ^~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:20: note: consider transferring the value with '^'
     return CSVData(cab, dados, texto)^
                    ^
                       ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:20: note: you can copy it explicitly with '.copy()'
     return CSVData(cab, dados, texto)^
                    ^
                       .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:25: warning: 'List' is no longer implicitly copyable, because it is O(n) expensive; this warning will be an error in the next release of Mojo
     return CSVData(cab, dados, texto)^
                         ^~~~~
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:25: note: consider transferring the value with '^'
     return CSVData(cab, dados, texto)^
                         ^
                              ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:25: note: you can copy it explicitly with '.copy()'
     return CSVData(cab, dados, texto)^
                         ^
                              .copy()
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/dados/csv.mojo:97:38: warning: transfer from an owned value has no effect and can be removed
     return CSVData(cab, dados, texto)^
                                      ^
                                      
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:28:10: warning: transfer from an owned value has no effect and can be removed
+/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:29:10: warning: transfer from an owned value has no effect and can be removed
         )^
          ^
          
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:2:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/nucleo/Tensor.mojo:3:
-/mnt/c/PROJETOS/BIONIX-ML/src/computacao/tipos.mojo:11:12: error: cannot implicitly convert 'StringSlice[__origin_of((muttoimm nome))]' value to 'String'
-    return n
-           ^
-/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/bin/mojo: error: failed to parse the provided Mojo source module
+/mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/csv_supervisionado.mojo:101:33: warning: assignment to 'parsed' was never used; assign to '_' instead?
+    var parsed = csv_mod.CSVData(List[String](), List[List[String]](), "")
+                                ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:124:20: warning: assignment to 'n' was never used; assign to '_' instead?
+    var n = Float32(amostras)
+                   ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/__init__.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/linear/linear.mojo:198:20: warning: assignment to 'conteudo' was never used; assign to '_' instead?
+    var conteudo = ""
+                   ^
+
+============================================================
+EXECUTANDO EXEMPLOS DO BIONIX
+============================================================
+
+[2/2] Exemplo 2: Modelo Linear com CSV e persistência...
+--- Exemplo e000002: modelo linear com Tensor parametrizável ---
+Tipo de computação do tensor: cpu
+Amostras: 9 | Features: 3
+[debug] Criando camada linear...
+[debug] Camada criada. Iniciando treinamento...
+Treinando modelo linear...
+Época 0 | MSE: 92140.56
+Época 500 | MSE: 29.616587
+Época 1000 | MSE: 29.581787
+Época 1500 | MSE: 29.548855
+Época 2000 | MSE: 29.51614
+Época 2500 | MSE: 29.483507
+Época 3000 | MSE: 29.45098
+Época 3500 | MSE: 29.41861
+Época 3999 | MSE: 29.386322
+Loss final: 29.386322
+Pesos salvos em: exemplos/e000002_modelo_linear/pesos_linear.txt
+Modelo recarregado. Bias: -0.28395703
+Inferência para [area=78, quartos=3, idade=2]: 342.50494
+--- Fim do exemplo e000002 ---
+
+============================================================
+CONCLUÍDO: EXEMPLOS
+============================================================
+

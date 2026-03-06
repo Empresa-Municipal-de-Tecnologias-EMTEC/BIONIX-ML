@@ -42,11 +42,14 @@ struct Tensor(Movable, Copyable):
 #Dessa forma, caso seja necessário trabalhar com múltiplos backends (Plataforma de hardware), a estrutura do tensor permanece consistente.
 #É possivel inclusive criar parâmetros para controlar paralelismo de tensores (Dividir o tensor em blocos localizados na meória de diferentes dispositivos), como blocos de processamento, mas isso fica para uma implementação futura.
 fn calcular_passos(formato: List[Int]) -> List[Int]:
-    var passos = List[Int](len(formato))
+    var passos_reverso = List[Int]()
     var acumulador: Int = 1
     for i in reversed(range(len(formato))):
-        passos[i] = acumulador
+        passos_reverso.append(acumulador)
         acumulador = acumulador * formato[i]
+    var passos = List[Int]()
+    for i in reversed(range(len(passos_reverso))):
+        passos.append(passos_reverso[i])
     return passos^
 
 

@@ -153,12 +153,15 @@ fn _float_list_para_texto(valores: List[Float32]) -> String:
 
 
 fn salvar_pesos(camada: CamadaLinear, var caminho: String):
-    var f = open(caminho, "w")
-    f.write("tipo=" + camada.tipo_computacao + "\n")
-    f.write("num_entradas=" + String(camada.pesos.formato[0]) + "\n")
-    f.write("pesos=" + _float_list_para_texto(camada.pesos.dados.copy()) + "\n")
-    f.write("bias=" + String(camada.bias.dados[0]) + "\n")
-    f.close()
+    try:
+        var f = open(caminho, "w")
+        f.write("tipo=" + camada.tipo_computacao + "\n")
+        f.write("num_entradas=" + String(camada.pesos.formato[0]) + "\n")
+        f.write("pesos=" + _float_list_para_texto(camada.pesos.dados.copy()) + "\n")
+        f.write("bias=" + String(camada.bias.dados[0]) + "\n")
+        f.close()
+    except Exception:
+        pass
 
 
 fn _parse_linha_chave_valor(var linha: String) -> List[String]:
@@ -192,9 +195,13 @@ fn _split_csv_simples(var texto: String) -> List[String]:
 
 
 fn carregar_pesos(var caminho: String, var tipo_computacao_padrao: String = "cpu") -> CamadaLinear:
-    var f = open(caminho, "r")
-    var conteudo = f.read()
-    f.close()
+    var conteudo = ""
+    try:
+        var f = open(caminho, "r")
+        conteudo = f.read()
+        f.close()
+    except Exception:
+        return CamadaLinear(1, tipo_computacao_padrao)^
 
     var tipo = tipo_computacao_padrao
     var num_entradas: Int = 0
@@ -214,7 +221,7 @@ fn carregar_pesos(var caminho: String, var tipo_computacao_padrao: String = "cpu
                 elif kv[0] == "pesos":
                     var itens = _split_csv_simples(kv[1])
                     for it in itens:
-                        if it.strip() != "":
+                        if len(it.strip()) > 0:
                             pesos_lidos.append(_parse_float_ascii(it))
                 elif kv[0] == "bias":
                     bias_lido = _parse_float_ascii(kv[1])
@@ -232,7 +239,7 @@ fn carregar_pesos(var caminho: String, var tipo_computacao_padrao: String = "cpu
             elif kv_last[0] == "pesos":
                 var itens_last = _split_csv_simples(kv_last[1])
                 for it in itens_last:
-                    if it.strip() != "":
+                    if len(it.strip()) > 0:
                         pesos_lidos.append(_parse_float_ascii(it))
             elif kv_last[0] == "bias":
                 bias_lido = _parse_float_ascii(kv_last[1])

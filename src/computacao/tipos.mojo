@@ -8,7 +8,10 @@ fn _normalizar_nome_interno(var nome: String) -> String:
     var n = nome.strip()
     if n == "cpu" or n == "CPU" or n == "Cpu" or n == "cPu" or n == "cpU" or n == "CPu" or n == "cPU":
         return "cpu"
-    return n
+    var out = ""
+    for i in range(len(n)):
+        out = out + n[i:i+1]
+    return out
 
 
 fn backend_id_de_nome(var nome: String) -> Int:
