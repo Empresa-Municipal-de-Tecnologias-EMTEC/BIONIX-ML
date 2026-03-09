@@ -326,7 +326,8 @@ EXECUTANDO EXEMPLOS DO BIONIX
 Dataset BMP já existe; reutilizando: exemplos/e000003_espirais_intercaladas/dataset
 Amostras treino: 20136 | Features: 2
 Amostras teste: 10368
-Lotes de treino (epocas x lotes): 2528 | Lotes de teste: 81
+Lotes de treino (epocas x lotes): 7900 | Lotes de teste: 81
+Epocas de treino: 50
 Época 0 | Loss treino médio: 0.31317946 | Loss validação: 0.33072495
 Época 1 | Loss treino médio: 0.31258756 | Loss validação: 0.329605
 Época 2 | Loss treino médio: 0.3107174 | Loss validação: 0.32671294
@@ -343,9 +344,45 @@ Lotes de treino (epocas x lotes): 2528 | Lotes de teste: 81
 Época 13 | Loss treino médio: 0.27463594 | Loss validação: 0.28503424
 Época 14 | Loss treino médio: 0.2694139 | Loss validação: 0.2795303
 Época 15 | Loss treino médio: 0.26505464 | Loss validação: 0.2752077
-Loss final: 0.175
+Época 16 | Loss treino médio: 0.26127574 | Loss validação: 0.2711334
+Época 17 | Loss treino médio: 0.25675893 | Loss validação: 0.26591733
+Época 18 | Loss treino médio: 0.25277403 | Loss validação: 0.2620232
+Época 19 | Loss treino médio: 0.24988864 | Loss validação: 0.2596154
+Época 20 | Loss treino médio: 0.24723782 | Loss validação: 0.2568711
+Época 21 | Loss treino médio: 0.24464229 | Loss validação: 0.2526202
+Época 22 | Loss treino médio: 0.24124987 | Loss validação: 0.250137
+Época 23 | Loss treino médio: 0.23923637 | Loss validação: 0.24829857
+Época 24 | Loss treino médio: 0.23734662 | Loss validação: 0.24629723
+Época 25 | Loss treino médio: 0.23513047 | Loss validação: 0.24292925
+Época 26 | Loss treino médio: 0.23265407 | Loss validação: 0.24202265
+Época 27 | Loss treino médio: 0.23112351 | Loss validação: 0.24019934
+Época 28 | Loss treino médio: 0.22928585 | Loss validação: 0.23808959
+Época 29 | Loss treino médio: 0.22787993 | Loss validação: 0.23677559
+Época 30 | Loss treino médio: 0.22669582 | Loss validação: 0.23532145
+Época 31 | Loss treino médio: 0.22530805 | Loss validação: 0.2338504
+Época 32 | Loss treino médio: 0.22373241 | Loss validação: 0.23216632
+Época 33 | Loss treino médio: 0.22238591 | Loss validação: 0.230854
+Época 34 | Loss treino médio: 0.22147314 | Loss validação: 0.22967616
+Época 35 | Loss treino médio: 0.22025299 | Loss validação: 0.22854595
+Época 36 | Loss treino médio: 0.21897122 | Loss validação: 0.22707672
+Época 37 | Loss treino médio: 0.21815257 | Loss validação: 0.22665285
+Época 38 | Loss treino médio: 0.21781863 | Loss validação: 0.22631906
+Época 39 | Loss treino médio: 0.21742575 | Loss validação: 0.22551309
+Época 40 | Loss treino médio: 0.21678032 | Loss validação: 0.22489117
+Época 41 | Loss treino médio: 0.21627143 | Loss validação: 0.22423545
+Época 42 | Loss treino médio: 0.2158847 | Loss validação: 0.22417133
+Época 43 | Loss treino médio: 0.21583274 | Loss validação: 0.22413749
+Época 44 | Loss treino médio: 0.21580863 | Loss validação: 0.22411485
+Época 45 | Loss treino médio: 0.21578741 | Loss validação: 0.22408998
+Época 46 | Loss treino médio: 0.21576904 | Loss validação: 0.22406065
+Época 47 | Loss treino médio: 0.21573289 | Loss validação: 0.22404085
+Época 48 | Loss treino médio: 0.21570396 | Loss validação: 0.2240414
+Época 49 | Loss treino médio: 0.21565266 | Loss validação: 0.22400016
+Loss final: 0.15359148
 Acurácia treino: 0.685737
 Acurácia teste: 0.66878855
+Acurácia de predição entre A e B (treino): 0.685737
+Acurácia de predição entre A e B (teste): 0.66878855
 --- Fim do exemplo e000003 ---
 
 ============================================================

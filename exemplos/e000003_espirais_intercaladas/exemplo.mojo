@@ -98,9 +98,11 @@ def executar_exemplo():
     print("Amostras treino:", entradas.formato[0], "| Features:", entradas.formato[1])
     print("Amostras teste:", conjunto_teste.entradas.formato[0])
 
-    var prep_lotes = conjuntos_pkg.preparar_treino_validacao_em_lotes(conjunto_treino, 128, 16, 0.0)
+    var epocas = 50
+    var prep_lotes = conjuntos_pkg.preparar_treino_validacao_em_lotes(conjunto_treino, 128, epocas, 0.0)
     var lotes_teste = conjuntos_pkg.quebrar_em_lotes(conjunto_teste, 128)
     print("Lotes de treino (epocas x lotes):", len(prep_lotes.treino_por_epoca), "| Lotes de teste:", len(lotes_teste))
+    print("Epocas de treino:", epocas)
 
     # 3) Treino do bloco MLP por lotes (autograd + funções de ativação), validando no conjunto de teste
     var topologia = List[Int]()
@@ -115,7 +117,11 @@ def executar_exemplo():
     # 4) Métricas de acurácia para treino e teste
     var pred_treino = mlp_pkg.inferir(mlp, entradas)
     var pred_teste = mlp_pkg.inferir(mlp, conjunto_teste.entradas)
-    print("Acurácia treino:", _acuracia_binaria(pred_treino, alvos))
-    print("Acurácia teste:", _acuracia_binaria(pred_teste, conjunto_teste.alvos))
+    var acuracia_treino = _acuracia_binaria(pred_treino, alvos)
+    var acuracia_teste = _acuracia_binaria(pred_teste, conjunto_teste.alvos)
+    print("Acurácia treino:", acuracia_treino)
+    print("Acurácia teste:", acuracia_teste)
+    print("Acurácia de predição entre A e B (treino):", acuracia_treino)
+    print("Acurácia de predição entre A e B (teste):", acuracia_teste)
 
     print("--- Fim do exemplo e000003 ---")
