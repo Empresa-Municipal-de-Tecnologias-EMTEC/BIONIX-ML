@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-	Framework de IA em <strong>Mojo</strong> para leitura de dados multimodais, normalização, conversão para tensor, treinamento, inferência e futura implantação de modelos em uma pilha unificada.
+	Framework de IA em <strong>Mojo</strong> para leitura de dados multimodais, normalização, codificação, treinamento, inferência e futura implantação de modelos em uma pilha unificada.
 </p>
 
 ## Visão geral
@@ -323,6 +323,6 @@ Esse padrão funciona para o desenvolvimento interno do próprio repositório.
 
 Até essa padronização existir, ainda não há no repositório uma maneira oficialmente documentada para importar o BIONIX como dependência externa em um novo projeto.
 
-## Estado atual em uma frase
+## Estado atual
 
 Hoje, o BIONIX-ML já oferece uma base funcional para **carregar dados, normalizar, converter para tensor e experimentar modelos lineares em CPU**, enquanto evolui para se tornar uma pilha completa de IA multimodal e multi-backend.
