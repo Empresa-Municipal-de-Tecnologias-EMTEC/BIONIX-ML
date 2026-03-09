@@ -23,7 +23,14 @@ fn desenhar_ponto_grayscale(mut imagem: List[Int], var largura: Int, var altura:
     imagem[y * largura + x] = valor
 
 
-fn plotar_espiral_grayscale(mut imagem: List[Int], var largura: Int, var altura: Int, var classe: Int):
+fn _plotar_espiral_grayscale_variada(
+    mut imagem: List[Int],
+    var largura: Int,
+    var altura: Int,
+    var classe: Int,
+    var offset_passos_rotacao: Int,
+    var delta_intensidade: Int,
+):
     var c: Float32 = 0.9921147
     var s: Float32 = 0.1253332
     var vx: Float32 = 1.0
@@ -32,8 +39,21 @@ fn plotar_espiral_grayscale(mut imagem: List[Int], var largura: Int, var altura:
         vx = -1.0
         vy = 0.0
 
+    var rot_steps = offset_passos_rotacao
+    if rot_steps < 0:
+        rot_steps = -rot_steps
+    for _ in range(rot_steps):
+        var rvx = vx * c - vy * s
+        var rvy = vx * s + vy * c
+        vx = rvx
+        vy = rvy
+
     var passos = 820
-    var intensidade = 96 if classe == 0 else 224
+    var intensidade = (96 if classe == 0 else 224) + delta_intensidade
+    if intensidade < 0:
+        intensidade = 0
+    if intensidade > 255:
+        intensidade = 255
     for i in range(passos):
         var t = Float32(i) / Float32(passos - 1)
         var r = 0.08 + 0.82 * t
@@ -50,6 +70,10 @@ fn plotar_espiral_grayscale(mut imagem: List[Int], var largura: Int, var altura:
         var nvy = vx * s + vy * c
         vx = nvx
         vy = nvy
+
+
+fn plotar_espiral_grayscale(mut imagem: List[Int], var largura: Int, var altura: Int, var classe: Int):
+    _plotar_espiral_grayscale_variada(imagem, largura, altura, classe, 0, 0)
 
 
 fn gerar_bmp_24bits_de_grayscale(var imagem: List[Int], var largura: Int, var altura: Int) -> List[Int]:
@@ -97,4 +121,17 @@ fn gerar_bmp_espirais_intercaladas_bytes(var largura: Int = 192, var altura: Int
     var imagem = criar_imagem_grayscale(largura, altura, 0)
     plotar_espiral_grayscale(imagem, largura, altura, 0)
     plotar_espiral_grayscale(imagem, largura, altura, 1)
+    return gerar_bmp_24bits_de_grayscale(imagem, largura, altura)
+
+
+fn gerar_bmp_espirais_intercaladas_variacao_bytes(
+    var largura: Int = 192,
+    var altura: Int = 192,
+    var offset_classe0: Int = 0,
+    var offset_classe1: Int = 0,
+    var delta_intensidade: Int = 0,
+) -> List[Int]:
+    var imagem = criar_imagem_grayscale(largura, altura, 0)
+    _plotar_espiral_grayscale_variada(imagem, largura, altura, 0, offset_classe0, delta_intensidade)
+    _plotar_espiral_grayscale_variada(imagem, largura, altura, 1, offset_classe1, -delta_intensidade)
     return gerar_bmp_24bits_de_grayscale(imagem, largura, altura)
