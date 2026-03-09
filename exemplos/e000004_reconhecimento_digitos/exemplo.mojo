@@ -67,6 +67,7 @@ fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_comput
     var largura = len(primeira[0]) if altura > 0 else 0
     var features = largura * altura
     var amostras = len(caminhos)
+    print("Carregando", amostras, "imagens...")
 
     var formato_x = List[Int]()
     formato_x.append(amostras)
@@ -96,6 +97,9 @@ fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_comput
 
         for c in range(10):
             y_t.dados[i * 10 + c] = 1.0 if c == label else Float32(0.0)
+
+        if i > 0 and i % 500 == 0:
+            print("  progresso:", i, "/", amostras)
 
     var out = List[tensor_defs.Tensor]()
     out.append(x_t.copy())
@@ -128,9 +132,13 @@ fn _dividir_arquivos_treino_valid_teste(var dir_dataset: String) -> List[List[St
         except Exception:
             continue
         var idx = 0
+        var usados_classe = 0
+        var max_por_classe = 320
         for nome in arquivos:
             if not nome.endswith(".bmp"):
                 continue
+            if max_por_classe > 0 and usados_classe >= max_por_classe:
+                break
 
             var caminho = os.path.join(dir_classe, nome)
             var bucket = idx % 20
@@ -141,11 +149,12 @@ fn _dividir_arquivos_treino_valid_teste(var dir_dataset: String) -> List[List[St
             else:
                 teste.append(caminho)
             idx = idx + 1
+            usados_classe = usados_classe + 1
 
     var out = List[List[String]]()
-    out.append(treino)
-    out.append(valid)
-    out.append(teste)
+    out.append(treino^)
+    out.append(valid^)
+    out.append(teste^)
     return out^
 
 
@@ -267,6 +276,7 @@ def executar_exemplo():
     var arquivos_treino = arquivos_split[0].copy()
     var arquivos_valid = arquivos_split[1].copy()
     var arquivos_teste = arquivos_split[2].copy()
+    print("Arquivos split | treino:", len(arquivos_treino), "| valid:", len(arquivos_valid), "| teste:", len(arquivos_teste))
     var treino = _carregar_dataset_digitos_de_arquivos(arquivos_treino, tipo_computacao)
     var valid = _carregar_dataset_digitos_de_arquivos(arquivos_valid, tipo_computacao)
     var teste = _carregar_dataset_digitos_de_arquivos(arquivos_teste, tipo_computacao)
