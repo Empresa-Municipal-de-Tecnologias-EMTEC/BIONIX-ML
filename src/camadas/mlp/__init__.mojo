@@ -1,4 +1,5 @@
 import src.camadas.mlp.mlp as mlp_impl
+import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
 
 alias BlocoMLP = mlp_impl.BlocoMLP
@@ -28,5 +29,23 @@ def treinar(
         taxa_aprendizado,
         epocas,
         imprimir_cada,
+        manter_gradientes_na_ram_principal,
+    )
+
+
+def treinar_por_lotes(
+    mut bloco: BlocoMLP,
+    lotes_treino_por_epoca: List[lotes_sup.LoteEpocaSupervisionado],
+    lotes_validacao: List[lotes_sup.LoteSupervisionado],
+    var taxa_aprendizado: Float32 = 0.03,
+    var imprimir_cada_epoca: Int = 1,
+    var manter_gradientes_na_ram_principal: Bool = True,
+) -> Float32:
+    return mlp_impl.treinar_por_lotes(
+        bloco,
+        lotes_treino_por_epoca,
+        lotes_validacao,
+        taxa_aprendizado,
+        imprimir_cada_epoca,
         manter_gradientes_na_ram_principal,
     )

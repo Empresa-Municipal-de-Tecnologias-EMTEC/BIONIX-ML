@@ -1,6 +1,8 @@
 import src.autograd as autograd
 import src.computacao.dispatcher_gradiente as dispatcher_gradiente
+import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
+import src.perdas as perdas
 
 struct BlocoMLP(Movable, Copyable):
     var w1: tensor_defs.Tensor
@@ -64,6 +66,71 @@ fn prever(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
 
 fn inferir(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
     return prever(bloco, entradas)
+
+
+fn _loss_medio_lotes_validacao(bloco: BlocoMLP, lotes_validacao: List[lotes_sup.LoteSupervisionado]) -> Float32:
+    if len(lotes_validacao) == 0:
+        return 0.0
+
+    var soma: Float32 = 0.0
+    for lote in lotes_validacao:
+        var pred = inferir(bloco, lote.entradas)
+        soma = soma + perdas.mse(pred, lote.alvos)
+
+    return soma / Float32(len(lotes_validacao))
+
+
+fn treinar_por_lotes(
+    mut bloco: BlocoMLP,
+    lotes_treino_por_epoca: List[lotes_sup.LoteEpocaSupervisionado],
+    lotes_validacao: List[lotes_sup.LoteSupervisionado],
+    var taxa_aprendizado: Float32 = 0.03,
+    var imprimir_cada_epoca: Int = 1,
+    var manter_gradientes_na_ram_principal: Bool = True,
+) -> Float32:
+    if len(lotes_treino_por_epoca) == 0:
+        return 0.0
+
+    var loss_lote_final: Float32 = 0.0
+    var epoca_atual = lotes_treino_por_epoca[0].epoca
+    var soma_loss_epoca: Float32 = 0.0
+    var quantidade_lotes_epoca: Int = 0
+
+    for item in lotes_treino_por_epoca:
+        if item.epoca != epoca_atual:
+            var loss_medio_epoca = soma_loss_epoca / Float32(quantidade_lotes_epoca) if quantidade_lotes_epoca > 0 else 0.0
+            var loss_validacao = _loss_medio_lotes_validacao(bloco, lotes_validacao)
+            if imprimir_cada_epoca > 0 and (epoca_atual % imprimir_cada_epoca == 0):
+                print("Época", epoca_atual, "| Loss treino médio:", loss_medio_epoca, "| Loss validação:", loss_validacao)
+
+            epoca_atual = item.epoca
+            soma_loss_epoca = 0.0
+            quantidade_lotes_epoca = 0
+
+        var entradas = item.lote.entradas
+        var alvos = item.lote.alvos
+
+        var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
+        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.w2, manter_gradientes_na_ram_principal)
+        loss_lote_final = grads.loss
+
+        for i in range(len(bloco.w1.dados)):
+            bloco.w1.dados[i] = bloco.w1.dados[i] - taxa_aprendizado * grads.grad_w1.dados[i]
+        for i in range(len(bloco.b1.dados)):
+            bloco.b1.dados[i] = bloco.b1.dados[i] - taxa_aprendizado * grads.grad_b1.dados[i]
+        for i in range(len(bloco.w2.dados)):
+            bloco.w2.dados[i] = bloco.w2.dados[i] - taxa_aprendizado * grads.grad_w2.dados[i]
+        bloco.b2.dados[0] = bloco.b2.dados[0] - taxa_aprendizado * grads.grad_b2
+
+        soma_loss_epoca = soma_loss_epoca + grads.loss
+        quantidade_lotes_epoca = quantidade_lotes_epoca + 1
+
+    var loss_medio_epoca_final = soma_loss_epoca / Float32(quantidade_lotes_epoca) if quantidade_lotes_epoca > 0 else 0.0
+    var loss_validacao_final = _loss_medio_lotes_validacao(bloco, lotes_validacao)
+    if imprimir_cada_epoca > 0 and (epoca_atual % imprimir_cada_epoca == 0):
+        print("Época", epoca_atual, "| Loss treino médio:", loss_medio_epoca_final, "| Loss validação:", loss_validacao_final)
+
+    return loss_lote_final
 
 
 fn treinar(

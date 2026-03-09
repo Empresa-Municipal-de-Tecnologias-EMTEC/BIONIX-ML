@@ -19,6 +19,10 @@ def carregar_csv(var caminho: String, var delimitador: String = ",", var detecta
     var texto = arquivo.ler_arquivo_texto(caminho)
     return csv.parse_csv(texto, delimitador, detectar_cabecalho)
 
+
+def gravar_arquivo_binario(var caminho: String, var dados: List[Int]) -> Bool:
+    return arquivo.gravar_arquivo_binario(caminho, dados)
+
 def carregar_wav(var caminho: String) -> wav.WAVInfo:
     return wav.parse_wav(caminho)^
 

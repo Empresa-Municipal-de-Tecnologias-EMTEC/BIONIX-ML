@@ -15,3 +15,13 @@ fn ler_arquivo_binario(var caminho: String) -> List[Int]:
         return out^
     except Exception:
         return List[Int]()
+
+
+fn gravar_arquivo_binario(var caminho: String, var dados: List[Int]) -> Bool:
+    try:
+        var f = open(caminho, "w")
+        f.write_bytes(dados)
+        f.close()
+        return True
+    except Exception:
+        return False
