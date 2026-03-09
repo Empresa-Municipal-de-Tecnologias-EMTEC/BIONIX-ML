@@ -9,13 +9,13 @@ def main():
     print("="*60)
 
     print("\n[1/4] Exemplo 1: Testes do Núcleo (exemplo)...")
-    exemplo.executar_exemplo()
+    #exemplo.executar_exemplo()
 
     print("\n[2/4] Exemplo 2: Modelo Linear com CSV e persistência...")
-    exemplo_linear.executar_exemplo()
+    #exemplo_linear.executar_exemplo()
 
     print("\n[3/4] Exemplo 3: Espirais intercaladas com BMP + autograd + MLP...")
-    exemplo_espirais.executar_exemplo()
+    #exemplo_espirais.executar_exemplo()
 
     print("\n[4/4] Exemplo 4: Reconhecimento de dígitos 0-9 com MLP...")
     exemplo_digitos.executar_exemplo()

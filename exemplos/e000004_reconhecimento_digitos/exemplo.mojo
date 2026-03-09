@@ -210,8 +210,7 @@ fn _parse_label_de_caminho(var caminho: String) -> Int:
         return 0
 
 
-fn _carregar_dataset_digitos(var dir_raiz: String, var tipo_computacao: String) -> List[tensor_defs.Tensor]:
-    var caminhos = _lista_arquivos_bmp(dir_raiz)
+fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_computacao: String) -> List[tensor_defs.Tensor]:
     if len(caminhos) == 0:
         var fx = List[Int]()
         fx.append(0)
@@ -258,6 +257,48 @@ fn _carregar_dataset_digitos(var dir_raiz: String, var tipo_computacao: String) 
     var out = List[tensor_defs.Tensor]()
     out.append(x_t)
     out.append(y_t)
+    return out^
+
+
+fn _dataset_tem_classes_0_a_9(var dir_dataset: String) -> Bool:
+    for classe in range(10):
+        var dir_classe = os.path.join(dir_dataset, String(classe))
+        if not os.path.isdir(dir_classe):
+            return False
+    return True
+
+
+fn _dividir_arquivos_treino_valid_teste(var dir_dataset: String) -> List[List[String]]:
+    var treino = List[String]()
+    var valid = List[String]()
+    var teste = List[String]()
+
+    # Split estratificado determinístico por classe: 70% treino, 15% validação, 15% teste
+    for classe in range(10):
+        var dir_classe = os.path.join(dir_dataset, String(classe))
+        if not os.path.isdir(dir_classe):
+            continue
+
+        var arquivos = os.listdir(dir_classe)
+        var idx = 0
+        for nome in arquivos:
+            if not nome.endswith(".bmp"):
+                continue
+
+            var caminho = os.path.join(dir_classe, nome)
+            var bucket = idx % 20
+            if bucket < 14:
+                treino.append(caminho)
+            elif bucket < 17:
+                valid.append(caminho)
+            else:
+                teste.append(caminho)
+            idx = idx + 1
+
+    var out = List[List[String]]()
+    out.append(treino)
+    out.append(valid)
+    out.append(teste)
     return out^
 
 
@@ -355,8 +396,9 @@ fn _treinar_por_lotes_multiclasse(
 
         var pred_val = mlp_pkg.inferir(bloco, x_valid)
         var loss_val = tensor_defs.erro_quadratico_medio_escalar(pred_val, y_valid)
+        var acc_val = _acuracia_multiclasse(pred_val, y_valid)
         var loss_treino_medio = soma_loss / Float32(lotes) if lotes > 0 else 0.0
-        print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val)
+        print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val, "| Acc validação:", acc_val)
 
 
 def executar_exemplo():
@@ -365,24 +407,29 @@ def executar_exemplo():
     var tipo_computacao = "cpu"
     var dir_dataset = "exemplos/e000004_reconhecimento_digitos/dataset"
     var caminho_ok = "exemplos/e000004_reconhecimento_digitos/dataset/dataset.ok"
-    var dir_treino = os.path.join(dir_dataset, "treino")
-    var dir_teste = os.path.join(dir_dataset, "teste")
 
-    _garantir_dataset(dir_dataset, caminho_ok)
+    if not _dataset_tem_classes_0_a_9(dir_dataset):
+        print("Dataset 0..9 não encontrado em", dir_dataset, "- gerando dataset sintético de fallback.")
+        _garantir_dataset(dir_dataset, caminho_ok)
 
-    var treino = _carregar_dataset_digitos(dir_treino, tipo_computacao)
-    var teste = _carregar_dataset_digitos(dir_teste, tipo_computacao)
+    var arquivos_split = _dividir_arquivos_treino_valid_teste(dir_dataset)
+    var treino = _carregar_dataset_digitos_de_arquivos(arquivos_split[0], tipo_computacao)
+    var valid = _carregar_dataset_digitos_de_arquivos(arquivos_split[1], tipo_computacao)
+    var teste = _carregar_dataset_digitos_de_arquivos(arquivos_split[2], tipo_computacao)
+
     var x_treino = treino[0].copy()
     var y_treino = treino[1].copy()
+    var x_valid = valid[0].copy()
+    var y_valid = valid[1].copy()
     var x_teste = teste[0].copy()
     var y_teste = teste[1].copy()
 
-    if x_treino.formato[0] == 0 or x_teste.formato[0] == 0:
+    if x_treino.formato[0] == 0 or x_valid.formato[0] == 0 or x_teste.formato[0] == 0:
         print("Falha ao carregar dataset de dígitos.")
         return
 
     print("Amostras treino:", x_treino.formato[0], "| Features:", x_treino.formato[1])
-    print("Amostras teste:", x_teste.formato[0], "| Classes:", y_treino.formato[1])
+    print("Amostras validação:", x_valid.formato[0], "| Amostras teste:", x_teste.formato[0], "| Classes:", y_treino.formato[1])
 
     var topologia = List[Int]()
     topologia.append(x_treino.formato[1])
@@ -391,18 +438,22 @@ def executar_exemplo():
     topologia.append(10)
     var mlp = mlp_pkg.BlocoMLP(topologia^, tipo_computacao)
 
-    var epocas = 30
-    var tamanho_lote = 64
-    var taxa_aprendizado: Float32 = 0.02
+    # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
+    var epocas = 50
+    var tamanho_lote = 32
+    var taxa_aprendizado: Float32 = 0.01
     print("Epocas:", epocas, "| Lote:", tamanho_lote, "| LR:", taxa_aprendizado)
 
-    _treinar_por_lotes_multiclasse(mlp, x_treino, y_treino, x_teste, y_teste, epocas, tamanho_lote, taxa_aprendizado)
+    _treinar_por_lotes_multiclasse(mlp, x_treino, y_treino, x_valid, y_valid, epocas, tamanho_lote, taxa_aprendizado)
 
     var pred_treino = mlp_pkg.inferir(mlp, x_treino)
+    var pred_valid = mlp_pkg.inferir(mlp, x_valid)
     var pred_teste = mlp_pkg.inferir(mlp, x_teste)
     var acc_treino = _acuracia_multiclasse(pred_treino, y_treino)
+    var acc_valid = _acuracia_multiclasse(pred_valid, y_valid)
     var acc_teste = _acuracia_multiclasse(pred_teste, y_teste)
 
     print("Acurácia treino (0-9):", acc_treino)
+    print("Acurácia validação (0-9):", acc_valid)
     print("Acurácia teste (0-9):", acc_teste)
     print("--- Fim do exemplo e000004 ---")
