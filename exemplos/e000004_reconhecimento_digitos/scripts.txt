@@ -1,0 +1,3 @@
+# Exemplo 4 - Reconhecimento de dígitos (0-9)
+# Executar via exemplos/principal.mojo
+pixi run mojo run exemplos/principal.mojo
