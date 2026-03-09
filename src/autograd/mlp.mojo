@@ -1,5 +1,7 @@
 import src.nucleo.Tensor as tensor_defs
 import src.ativacoes as ativacoes
+import src.perdas as perdas
+import src.autograd.grafo as grafo
 
 struct MLPForwardContext(Movable, Copyable):
     var entradas: tensor_defs.Tensor
@@ -9,6 +11,7 @@ struct MLPForwardContext(Movable, Copyable):
     var z2: tensor_defs.Tensor
     var pred: tensor_defs.Tensor
     var operacoes: List[String]
+    var grafo: grafo.GrafoComputacao
 
     fn __init__(
         out self,
@@ -19,6 +22,7 @@ struct MLPForwardContext(Movable, Copyable):
         z2_in: tensor_defs.Tensor,
         pred_in: tensor_defs.Tensor,
         var ops_in: List[String],
+        grafo_in: grafo.GrafoComputacao,
     ):
         self.entradas = entradas_in.copy()
         self.alvos = alvos_in.copy()
@@ -27,6 +31,7 @@ struct MLPForwardContext(Movable, Copyable):
         self.z2 = z2_in.copy()
         self.pred = pred_in.copy()
         self.operacoes = ops_in^
+        self.grafo = grafo_in
 
 
 struct MLPGradientes(Movable, Copyable):
@@ -103,13 +108,14 @@ fn construir_contexto(
     var pred = ativacoes.hard_sigmoid(z2)
     ops.append("hard_sigmoid")
 
-    return MLPForwardContext(entradas, alvos, z1, a1, z2, pred, ops^)
+    var g = grafo.criar_grafo_mlp_forward()
+    return MLPForwardContext(entradas, alvos, z1, a1, z2, pred, ops^, g)
 
 
 fn calcular_gradientes(ctx: MLPForwardContext, w2: tensor_defs.Tensor) -> MLPGradientes:
-    var loss = tensor_defs.erro_quadratico_medio_escalar(ctx.pred, ctx.alvos)
+    var loss = perdas.mse(ctx.pred, ctx.alvos)
 
-    var grad_pred = tensor_defs.gradiente_mse(ctx.pred, ctx.alvos)
+    var grad_pred = perdas.gradiente_mse(ctx.pred, ctx.alvos)
     var grad_z2 = ativacoes.derivada_hard_sigmoid(ctx.z2, grad_pred)
 
     var a1_t = tensor_defs.transpor(ctx.a1)

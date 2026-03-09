@@ -1,4 +1,5 @@
 import src.autograd as autograd
+import src.computacao.dispatcher_gradiente as dispatcher_gradiente
 import src.nucleo.Tensor as tensor_defs
 
 struct BlocoMLP(Movable, Copyable):
@@ -72,6 +73,7 @@ fn treinar(
     var taxa_aprendizado: Float32 = 0.03,
     var epocas: Int = 1200,
     var imprimir_cada: Int = 200,
+    var manter_gradientes_na_ram_principal: Bool = True,
 ) -> Float32:
     debug_assert(len(entradas.formato) == 2, "entradas deve ser tensor 2D")
     debug_assert(len(alvos.formato) == 2 and alvos.formato[1] == 1, "alvos deve ser tensor 2D [N,1]")
@@ -81,7 +83,7 @@ fn treinar(
     var loss_final: Float32 = 0.0
     for epoca in range(epocas):
         var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
-        var grads = autograd.calcular_gradientes_mlp(ctx, bloco.w2)
+        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.w2, manter_gradientes_na_ram_principal)
         loss_final = grads.loss
 
         for i in range(len(bloco.w1.dados)):
@@ -98,5 +100,11 @@ fn treinar(
                 print("Grafo de computação (forward):")
                 for op in ctx.operacoes:
                     print("  -", op)
+                print("Nós do grafo:")
+                for no in ctx.grafo.nos:
+                    print("  *", no)
+                print("Arestas do grafo:")
+                for ar in ctx.grafo.arestas:
+                    print("  ->", ar)
 
     return loss_final

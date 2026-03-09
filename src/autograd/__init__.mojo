@@ -1,8 +1,10 @@
 import src.autograd.mlp as mlp
+import src.autograd.grafo as grafo
 import src.nucleo.Tensor as tensor_defs
 
 alias MLPForwardContext = mlp.MLPForwardContext
 alias MLPGradientes = mlp.MLPGradientes
+alias GrafoComputacao = grafo.GrafoComputacao
 
 
 def construir_contexto_mlp(
@@ -22,3 +24,7 @@ def calcular_gradientes_mlp(ctx: MLPForwardContext, w2: tensor_defs.Tensor) -> M
 
 def adicionar_bias_vetor_coluna(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:
     return mlp.adicionar_bias_vetor_coluna(a, b)
+
+
+def criar_grafo_mlp_forward() -> GrafoComputacao:
+    return grafo.criar_grafo_mlp_forward()

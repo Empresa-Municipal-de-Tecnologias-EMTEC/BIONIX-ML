@@ -19,5 +19,14 @@ def treinar(
     var taxa_aprendizado: Float32 = 0.03,
     var epocas: Int = 1200,
     var imprimir_cada: Int = 200,
+    var manter_gradientes_na_ram_principal: Bool = True,
 ) -> Float32:
-    return mlp_impl.treinar(bloco, entradas, alvos, taxa_aprendizado, epocas, imprimir_cada)
+    return mlp_impl.treinar(
+        bloco,
+        entradas,
+        alvos,
+        taxa_aprendizado,
+        epocas,
+        imprimir_cada,
+        manter_gradientes_na_ram_principal,
+    )

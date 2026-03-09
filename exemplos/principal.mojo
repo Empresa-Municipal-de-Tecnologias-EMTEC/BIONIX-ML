@@ -8,10 +8,10 @@ def main():
     print("="*60)
 
     print("\n[1/3] Exemplo 1: Testes do Núcleo (exemplo)...")
-    exemplo.executar_exemplo()
+    #exemplo.executar_exemplo()
 
     print("\n[2/3] Exemplo 2: Modelo Linear com CSV e persistência...")
-    exemplo_linear.executar_exemplo()
+    #exemplo_linear.executar_exemplo()
 
     print("\n[3/3] Exemplo 3: Espirais intercaladas com BMP + autograd + MLP...")
     exemplo_espirais.executar_exemplo()
