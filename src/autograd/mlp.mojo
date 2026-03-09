@@ -6,9 +6,8 @@ import src.autograd.grafo as grafo
 struct MLPForwardContext(Movable, Copyable):
     var entradas: tensor_defs.Tensor
     var alvos: tensor_defs.Tensor
-    var z1: tensor_defs.Tensor
-    var a1: tensor_defs.Tensor
-    var z2: tensor_defs.Tensor
+    var zs: List[tensor_defs.Tensor]
+    var ativacoes: List[tensor_defs.Tensor]
     var pred: tensor_defs.Tensor
     var operacoes: List[String]
     var grafo: grafo.GrafoComputacao
@@ -17,42 +16,42 @@ struct MLPForwardContext(Movable, Copyable):
         out self,
         entradas_in: tensor_defs.Tensor,
         alvos_in: tensor_defs.Tensor,
-        z1_in: tensor_defs.Tensor,
-        a1_in: tensor_defs.Tensor,
-        z2_in: tensor_defs.Tensor,
+        var zs_in: List[tensor_defs.Tensor],
+        var ativacoes_in: List[tensor_defs.Tensor],
         pred_in: tensor_defs.Tensor,
         var ops_in: List[String],
         grafo_in: grafo.GrafoComputacao,
     ):
         self.entradas = entradas_in.copy()
         self.alvos = alvos_in.copy()
-        self.z1 = z1_in.copy()
-        self.a1 = a1_in.copy()
-        self.z2 = z2_in.copy()
+        self.zs = List[tensor_defs.Tensor]()
+        for z in zs_in:
+            self.zs.append(z.copy())
+        self.ativacoes = List[tensor_defs.Tensor]()
+        for a in ativacoes_in:
+            self.ativacoes.append(a.copy())
         self.pred = pred_in.copy()
         self.operacoes = ops_in^
         self.grafo = grafo_in.copy()
 
 
 struct MLPGradientes(Movable, Copyable):
-    var grad_w1: tensor_defs.Tensor
-    var grad_b1: tensor_defs.Tensor
-    var grad_w2: tensor_defs.Tensor
-    var grad_b2: Float32
+    var grad_ws: List[tensor_defs.Tensor]
+    var grad_bs: List[tensor_defs.Tensor]
     var loss: Float32
 
     fn __init__(
         out self,
-        gw1: tensor_defs.Tensor,
-        gb1: tensor_defs.Tensor,
-        gw2: tensor_defs.Tensor,
-        var gb2: Float32,
+        var gws: List[tensor_defs.Tensor],
+        var gbs: List[tensor_defs.Tensor],
         var loss_in: Float32,
     ):
-        self.grad_w1 = gw1.copy()
-        self.grad_b1 = gb1.copy()
-        self.grad_w2 = gw2.copy()
-        self.grad_b2 = gb2
+        self.grad_ws = List[tensor_defs.Tensor]()
+        for gw in gws:
+            self.grad_ws.append(gw.copy())
+        self.grad_bs = List[tensor_defs.Tensor]()
+        for gb in gbs:
+            self.grad_bs.append(gb.copy())
         self.loss = loss_in
 
 
@@ -88,46 +87,86 @@ fn somar_linhas(a: tensor_defs.Tensor) -> tensor_defs.Tensor:
 fn construir_contexto(
     entradas: tensor_defs.Tensor,
     alvos: tensor_defs.Tensor,
-    w1: tensor_defs.Tensor,
-    b1: tensor_defs.Tensor,
-    w2: tensor_defs.Tensor,
-    b2: tensor_defs.Tensor,
+    pesos: List[tensor_defs.Tensor],
+    biases: List[tensor_defs.Tensor],
 ) -> MLPForwardContext:
+    debug_assert(len(pesos) > 0, "MLP precisa de ao menos uma camada")
+    debug_assert(len(pesos) == len(biases), "pesos e biases precisam ter mesmo tamanho")
+
     var ops = List[String]()
 
-    var z1_bruto = tensor_defs.multiplicar_matrizes(entradas, w1)
-    ops.append("matmul(x,w1)")
-    var z1 = adicionar_bias_vetor_coluna(z1_bruto, b1)
-    ops.append("add_bias_hidden")
-    var a1 = ativacoes.relu(z1)
-    ops.append("relu")
-    var z2_bruto = tensor_defs.multiplicar_matrizes(a1, w2)
-    ops.append("matmul(a1,w2)")
-    var z2 = tensor_defs.adicionar_bias_coluna(z2_bruto, b2)
-    ops.append("add_bias_out")
-    var pred = ativacoes.hard_sigmoid(z2)
-    ops.append("hard_sigmoid")
+    var zs = List[tensor_defs.Tensor]()
+    var ativs = List[tensor_defs.Tensor]()
+    ativs.append(entradas.copy())
 
-    var g = grafo.criar_grafo_mlp_forward()
-    return MLPForwardContext(entradas, alvos, z1, a1, z2, pred, ops^, g)
+    var atual = entradas.copy()
+    var num_camadas = len(pesos)
+
+    for camada in range(num_camadas):
+        var z_bruto = tensor_defs.multiplicar_matrizes(atual, pesos[camada])
+        ops.append("matmul(a" + String(camada) + ",w" + String(camada + 1) + ")")
+
+        var z = adicionar_bias_vetor_coluna(z_bruto, biases[camada])
+        ops.append("add_bias_" + String(camada + 1))
+        zs.append(z.copy())
+
+        if camada < num_camadas - 1:
+            atual = ativacoes.relu(z)
+            ops.append("relu_" + String(camada + 1))
+        else:
+            atual = ativacoes.hard_sigmoid(z)
+            ops.append("hard_sigmoid_out")
+
+        ativs.append(atual.copy())
+
+    var pred = atual.copy()
+
+    var topologia = List[Int]()
+    topologia.append(entradas.formato[1])
+    for p in pesos:
+        topologia.append(p.formato[1])
+
+    var g = grafo.criar_grafo_mlp_forward_topologia(topologia)
+    return MLPForwardContext(entradas, alvos, zs^, ativs^, pred, ops^, g)
 
 
-fn calcular_gradientes(ctx: MLPForwardContext, w2: tensor_defs.Tensor) -> MLPGradientes:
+fn calcular_gradientes(ctx: MLPForwardContext, pesos: List[tensor_defs.Tensor]) -> MLPGradientes:
+    var num_camadas = len(pesos)
+    debug_assert(num_camadas > 0, "MLP precisa de ao menos uma camada")
+    debug_assert(num_camadas == len(ctx.zs), "contexto inconsistente com número de camadas")
+
     var loss = perdas_mse.mse(ctx.pred, ctx.alvos)
 
     var grad_pred = perdas_mse.gradiente_mse(ctx.pred, ctx.alvos)
-    var grad_z2 = ativacoes.derivada_hard_sigmoid(ctx.z2, grad_pred)
+    var z_saida = ctx.zs[num_camadas - 1].copy()
+    var grad_z_atual = ativacoes.derivada_hard_sigmoid(z_saida, grad_pred)
 
-    var a1_t = tensor_defs.transpor(ctx.a1)
-    var grad_w2 = tensor_defs.multiplicar_matrizes(a1_t, grad_z2)
-    var grad_b2 = tensor_defs.soma_total(grad_z2)
+    var grad_ws_reverso = List[tensor_defs.Tensor]()
+    var grad_bs_reverso = List[tensor_defs.Tensor]()
 
-    var w2_t = tensor_defs.transpor(w2)
-    var grad_a1 = tensor_defs.multiplicar_matrizes(grad_z2, w2_t)
-    var grad_z1 = ativacoes.derivada_relu(ctx.z1, grad_a1)
+    for passo in range(num_camadas):
+        var camada = num_camadas - 1 - passo
 
-    var x_t = tensor_defs.transpor(ctx.entradas)
-    var grad_w1 = tensor_defs.multiplicar_matrizes(x_t, grad_z1)
-    var grad_b1 = somar_linhas(grad_z1)
+        var ativ_prev = ctx.ativacoes[camada].copy()
+        var ativ_prev_t = tensor_defs.transpor(ativ_prev)
+        var grad_w = tensor_defs.multiplicar_matrizes(ativ_prev_t, grad_z_atual)
+        var grad_b = somar_linhas(grad_z_atual)
 
-    return MLPGradientes(grad_w1, grad_b1, grad_w2, grad_b2, loss)
+        grad_ws_reverso.append(grad_w.copy())
+        grad_bs_reverso.append(grad_b.copy())
+
+        if camada > 0:
+            var peso_camada = pesos[camada].copy()
+            var w_t = tensor_defs.transpor(peso_camada)
+            var grad_a_prev = tensor_defs.multiplicar_matrizes(grad_z_atual, w_t)
+            var z_anterior = ctx.zs[camada - 1].copy()
+            grad_z_atual = ativacoes.derivada_relu(z_anterior, grad_a_prev)
+
+    var grad_ws = List[tensor_defs.Tensor]()
+    var grad_bs = List[tensor_defs.Tensor]()
+    for i in range(num_camadas):
+        var idx = num_camadas - 1 - i
+        grad_ws.append(grad_ws_reverso[idx].copy())
+        grad_bs.append(grad_bs_reverso[idx].copy())
+
+    return MLPGradientes(grad_ws^, grad_bs^, loss)

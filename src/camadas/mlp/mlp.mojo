@@ -5,52 +5,58 @@ import src.nucleo.Tensor as tensor_defs
 import src.perdas.mse as perdas_mse
 
 struct BlocoMLP(Movable, Copyable):
-    var w1: tensor_defs.Tensor
-    var b1: tensor_defs.Tensor
-    var w2: tensor_defs.Tensor
-    var b2: tensor_defs.Tensor
+    var topologia: List[Int]
+    var pesos: List[tensor_defs.Tensor]
+    var biases: List[tensor_defs.Tensor]
     var tipo_computacao: String
 
     fn __init__(out self, var num_entradas: Int, var num_ocultas: Int = 16, var tipo_computacao_in: String = "cpu"):
+        var topologia_local = List[Int]()
+        topologia_local.append(num_entradas)
+        topologia_local.append(num_ocultas)
+        topologia_local.append(num_ocultas)
+        topologia_local.append(1)
+
+        self.__init__(topologia_local^, tipo_computacao_in)
+
+    fn __init__(out self, var topologia_in: List[Int], var tipo_computacao_in: String = "cpu"):
+        debug_assert(len(topologia_in) >= 2, "topologia deve ter ao menos entrada e saída")
+
+        self.topologia = topologia_in^
         self.tipo_computacao = tipo_computacao_in^
-
-        var formato_w1 = List[Int]()
-        formato_w1.append(num_entradas)
-        formato_w1.append(num_ocultas)
-        self.w1 = tensor_defs.Tensor(formato_w1^, self.tipo_computacao)
-
-        var formato_b1 = List[Int]()
-        formato_b1.append(1)
-        formato_b1.append(num_ocultas)
-        self.b1 = tensor_defs.Tensor(formato_b1^, self.tipo_computacao)
-
-        var formato_w2 = List[Int]()
-        formato_w2.append(num_ocultas)
-        formato_w2.append(1)
-        self.w2 = tensor_defs.Tensor(formato_w2^, self.tipo_computacao)
-
-        var formato_b2 = List[Int]()
-        formato_b2.append(1)
-        formato_b2.append(1)
-        self.b2 = tensor_defs.Tensor(formato_b2^, self.tipo_computacao)
+        self.pesos = List[tensor_defs.Tensor]()
+        self.biases = List[tensor_defs.Tensor]()
 
         var escala: Float32 = 0.05
-        for i in range(len(self.w1.dados)):
-            var sinal: Float32 = 1.0 if (i % 2 == 0) else Float32(-1.0)
-            self.w1.dados[i] = Float32(i + 1) * escala * sinal
-        for i in range(len(self.b1.dados)):
-            self.b1.dados[i] = 0.0
-        for i in range(len(self.w2.dados)):
-            var sinal2: Float32 = 1.0 if (i % 2 == 0) else Float32(-1.0)
-            self.w2.dados[i] = Float32(i + 1) * escala * sinal2
-        self.b2.dados[0] = 0.0
+        var num_camadas = len(self.topologia) - 1
+        for camada in range(num_camadas):
+            var formato_w = List[Int]()
+            formato_w.append(self.topologia[camada])
+            formato_w.append(self.topologia[camada + 1])
+            var w = tensor_defs.Tensor(formato_w^, self.tipo_computacao)
+
+            var formato_b = List[Int]()
+            formato_b.append(1)
+            formato_b.append(self.topologia[camada + 1])
+            var b = tensor_defs.Tensor(formato_b^, self.tipo_computacao)
+
+            for i in range(len(w.dados)):
+                var sinal: Float32 = 1.0 if (i % 2 == 0) else Float32(-1.0)
+                w.dados[i] = Float32(i + 1) * escala * sinal
+            for i in range(len(b.dados)):
+                b.dados[i] = 0.0
+
+            self.pesos.append(w.copy())
+            self.biases.append(b.copy())
 
     fn copy(self) -> BlocoMLP:
-        var copia = BlocoMLP(self.w1.formato[0], self.w1.formato[1], self.tipo_computacao)
-        copia.w1 = self.w1.copy()
-        copia.b1 = self.b1.copy()
-        copia.w2 = self.w2.copy()
-        copia.b2 = self.b2.copy()
+        var copia = BlocoMLP(self.topologia.copy(), self.tipo_computacao)
+        copia.pesos = List[tensor_defs.Tensor]()
+        for w in self.pesos:
+            copia.pesos.append(w.copy())
+        copia.biases = List[tensor_defs.Tensor]()
+        for b in self.biases:
+            copia.biases.append(b.copy())
         return copia^
 
 
@@ -60,7 +66,7 @@ fn prever(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
     formato_y.append(entradas.formato[0])
     formato_y.append(1)
     var alvos_dummy = tensor_defs.Tensor(formato_y^, entradas.tipo_computacao)
-    var ctx = autograd.construir_contexto_mlp(entradas, alvos_dummy, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
+    var ctx = autograd.construir_contexto_mlp(entradas, alvos_dummy, bloco.pesos, bloco.biases)
     return ctx.pred.copy()
 
 
@@ -110,17 +116,15 @@ fn treinar_por_lotes(
         var entradas = item.lote.entradas.copy()
         var alvos = item.lote.alvos.copy()
 
-        var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
-        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.w2, manter_gradientes_na_ram_principal)
+        var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.pesos, bloco.biases)
+        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
         loss_lote_final = grads.loss
 
-        for i in range(len(bloco.w1.dados)):
-            bloco.w1.dados[i] = bloco.w1.dados[i] - taxa_aprendizado * grads.grad_w1.dados[i]
-        for i in range(len(bloco.b1.dados)):
-            bloco.b1.dados[i] = bloco.b1.dados[i] - taxa_aprendizado * grads.grad_b1.dados[i]
-        for i in range(len(bloco.w2.dados)):
-            bloco.w2.dados[i] = bloco.w2.dados[i] - taxa_aprendizado * grads.grad_w2.dados[i]
-        bloco.b2.dados[0] = bloco.b2.dados[0] - taxa_aprendizado * grads.grad_b2
+        for camada in range(len(bloco.pesos)):
+            for i in range(len(bloco.pesos[camada].dados)):
+                bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
+            for j in range(len(bloco.biases[camada].dados)):
+                bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
 
         soma_loss_epoca = soma_loss_epoca + grads.loss
         quantidade_lotes_epoca = quantidade_lotes_epoca + 1
@@ -145,21 +149,19 @@ fn treinar(
     debug_assert(len(entradas.formato) == 2, "entradas deve ser tensor 2D")
     debug_assert(len(alvos.formato) == 2 and alvos.formato[1] == 1, "alvos deve ser tensor 2D [N,1]")
     debug_assert(entradas.formato[0] == alvos.formato[0], "entradas/alvos com número de linhas diferente")
-    debug_assert(entradas.formato[1] == bloco.w1.formato[0], "número de features incompatível")
+    debug_assert(entradas.formato[1] == bloco.topologia[0], "número de features incompatível")
 
     var loss_final: Float32 = 0.0
     for epoca in range(epocas):
-        var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
-        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.w2, manter_gradientes_na_ram_principal)
+        var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.pesos, bloco.biases)
+        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
         loss_final = grads.loss
 
-        for i in range(len(bloco.w1.dados)):
-            bloco.w1.dados[i] = bloco.w1.dados[i] - taxa_aprendizado * grads.grad_w1.dados[i]
-        for i in range(len(bloco.b1.dados)):
-            bloco.b1.dados[i] = bloco.b1.dados[i] - taxa_aprendizado * grads.grad_b1.dados[i]
-        for i in range(len(bloco.w2.dados)):
-            bloco.w2.dados[i] = bloco.w2.dados[i] - taxa_aprendizado * grads.grad_w2.dados[i]
-        bloco.b2.dados[0] = bloco.b2.dados[0] - taxa_aprendizado * grads.grad_b2
+        for camada in range(len(bloco.pesos)):
+            for i in range(len(bloco.pesos[camada].dados)):
+                bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
+            for j in range(len(bloco.biases[camada].dados)):
+                bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
 
         if imprimir_cada > 0 and (epoca % imprimir_cada == 0 or epoca == epocas - 1):
             print("Época", epoca, "| Loss MSE:", loss_final)

@@ -1,3 +1,9 @@
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/mlp/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/mlp/__init__.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/src/camadas/mlp/mlp.mojo:20:22: warning: 'BlocoMLP' value is unused
+        self.__init__(topologia_local^, tipo_computacao_in)
+        ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        _ = 
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:1:
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/__init__.mojo:2:
 /mnt/c/PROJETOS/BIONIX-ML/src/conjuntos/bitmap_supervisionado.mojo:136:6: warning: transfer from an owned value has no effect and can be removed
@@ -321,23 +327,23 @@ Dataset BMP já existe; reutilizando: exemplos/e000003_espirais_intercaladas/dat
 Amostras treino: 20136 | Features: 2
 Amostras teste: 10368
 Lotes de treino (epocas x lotes): 2528 | Lotes de teste: 81
-Época 0 | Loss treino médio: 0.32336202 | Loss validação: 0.29569507
-Época 1 | Loss treino médio: 0.2679376 | Loss validação: 0.26155806
-Época 2 | Loss treino médio: 0.24604845 | Loss validação: 0.24816704
-Época 3 | Loss treino médio: 0.2357593 | Loss validação: 0.23992805
-Época 4 | Loss treino médio: 0.22893389 | Loss validação: 0.23391318
-Época 5 | Loss treino médio: 0.22415762 | Loss validação: 0.22980902
-Época 6 | Loss treino médio: 0.22114652 | Loss validação: 0.22727594
-Época 7 | Loss treino médio: 0.21925747 | Loss validação: 0.22565538
-Época 8 | Loss treino médio: 0.21803658 | Loss validação: 0.2245806
-Época 9 | Loss treino médio: 0.21722816 | Loss validação: 0.22385049
-Época 10 | Loss treino médio: 0.21668488 | Loss validação: 0.22334655
-Época 11 | Loss treino médio: 0.21631518 | Loss validação: 0.22299044
-Época 12 | Loss treino médio: 0.21605892 | Loss validação: 0.22273314
-Época 13 | Loss treino médio: 0.21587761 | Loss validação: 0.22254363
-Época 14 | Loss treino médio: 0.21574792 | Loss validação: 0.22240226
-Época 15 | Loss treino médio: 0.21565314 | Loss validação: 0.2222949
-Loss final: 0.1526797
+Época 0 | Loss treino médio: 0.31317946 | Loss validação: 0.33072495
+Época 1 | Loss treino médio: 0.31258756 | Loss validação: 0.329605
+Época 2 | Loss treino médio: 0.3107174 | Loss validação: 0.32671294
+Época 3 | Loss treino médio: 0.3086335 | Loss validação: 0.32365277
+Época 4 | Loss treino médio: 0.3069928 | Loss validação: 0.32271495
+Época 5 | Loss treino médio: 0.30605725 | Loss validação: 0.32102472
+Época 6 | Loss treino médio: 0.3039092 | Loss validação: 0.31912774
+Época 7 | Loss treino médio: 0.30139932 | Loss validação: 0.31544772
+Época 8 | Loss treino médio: 0.29780087 | Loss validação: 0.31227705
+Época 9 | Loss treino médio: 0.29520512 | Loss validação: 0.30871338
+Época 10 | Loss treino médio: 0.29168296 | Loss validação: 0.30319318
+Época 11 | Loss treino médio: 0.28553805 | Loss validação: 0.29768702
+Época 12 | Loss treino médio: 0.28033576 | Loss validação: 0.2917646
+Época 13 | Loss treino médio: 0.27463594 | Loss validação: 0.28503424
+Época 14 | Loss treino médio: 0.2694139 | Loss validação: 0.2795303
+Época 15 | Loss treino médio: 0.26505464 | Loss validação: 0.2752077
+Loss final: 0.175
 Acurácia treino: 0.685737
 Acurácia teste: 0.66878855
 --- Fim do exemplo e000003 ---

@@ -7,9 +7,9 @@ fn pipeline_id_vulkan(var pipeline_memoria_id: Int, var operacao_id: Int) -> Int
 
 fn calcular_gradientes_mlp_vulkan(
     ctx: autograd_mlp.MLPForwardContext,
-    w2: tensor_defs.Tensor,
+    pesos: List[tensor_defs.Tensor],
     var pipeline_id: Int,
 ) raises -> autograd_mlp.MLPGradientes:
     _ = ctx
-    _ = w2
+    _ = pesos
     raise Exception("Vulkan calcular_gradientes_mlp não implementado. pipeline_id=" + String(pipeline_id))

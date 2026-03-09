@@ -7,3 +7,7 @@ def criar_linear(var num_entradas: Int, var tipo_computacao: String = "cpu") -> 
 
 def criar_mlp(var num_entradas: Int, var num_ocultas: Int = 16, var tipo_computacao: String = "cpu") -> mlp.BlocoMLP:
     return mlp.BlocoMLP(num_entradas, num_ocultas, tipo_computacao)
+
+
+def criar_mlp_topologia(var topologia: List[Int], var tipo_computacao: String = "cpu") -> mlp.BlocoMLP:
+    return mlp.BlocoMLP(topologia, tipo_computacao)

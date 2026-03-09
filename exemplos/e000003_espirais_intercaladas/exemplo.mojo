@@ -103,7 +103,12 @@ def executar_exemplo():
     print("Lotes de treino (epocas x lotes):", len(prep_lotes.treino_por_epoca), "| Lotes de teste:", len(lotes_teste))
 
     # 3) Treino do bloco MLP por lotes (autograd + funções de ativação), validando no conjunto de teste
-    var mlp = mlp_pkg.BlocoMLP(2, 16, tipo_computacao)
+    var topologia = List[Int]()
+    topologia.append(2)
+    topologia.append(16)
+    topologia.append(16)
+    topologia.append(1)
+    var mlp = mlp_pkg.BlocoMLP(topologia^, tipo_computacao)
     var loss_final = mlp_pkg.treinar_por_lotes(mlp, prep_lotes.treino_por_epoca, lotes_teste, 0.03, 1)
     print("Loss final:", loss_final)
 

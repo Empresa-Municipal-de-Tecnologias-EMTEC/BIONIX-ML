@@ -10,16 +10,14 @@ alias GrafoComputacao = grafo.GrafoComputacao
 fn construir_contexto_mlp(
     entradas: tensor_defs.Tensor,
     alvos: tensor_defs.Tensor,
-    w1: tensor_defs.Tensor,
-    b1: tensor_defs.Tensor,
-    w2: tensor_defs.Tensor,
-    b2: tensor_defs.Tensor,
+    pesos: List[tensor_defs.Tensor],
+    biases: List[tensor_defs.Tensor],
 ) -> MLPForwardContext:
-    return mlp.construir_contexto(entradas, alvos, w1, b1, w2, b2)
+    return mlp.construir_contexto(entradas, alvos, pesos, biases)
 
 
-fn calcular_gradientes_mlp(ctx: MLPForwardContext, w2: tensor_defs.Tensor) -> MLPGradientes:
-    return mlp.calcular_gradientes(ctx, w2)
+fn calcular_gradientes_mlp(ctx: MLPForwardContext, pesos: List[tensor_defs.Tensor]) -> MLPGradientes:
+    return mlp.calcular_gradientes(ctx, pesos)
 
 
 fn adicionar_bias_vetor_coluna(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:

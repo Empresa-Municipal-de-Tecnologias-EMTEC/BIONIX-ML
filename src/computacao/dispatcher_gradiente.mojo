@@ -18,7 +18,7 @@ fn _backend_execucao_efetivo(var backend_id: Int) -> Int:
 
 fn calcular_gradientes_mlp(
     ctx: autograd_mlp.MLPForwardContext,
-    w2: tensor_defs.Tensor,
+    pesos: List[tensor_defs.Tensor],
     var manter_gradientes_na_ram_principal: Bool = True,
 ) -> autograd_mlp.MLPGradientes:
     var backend = tipos.backend_cpu_id() if manter_gradientes_na_ram_principal else _backend_execucao_efetivo(ctx.entradas.id_backend)
@@ -26,4 +26,4 @@ fn calcular_gradientes_mlp(
         backend == tipos.backend_cpu_id(),
         "dispatcher_gradiente: backend não implementado sem fallback automático: " + tipos.backend_nome_de_id(backend),
     )
-    return kernels_cpu.calcular_gradientes_mlp_cpu(ctx, w2)
+    return kernels_cpu.calcular_gradientes_mlp_cpu(ctx, pesos)
