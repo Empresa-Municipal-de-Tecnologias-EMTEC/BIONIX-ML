@@ -20,7 +20,10 @@ fn ler_arquivo_binario(var caminho: String) -> List[Int]:
 fn gravar_arquivo_binario(var caminho: String, var dados: List[Int]) -> Bool:
     try:
         var f = open(caminho, "w")
-        f.write_bytes(dados)
+        var bytes_out = List[UInt8]()
+        for v in dados:
+            bytes_out.append(UInt8(v & 0xFF))
+        f.write_bytes(bytes_out)
         f.close()
         return True
     except Exception:
