@@ -2,7 +2,7 @@ import src.autograd as autograd
 import src.computacao.dispatcher_gradiente as dispatcher_gradiente
 import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
-import src.perdas as perdas
+import src.perdas.mse as perdas_mse
 
 struct BlocoMLP(Movable, Copyable):
     var w1: tensor_defs.Tensor
@@ -61,7 +61,7 @@ fn prever(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
     formato_y.append(1)
     var alvos_dummy = tensor_defs.Tensor(formato_y^, entradas.tipo_computacao)
     var ctx = autograd.construir_contexto_mlp(entradas, alvos_dummy, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
-    return ctx.pred
+    return ctx.pred.copy()
 
 
 fn inferir(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -75,7 +75,7 @@ fn _loss_medio_lotes_validacao(bloco: BlocoMLP, lotes_validacao: List[lotes_sup.
     var soma: Float32 = 0.0
     for lote in lotes_validacao:
         var pred = inferir(bloco, lote.entradas)
-        soma = soma + perdas.mse(pred, lote.alvos)
+        soma = soma + perdas_mse.mse(pred, lote.alvos)
 
     return soma / Float32(len(lotes_validacao))
 
@@ -107,8 +107,8 @@ fn treinar_por_lotes(
             soma_loss_epoca = 0.0
             quantidade_lotes_epoca = 0
 
-        var entradas = item.lote.entradas
-        var alvos = item.lote.alvos
+        var entradas = item.lote.entradas.copy()
+        var alvos = item.lote.alvos.copy()
 
         var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.w1, bloco.b1, bloco.w2, bloco.b2)
         var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.w2, manter_gradientes_na_ram_principal)

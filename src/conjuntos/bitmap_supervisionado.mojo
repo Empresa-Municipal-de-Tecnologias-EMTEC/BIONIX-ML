@@ -75,7 +75,11 @@ fn carregar_bitmap_supervisionado(
     var n = 0
 
     for caminho_bmp in caminhos:
-        var matriz = dados_pkg.carregar_bmp_grayscale_matriz(caminho_bmp)
+        var matriz = List[List[Float32]]()
+        try:
+            matriz = dados_pkg.carregar_bmp_grayscale_matriz(caminho_bmp)
+        except Exception:
+            continue
         if len(matriz) == 0 or len(matriz[0]) == 0:
             continue
 

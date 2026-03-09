@@ -9,5 +9,7 @@ fn calcular_gradientes_mlp_cuda(
     ctx: autograd_mlp.MLPForwardContext,
     w2: tensor_defs.Tensor,
     var pipeline_id: Int,
-) -> autograd_mlp.MLPGradientes:
+) raises -> autograd_mlp.MLPGradientes:
+    _ = ctx
+    _ = w2
     raise Exception("CUDA calcular_gradientes_mlp não implementado. pipeline_id=" + String(pipeline_id))

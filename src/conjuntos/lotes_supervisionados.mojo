@@ -19,7 +19,7 @@ struct LoteEpocaSupervisionado(Movable, Copyable):
     fn __init__(out self, var epoca_in: Int, var indice_lote_in: Int, lote_in: LoteSupervisionado):
         self.epoca = epoca_in
         self.indice_lote = indice_lote_in
-        self.lote = lote_in
+        self.lote = lote_in.copy()
 
 
 struct PreparacaoTreinoValidacaoLotes(Movable, Copyable):

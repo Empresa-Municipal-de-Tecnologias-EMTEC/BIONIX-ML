@@ -2,15 +2,18 @@ import src.camadas.mlp as mlp_pkg
 import src.dados as dados_pkg
 import src.graficos as graficos_pkg
 import src.conjuntos as conjuntos_pkg
-import src.computacao as computacao_pkg
 import src.uteis as uteis
 
 
 fn _garantir_dataset_bmp(var caminho_bmp: String, var caminho_ok: String):
     var marcador = uteis.ler_texto_seguro(caminho_ok).strip()
-    if marcador == "ok" and dados_pkg.diagnosticar_bmp(caminho_bmp):
-        print("Dataset BMP já existe; reutilizando:", caminho_bmp)
-        return
+    if marcador == "ok":
+        try:
+            if dados_pkg.diagnosticar_bmp(caminho_bmp):
+                print("Dataset BMP já existe; reutilizando:", caminho_bmp)
+                return
+        except Exception:
+            pass
 
     print("Gerando dataset BMP de espirais intercaladas...")
     var bytes_bmp = graficos_pkg.gerar_bmp_espirais_intercaladas_bytes(192, 192)
@@ -26,7 +29,7 @@ fn _garantir_dataset_bmp(var caminho_bmp: String, var caminho_ok: String):
 def executar_exemplo():
     print("--- Exemplo e000003: espirais intercaladas (BMP + autograd + ativações + MLP) ---")
 
-    var tipo_computacao = computacao_pkg.backend_nome_de_id(computacao_pkg.backend_cpu_id())
+    var tipo_computacao = "cpu"
     var caminho_bmp = "exemplos/e000003_espirais_intercaladas/dataset_espirais.bmp"
     var caminho_ok = "exemplos/e000003_espirais_intercaladas/dataset_espirais.ok"
 
