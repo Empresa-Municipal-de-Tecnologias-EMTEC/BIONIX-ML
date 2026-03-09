@@ -22,6 +22,20 @@ A proposta do projeto é entregar uma pilha mais simples, padronizada e centrali
 
 O foco é reduzir a curva de aprendizado sem perder flexibilidade, mantendo um ambiente **leve, performático, econômico, customizável e fácil de usar**, inclusive para ensino e experimentação.
 
+## Ambição do framework
+
+A ambição do BIONIX-ML é ser um framework de IA com módulos para:
+
+- ler **texto**;
+- ler **imagem**;
+- ler **áudio**;
+- normalizar dados;
+- retornar os dados em formato de **tensor**.
+
+Além disso, a proposta é reunir em uma única pilha os blocos necessários para evolução de projetos de IA em vários níveis, desde o estudo inicial até cenários mais avançados de pesquisa e uso comercial.
+
+Essa ambição também inclui viabilizar uma operação de **baixo custo**, com potencial de **execução local**, melhor aproveitamento de hardware disponível e mecanismos para reduzir consumo de memória, custo de execução e desperdício de recursos computacionais.
+
 ## Status do projeto
 
 ### Backends pretendidos
@@ -42,6 +56,8 @@ Embora a base do projeto já esteja preparada para lidar com múltiplos backends
 - **Linear**
 
 No momento, o bloco arquitetural funcional implementado é a camada **Linear**, com suporte a inferência, treinamento simples e persistência de pesos.
+
+O objetivo de longo prazo é que o framework contenha diversos **blocos arquiteturais de modelos de IA**, mas atualmente o bloco disponível é apenas `Linear`.
 
 ## O que já existe no repositório
 
@@ -115,6 +131,7 @@ Os itens abaixo ainda estão em planejamento e representam a direção estratég
 ### Observabilidade e destilação
 
 - instrumentação de camadas e modelos;
+- ferramentas para análise de modelos e camadas;
 - modo de execução com captura de entrada e saída por camada;
 - suporte a estratégias de destilação.
 
@@ -129,8 +146,9 @@ Os itens abaixo ainda estão em planejamento e representam a direção estratég
 ### Resiliência operacional
 
 - offload em memória e disco;
+- offload em disco para cenários de restrição de memória e execução local;
 - persistência do estado de treinamento;
-- salvamento de pesos a cada iteração;
+- persistência de pesos a cada iteração;
 - continuidade automática do procedimento em caso de falha.
 
 ### Interoperabilidade e inferência
@@ -146,8 +164,33 @@ Os itens abaixo ainda estão em planejamento e representam a direção estratég
 ### Compressão e eficiência de modelos
 
 - instrumentação para criação de métodos ótimos de compressão ainda no treinamento;
+- compressão máxima do modelo já em tempo de treinamento;
+- estratégias customizáveis de alocação de tensor;
+- redução de consumo de memória e custo de execução;
+- liberação de recursos para paralelismo e aumento de vazão das requisições;
 - foco em viabilizar treinamento e inferência com melhor aproveitamento de recursos;
 - aumento de paralelismo e vazão de modelos.
+
+## TODOs estratégicos do framework
+
+Para refletir de forma objetiva o estado pretendido do projeto, os principais `TODOs` atuais são:
+
+- [ ] expandir de uma arquitetura linear simples para **redes de múltiplas camadas**;
+- [ ] adicionar **funções de ativação**;
+- [ ] implementar blocos **transformer** e **convolucionais**;
+- [ ] evoluir recursos de **clonagem de voz**, **texto para fala** e **fala para texto**;
+- [ ] introduzir suporte a **LLMs**;
+- [ ] criar mecanismos de **instrumentação de camadas e modelos**;
+- [ ] criar ferramentas para **análise de modelos e camadas**;
+- [ ] disponibilizar modo de execução com captura de entrada e saída por camada para **destilação**;
+- [ ] suportar **paralelismo de dados, tensor, pipeline e híbrido** para aumento de vazão e viabilização do treinamento;
+- [ ] implementar **offload em memória e disco**;
+- [ ] viabilizar **execução de baixo custo com potencial de execução local**;
+- [ ] persistir **estado de treinamento e pesos a cada iteração** para continuidade após falhas;
+- [ ] criar um **módulo padrão de API de inferência** com payload dinâmico para múltiplas entradas numeradas, como `texto[1]`, `imagem[1]`, `imagem[2]` e `audio[1]`;
+- [ ] adicionar **leitura e exportação de GGUF**;
+- [ ] criar um módulo de instrumentação e compressão para obter **métodos ótimos de compressão máxima do modelo ainda durante o treinamento**, com foco em viabilizar treino, inferência e maior paralelismo orientado a vazão;
+- [ ] implementar **estratégias customizáveis de alocação de tensor** com objetivo de reduzir consumo de memória, custo de execução e liberar recursos para paralelismo.
 
 ## Diferencial do projeto
 
@@ -160,6 +203,10 @@ Isso significa oferecer uma base que atenda:
 - quem precisa construir soluções com aplicação comercial.
 
 Ao consolidar carregamento de dados, preparação, modelagem, treinamento e implantação em uma mesma pilha, o projeto busca reduzir fragmentação, facilitar manutenção e tornar o ambiente mais previsível para evolução de soluções de IA.
+
+Em outras palavras, o diferencial do projeto é permitir acesso em nível de **aprendizado, pesquisa e produção comercial** por meio da **amenização da curva de aprendizado** e da **padronização do ambiente de trabalho**, fornecendo uma pilha completa para projetos de IA em vários níveis: **do carregamento dos dados, análise e treinamento até a implantação do modelo**, mantendo o ambiente centralizado, leve, performático, econômico, customizável e fácil de utilizar.
+
+Dentro dessa visão, também faz parte do diferencial do projeto buscar caminhos para **execução local de menor custo**, **offload inteligente**, **análise e destilação de modelos e camadas**, **compressão de modelos** e **estratégias flexíveis de alocação de tensores**, com o objetivo de reduzir consumo de memória, custo operacional e ampliar a capacidade de paralelismo e vazão.
 
 ## Estrutura atual do repositório
 
