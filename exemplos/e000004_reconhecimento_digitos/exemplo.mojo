@@ -589,6 +589,9 @@ def executar_exemplo():
     var tamanho_lote = 64
     var taxa_aprendizado: Float32 = 0.005
     var usar_reduce_on_plateau = True
+    var fator_reducao_lr: Float32 = 0.5
+    var paciencia_reducao_lr = 5
+    var lr_min_reduce_on_plateau: Float32 = 0.0001
     print(
         "Configuração MLP | Ativação saída:",
         mlp_pkg.ativacao_saida_nome_de_id(mlp.ativacao_saida_id),
@@ -600,6 +603,9 @@ def executar_exemplo():
         "| Lote:", tamanho_lote,
         "| LR:", taxa_aprendizado,
         "| ReduceOnPlateau:", usar_reduce_on_plateau,
+        "| FatorReduceLR:", fator_reducao_lr,
+        "| PacienciaReduceLR:", paciencia_reducao_lr,
+        "| LRMinReduce:", lr_min_reduce_on_plateau,
         "| InferenciaSomente:", inferencia_somente,
         "| SalvarCheckpoint:", salvar_checkpoint_a_cada_epoca,
     )
@@ -619,9 +625,9 @@ def executar_exemplo():
             tamanho_lote,
             taxa_aprendizado,
             usar_reduce_on_plateau,
-            0.5,
-            3,
-            0.00005,
+            fator_reducao_lr,
+            paciencia_reducao_lr,
+            lr_min_reduce_on_plateau,
             0.12,
             0.001,
             salvar_checkpoint_a_cada_epoca,
