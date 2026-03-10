@@ -1,8 +1,45 @@
 import src.camadas.mlp.mlp as mlp_impl
+import src.autograd.tipos_mlp as tipos_mlp
 import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
 
 alias BlocoMLP = mlp_impl.BlocoMLP
+
+
+fn ativacao_saida_hard_sigmoid_id() -> Int:
+    return tipos_mlp.ativacao_saida_hard_sigmoid_id()
+
+
+fn ativacao_saida_linear_id() -> Int:
+    return tipos_mlp.ativacao_saida_linear_id()
+
+
+fn ativacao_saida_softmax_id() -> Int:
+    return tipos_mlp.ativacao_saida_softmax_id()
+
+
+fn perda_mse_id() -> Int:
+    return tipos_mlp.perda_mse_id()
+
+
+fn perda_cross_entropy_id() -> Int:
+    return tipos_mlp.perda_cross_entropy_id()
+
+
+fn ativacao_saida_id_valido(var ativacao_saida_id: Int) -> Bool:
+    return tipos_mlp.ativacao_saida_id_valido(ativacao_saida_id)
+
+
+fn perda_id_valido(var perda_id: Int) -> Bool:
+    return tipos_mlp.perda_id_valido(perda_id)
+
+
+fn ativacao_saida_nome_de_id(var ativacao_saida_id: Int) -> String:
+    return tipos_mlp.ativacao_saida_nome_de_id(ativacao_saida_id)
+
+
+fn perda_nome_de_id(var perda_id: Int) -> String:
+    return tipos_mlp.perda_nome_de_id(perda_id)
 
 
 def prever(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:

@@ -237,7 +237,7 @@ fn _treinar_por_lotes_multiclasse(
             var xb = _fatiar_2d(x_treino, inicio, fim)
             var yb = _fatiar_2d(y_treino, inicio, fim)
 
-            var ctx = autograd.construir_contexto_mlp(xb, yb, bloco.pesos, bloco.biases)
+            var ctx = autograd.construir_contexto_mlp(xb, yb, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
             var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, True)
             soma_loss = soma_loss + grads.loss
             lotes = lotes + 1
@@ -256,7 +256,7 @@ fn _treinar_por_lotes_multiclasse(
         except Exception:
             print("Falha na inferência de validação durante o treino.")
             return
-        var loss_val = tensor_defs.erro_quadratico_medio_escalar(pred_val, y_valid)
+        var loss_val = autograd.calcular_loss_mlp(pred_val, y_valid, bloco.perda_id)
         var acc_val = _acuracia_multiclasse(pred_val, y_valid)
         var loss_treino_medio = soma_loss / Float32(lotes) if lotes > 0 else 0.0
         print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val, "| Acc validação:", acc_val)
@@ -300,12 +300,23 @@ def executar_exemplo():
     topologia.append(128)
     topologia.append(64)
     topologia.append(10)
-    var mlp = mlp_pkg.BlocoMLP(topologia^, tipo_computacao)
+    var mlp = mlp_pkg.BlocoMLP(
+        topologia^,
+        tipo_computacao,
+        mlp_pkg.ativacao_saida_softmax_id(),
+        mlp_pkg.perda_cross_entropy_id(),
+    )
 
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
     var epocas = 50
     var tamanho_lote = 32
     var taxa_aprendizado: Float32 = 0.003
+    print(
+        "Configuração MLP | Ativação saída:",
+        mlp_pkg.ativacao_saida_nome_de_id(mlp.ativacao_saida_id),
+        "| Perda:",
+        mlp_pkg.perda_nome_de_id(mlp.perda_id),
+    )
     print("Epocas:", epocas, "| Lote:", tamanho_lote, "| LR:", taxa_aprendizado)
 
     _treinar_por_lotes_multiclasse(mlp, x_treino, y_treino, x_valid, y_valid, epocas, tamanho_lote, taxa_aprendizado)
