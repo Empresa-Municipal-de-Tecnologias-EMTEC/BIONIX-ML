@@ -223,19 +223,23 @@ Included from /mnt/c/PROJETOS/BIONIX-ML/src/dados/__init__.mojo:5:
                                              ^
                                               .copy()
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:95:36: warning: assignment to 'm' was never used; assign to '_' instead?
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:176:22: warning: assignment to 'pred' was never used; assign to '_' instead?
+    var pred = x.copy()
+                     ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:4:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:252:36: warning: assignment to 'm' was never used; assign to '_' instead?
         var m = List[List[Float32]]()
                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:57:39: warning: assignment to 'primeira' was never used; assign to '_' instead?
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:214:39: warning: assignment to 'primeira' was never used; assign to '_' instead?
     var primeira = List[List[Float32]]()
                                       ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:145:36: warning: assignment to 'arquivos' was never used; assign to '_' instead?
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:302:36: warning: assignment to 'arquivos' was never used; assign to '_' instead?
         var arquivos = List[String]()
                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/principal.mojo:4:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:327:36: warning: assignment to 'pred_val' was never used; assign to '_' instead?
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:486:36: warning: assignment to 'pred_val' was never used; assign to '_' instead?
         var pred_val = x_valid.copy()
                                    ^
 Included from /mnt/c/PROJETOS/BIONIX-ML/src/autograd/__init__.mojo:1:
@@ -264,4 +268,40 @@ EXECUTANDO EXEMPLOS DO BIONIX
 Arquivos split | treino: 2240 | valid: 480 | teste: 480
 Redimensionamento alvo: 32 x 32
 Carregando 2240 imagens...
+  progresso: 500 / 2240
+  progresso: 1000 / 2240
+  progresso: 1500 / 2240
+  progresso: 2000 / 2240
+Carregando 480 imagens...
+Carregando 480 imagens...
+Amostras treino: 2240 | Features: 1024
+Amostras validação: 480 | Amostras teste: 480 | Classes: 10
+Configuração MLP | Ativação saída: softmax | Perda: cross_entropy
+Epocas: 1500 | Lote: 64 | LR: 0.005 | ReduceOnPlateau: True | InferenciaSomente: False | SalvarCheckpoint: True
+Época 0 | Loss treino médio: 2.3932526 | Loss validação: 2.320789 | Acc validação: 0.09583333 | LR: 0.005
+Época 1 | Loss treino médio: 2.3102565 | Loss validação: 2.3076818 | Acc validação: 0.11666667 | LR: 0.005
+Época 2 | Loss treino médio: 2.3022265 | Loss validação: 2.3185275 | Acc validação: 0.12291667 | LR: 0.005
+Época 3 | Loss treino médio: 2.2976928 | Loss validação: 2.2974749 | Acc validação: 0.11875 | LR: 0.005
+Época 4 | Loss treino médio: 2.2899556 | Loss validação: 2.2997367 | Acc validação: 0.12916666 | LR: 0.005
+Época 5 | Loss treino médio: 2.2873924 | Loss validação: 2.2880952 | Acc validação: 0.12291667 | LR: 0.005
+Época 6 | Loss treino médio: 2.2829483 | Loss validação: 2.2982645 | Acc validação: 0.14791666 | LR: 0.005
+Época 7 | Loss treino médio: 2.2826703 | Loss validação: 2.2852273 | Acc validação: 0.12083333 | LR: 0.005
+Época 8 | Loss treino médio: 2.2782254 | Loss validação: 2.2788177 | Acc validação: 0.16041666 | LR: 0.005
+Época 9 | Loss treino médio: 2.2750306 | Loss validação: 2.2761967 | Acc validação: 0.14375 | LR: 0.005
+Época 10 | Loss treino médio: 2.270023 | Loss validação: 2.2758565 | Acc validação: 0.14583333 | LR: 0.005
+[ReduceLROnPlateau] acc recuou após inércia. LR: 0.005 -> 0.0025
+Época 11 | Loss treino médio: 2.268547 | Loss validação: 2.286963 | Acc validação: 0.12708333 | LR: 0.0025
+Época 12 | Loss treino médio: 2.2571387 | Loss validação: 2.2619062 | Acc validação: 0.15208334 | LR: 0.0025
+Época 13 | Loss treino médio: 2.2522 | Loss validação: 2.2599332 | Acc validação: 0.17708333 | LR: 0.0025
+Época 14 | Loss treino médio: 2.2513196 | Loss validação: 2.2566648 | Acc validação: 0.17708333 | LR: 0.0025
+Época 15 | Loss treino médio: 2.2486665 | Loss validação: 2.2565064 | Acc validação: 0.175 | LR: 0.0025
+Época 16 | Loss treino médio: 2.2467282 | Loss validação: 2.2550132 | Acc validação: 0.19375 | LR: 0.0025
+Época 17 | Loss treino médio: 2.2458456 | Loss validação: 2.2537358 | Acc validação: 0.1625 | LR: 0.0025
+Época 18 | Loss treino médio: 2.2447927 | Loss validação: 2.2515378 | Acc validação: 0.19583334 | LR: 0.0025
+Época 19 | Loss treino médio: 2.2410765 | Loss validação: 2.2517219 | Acc validação: 0.2 | LR: 0.0025
+Época 20 | Loss treino médio: 2.239253 | Loss validação: 2.2471259 | Acc validação: 0.20416667 | LR: 0.0025
+Época 21 | Loss treino médio: 2.2373808 | Loss validação: 2.2447102 | Acc validação: 0.2 | LR: 0.0025
+Época 22 | Loss treino médio: 2.2339065 | Loss validação: 2.2416313 | Acc validação: 0.24583334 | LR: 0.0025
+Época 23 | Loss treino médio: 2.2322624 | Loss validação: 2.2404976 | Acc validação: 0.21458334 | LR: 0.0025
+Época 24 | Loss treino médio: 2.2291622 | Loss validação: 2.239947 | Acc validação: 0.18541667 | LR: 0.0025
 [?25h

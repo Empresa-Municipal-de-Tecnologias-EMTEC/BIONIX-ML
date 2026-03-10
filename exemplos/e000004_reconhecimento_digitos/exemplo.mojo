@@ -3,6 +3,7 @@ import src.autograd as autograd
 import src.computacao.dispatcher_gradiente as dispatcher_gradiente
 import src.dados as dados_pkg
 import src.nucleo.Tensor as tensor_defs
+import src.uteis as uteis
 import os
 
 
@@ -23,11 +24,167 @@ fn _lista_arquivos_bmp(var dir_raiz: String) -> List[String]:
 fn _parse_label_de_caminho(var caminho: String) -> Int:
     var normalizado = caminho.replace("\\", "/")
     var partes = normalizado.split("/")
-    var ultima_pasta = partes[len(partes) - 2]
+    if len(partes) < 2:
+        return 0
+    var ultima_pasta = String(partes[len(partes) - 2])
     try:
         return Int(ultima_pasta)
     except Exception:
         return 0
+
+
+fn _nome_arquivo_de_caminho(var caminho: String) -> String:
+    var normalizado = caminho.replace("\\", "/")
+    var partes = normalizado.split("/")
+    if len(partes) <= 0:
+        return caminho
+    return String(partes[len(partes) - 1])
+
+
+fn _int_list_para_csv(valores: List[Int]) -> String:
+    var out = ""
+    for i in range(len(valores)):
+        out = out + String(valores[i])
+        if i < len(valores) - 1:
+            out = out + ","
+    return out
+
+
+fn _csv_para_int_list(var csv: String) -> List[Int]:
+    var out = List[Int]()
+    var itens = uteis.split_csv_simples(csv)
+    for it in itens:
+        var s = String(it.strip())
+        if len(s) > 0:
+            out.append(Int(uteis.parse_float_ascii(s)))
+    return out^
+
+
+fn _csv_para_float_list(var csv: String) -> List[Float32]:
+    var out = List[Float32]()
+    var itens = uteis.split_csv_simples(csv)
+    for it in itens:
+        var s = String(it.strip())
+        if len(s) > 0:
+            out.append(uteis.parse_float_ascii(s))
+    return out^
+
+
+fn _salvar_checkpoint_mlp(bloco: mlp_pkg.BlocoMLP, var caminho_checkpoint: String, var epoca: Int):
+    var chaves = List[String]()
+    var valores = List[String]()
+
+    chaves.append("tipo")
+    valores.append(bloco.tipo_computacao)
+    chaves.append("epoca")
+    valores.append(String(epoca))
+    chaves.append("topologia")
+    valores.append(_int_list_para_csv(bloco.topologia.copy()))
+    chaves.append("num_camadas")
+    valores.append(String(len(bloco.pesos)))
+
+    for camada in range(len(bloco.pesos)):
+        chaves.append("w_" + String(camada))
+        valores.append(uteis.float_list_para_csv(bloco.pesos[camada].dados.copy()))
+        chaves.append("b_" + String(camada))
+        valores.append(uteis.float_list_para_csv(bloco.biases[camada].dados.copy()))
+
+    _ = uteis.salvar_kv_arquivo_seguro(caminho_checkpoint, chaves, valores)
+
+
+fn _carregar_checkpoint_mlp(
+    var caminho_checkpoint: String,
+    topologia_padrao: List[Int],
+    var tipo_computacao_padrao: String,
+    var ativacao_saida_id: Int,
+    var perda_id: Int,
+) -> mlp_pkg.BlocoMLP:
+    if not os.path.isfile(caminho_checkpoint):
+        return mlp_pkg.BlocoMLP(topologia_padrao.copy(), tipo_computacao_padrao, ativacao_saida_id, perda_id)
+
+    var kv = uteis.carregar_kv_arquivo_seguro(caminho_checkpoint)
+    if len(kv.chaves) == 0:
+        return mlp_pkg.BlocoMLP(topologia_padrao.copy(), tipo_computacao_padrao, ativacao_saida_id, perda_id)
+
+    var tipo = uteis.obter_valor_ou_padrao(kv, "tipo", tipo_computacao_padrao)
+    var topologia_csv = uteis.obter_valor_ou_padrao(kv, "topologia", _int_list_para_csv(topologia_padrao))
+    var topologia_lida = _csv_para_int_list(topologia_csv)
+    if len(topologia_lida) < 2:
+        topologia_lida = topologia_padrao.copy()
+
+    var bloco = mlp_pkg.BlocoMLP(topologia_lida.copy(), tipo, ativacao_saida_id, perda_id)
+
+    for camada in range(len(bloco.pesos)):
+        var w_key = "w_" + String(camada)
+        var b_key = "b_" + String(camada)
+
+        var w_csv = uteis.obter_valor_ou_padrao(kv, w_key, "")
+        var b_csv = uteis.obter_valor_ou_padrao(kv, b_key, "")
+
+        var w_lidos = _csv_para_float_list(w_csv)
+        var b_lidos = _csv_para_float_list(b_csv)
+
+        var total_w = len(w_lidos)
+        if len(bloco.pesos[camada].dados) < total_w:
+            total_w = len(bloco.pesos[camada].dados)
+        for i in range(total_w):
+            bloco.pesos[camada].dados[i] = w_lidos[i]
+
+        var total_b = len(b_lidos)
+        if len(bloco.biases[camada].dados) < total_b:
+            total_b = len(bloco.biases[camada].dados)
+        for i in range(total_b):
+            bloco.biases[camada].dados[i] = b_lidos[i]
+
+    return bloco^
+
+
+fn _selecionar_uma_imagem_por_classe(caminhos: List[String]) -> List[String]:
+    var out = List[String]()
+    var achou = List[Bool]()
+    for _ in range(10):
+        achou.append(False)
+
+    for caminho in caminhos:
+        var cls = _parse_label_de_caminho(caminho)
+        if cls < 0 or cls > 9:
+            continue
+        if not achou[cls]:
+            out.append(caminho)
+            achou[cls] = True
+
+    return out^
+
+
+fn _log_inferencia_10_classes(
+    bloco: mlp_pkg.BlocoMLP,
+    caminhos_exemplo: List[String],
+    var tipo_computacao: String,
+    var altura_alvo: Int,
+    var largura_alvo: Int,
+):
+    if len(caminhos_exemplo) == 0:
+        print("Inferência: nenhuma imagem disponível.")
+        return
+
+    var dados = _carregar_dataset_digitos_de_arquivos(caminhos_exemplo, tipo_computacao, altura_alvo, largura_alvo)
+    var x = dados[0].copy()
+    if x.formato[0] == 0:
+        print("Inferência: falha ao carregar imagens de exemplo.")
+        return
+
+    var pred = x.copy()
+    try:
+        pred = mlp_pkg.inferir(bloco, x)
+    except Exception:
+        print("Inferência: falha ao inferir no modelo carregado.")
+        return
+    print("--- Inferência (uma imagem por classe) ---")
+    for i in range(len(caminhos_exemplo)):
+        var classe_real = _parse_label_de_caminho(caminhos_exemplo[i].copy())
+        var classe_prevista = _argmax_linha(pred, i)
+        var nome_arquivo = _nome_arquivo_de_caminho(caminhos_exemplo[i].copy())
+        print("Classe", classe_real, "| previsão", classe_prevista, "| nome do arquivo de imagem:", nome_arquivo)
 
 
 fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_computacao: String) -> List[tensor_defs.Tensor]:
@@ -284,6 +441,8 @@ fn _treinar_por_lotes_multiclasse(
     var lr_min: Float32 = 0.00005,
     var limiar_saida_inercia: Float32 = 0.12,
     var tolerancia_recuo: Float32 = 0.001,
+    var salvar_checkpoint_a_cada_epoca: Bool = False,
+    var caminho_checkpoint: String = "",
 ):
     var total = x_treino.formato[0]
     if total <= 0:
@@ -357,6 +516,9 @@ fn _treinar_por_lotes_multiclasse(
         var loss_treino_medio = soma_loss / Float32(lotes) if lotes > 0 else 0.0
         print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val, "| Acc validação:", acc_val, "| LR:", lr_atual)
 
+        if salvar_checkpoint_a_cada_epoca and len(caminho_checkpoint.strip()) > 0:
+            _salvar_checkpoint_mlp(bloco, caminho_checkpoint, epoca)
+
 
 def executar_exemplo():
     print("--- Exemplo e000004: reconhecimento de dígitos (0-9) com MLP ---")
@@ -399,12 +561,28 @@ def executar_exemplo():
     topologia.append(x_treino.formato[1])
     topologia.append(64)
     topologia.append(10)
+
+    var usar_pesos_salvos = True
+    var inferencia_somente = False
+    var caminho_checkpoint = "exemplos/e000004_reconhecimento_digitos/pesos_mlp_digits.txt"
+    var salvar_checkpoint_a_cada_epoca = True
+
     var mlp = mlp_pkg.BlocoMLP(
-        topologia^,
+        topologia.copy(),
         tipo_computacao,
         mlp_pkg.ativacao_saida_softmax_id(),
         mlp_pkg.perda_cross_entropy_id(),
     )
+
+    if usar_pesos_salvos and os.path.isfile(caminho_checkpoint):
+        print("Carregando pesos salvos de:", caminho_checkpoint)
+        mlp = _carregar_checkpoint_mlp(
+            caminho_checkpoint,
+            topologia,
+            tipo_computacao,
+            mlp_pkg.ativacao_saida_softmax_id(),
+            mlp_pkg.perda_cross_entropy_id(),
+        )
 
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
     var epocas = 1500
@@ -417,19 +595,41 @@ def executar_exemplo():
         "| Perda:",
         mlp_pkg.perda_nome_de_id(mlp.perda_id),
     )
-    print("Epocas:", epocas, "| Lote:", tamanho_lote, "| LR:", taxa_aprendizado, "| ReduceOnPlateau:", usar_reduce_on_plateau)
-
-    _treinar_por_lotes_multiclasse(
-        mlp,
-        x_treino,
-        y_treino,
-        x_valid,
-        y_valid,
-        epocas,
-        tamanho_lote,
-        taxa_aprendizado,
-        usar_reduce_on_plateau,
+    print(
+        "Epocas:", epocas,
+        "| Lote:", tamanho_lote,
+        "| LR:", taxa_aprendizado,
+        "| ReduceOnPlateau:", usar_reduce_on_plateau,
+        "| InferenciaSomente:", inferencia_somente,
+        "| SalvarCheckpoint:", salvar_checkpoint_a_cada_epoca,
     )
+
+    if inferencia_somente:
+        if not os.path.isfile(caminho_checkpoint):
+            print("Inferência solicitada, mas checkpoint não encontrado em:", caminho_checkpoint)
+            return
+    else:
+        _treinar_por_lotes_multiclasse(
+            mlp,
+            x_treino,
+            y_treino,
+            x_valid,
+            y_valid,
+            epocas,
+            tamanho_lote,
+            taxa_aprendizado,
+            usar_reduce_on_plateau,
+            0.5,
+            3,
+            0.00005,
+            0.12,
+            0.001,
+            salvar_checkpoint_a_cada_epoca,
+            caminho_checkpoint,
+        )
+
+        if salvar_checkpoint_a_cada_epoca and len(caminho_checkpoint.strip()) > 0:
+            _salvar_checkpoint_mlp(mlp, caminho_checkpoint, epocas)
 
     var pred_treino = mlp_pkg.inferir(mlp, x_treino)
     var pred_valid = mlp_pkg.inferir(mlp, x_valid)
@@ -441,4 +641,15 @@ def executar_exemplo():
     print("Acurácia treino (0-9):", acc_treino)
     print("Acurácia validação (0-9):", acc_valid)
     print("Acurácia teste (0-9):", acc_teste)
+
+    var arquivos_todos = List[String]()
+    for arq in arquivos_treino:
+        arquivos_todos.append(arq)
+    for arq in arquivos_valid:
+        arquivos_todos.append(arq)
+    for arq in arquivos_teste:
+        arquivos_todos.append(arq)
+    var amostras_inferencia = _selecionar_uma_imagem_por_classe(arquivos_todos)
+    _log_inferencia_10_classes(mlp, amostras_inferencia, tipo_computacao, altura_alvo, largura_alvo)
+
     print("--- Fim do exemplo e000004 ---")
