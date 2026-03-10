@@ -68,7 +68,7 @@ struct BlocoMLP(Movable, Copyable):
                 var normalizado = (Float32(bucket) / 96.0) * 2.0 - 1.0
                 w.dados[i] = normalizado * limite
             for i in range(len(b.dados)):
-                b.dados[i] = 0.0
+                b.dados[i] = 0.01 if camada < num_camadas - 1 else Float32(0.0)
 
             self.pesos.append(w.copy())
             self.biases.append(b.copy())

@@ -1,0 +1,30 @@
+============================================================
+EXECUTANDO EXEMPLOS DO BIONIX
+============================================================
+
+[1/4] Exemplo 1: Testes do Núcleo (exemplo)...
+
+[2/4] Exemplo 2: Modelo Linear com CSV e persistência...
+
+[3/4] Exemplo 3: Espirais intercaladas com BMP + autograd + MLP...
+
+[4/4] Exemplo 4: Reconhecimento de dígitos 0-9 com MLP...
+--- Exemplo e000004: reconhecimento de dígitos (0-9) com MLP ---
+Arquivos split | treino: 2240 | valid: 480 | teste: 480
+Carregando 2240 imagens...
+  progresso: 500 / 2240
+  progresso: 1000 / 2240
+  progresso: 1500 / 2240
+  progresso: 2000 / 2240
+Carregando 480 imagens...
+Carregando 480 imagens...
+Amostras treino: 2240 | Features: 16384
+Amostras validação: 480 | Amostras teste: 480 | Classes: 10
+Configuração MLP | Ativação saída: softmax | Perda: cross_entropy
+Epocas: 50 | Lote: 32 | LR: 0.003
+Época 0 | Loss treino médio: 2.304421 | Loss validação: 2.3042514 | Acc validação: 0.1
+Época 1 | Loss treino médio: 2.3047817 | Loss validação: 2.3025467 | Acc validação: 0.1125
+Época 2 | Loss treino médio: 2.303058 | Loss validação: 2.3029072 | Acc validação: 0.1
+Época 3 | Loss treino médio: 2.3029797 | Loss validação: 2.3023086 | Acc validação: 0.1
+Época 4 | Loss treino médio: 2.30343 | Loss validação: 2.3030684 | Acc validação: 0.1
+Época 5 | Loss treino médio: 2.302272 | Loss validação: 2.3020816 | Acc validação: 0.13958333

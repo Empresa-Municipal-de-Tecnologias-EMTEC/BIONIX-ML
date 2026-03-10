@@ -182,6 +182,52 @@ fn _fatiar_2d(t: tensor_defs.Tensor, var inicio: Int, var fim: Int) -> tensor_de
     return out^
 
 
+fn _fatiar_2d_por_indices(t: tensor_defs.Tensor, indices: List[Int], var inicio: Int, var fim: Int) -> tensor_defs.Tensor:
+    var total_idx = len(indices)
+    var colunas = t.formato[1]
+    if inicio < 0:
+        inicio = 0
+    if fim > total_idx:
+        fim = total_idx
+    if fim < inicio:
+        fim = inicio
+
+    var n = fim - inicio
+    var f = List[Int]()
+    f.append(n)
+    f.append(colunas)
+    var out = tensor_defs.Tensor(f^, t.tipo_computacao)
+
+    for i in range(n):
+        var src_i = indices[inicio + i]
+        for j in range(colunas):
+            out.dados[i * colunas + j] = t.dados[src_i * colunas + j]
+
+    return out^
+
+
+fn _permutacao_deterministica(var n: Int, var epoca: Int) -> List[Int]:
+    var perm = List[Int]()
+    for i in range(n):
+        perm.append(i)
+
+    if n <= 1:
+        return perm^
+
+    var seed = (epoca + 1) * 1103515245 + 12345
+    if seed < 0:
+        seed = -seed
+
+    for i in range(n - 1, 0, -1):
+        seed = (seed * 1664525 + 1013904223) % 2147483647
+        var j = seed % (i + 1)
+        var tmp = perm[i]
+        perm[i] = perm[j]
+        perm[j] = tmp
+
+    return perm^
+
+
 fn _argmax_linha(t: tensor_defs.Tensor, var linha: Int) -> Int:
     var colunas = t.formato[1]
     var melhor = 0
@@ -227,6 +273,7 @@ fn _treinar_por_lotes_multiclasse(
     for epoca in range(epocas):
         var soma_loss: Float32 = 0.0
         var lotes = 0
+        var perm = _permutacao_deterministica(total, epoca)
 
         var inicio = 0
         while inicio < total:
@@ -234,8 +281,8 @@ fn _treinar_por_lotes_multiclasse(
             if fim > total:
                 fim = total
 
-            var xb = _fatiar_2d(x_treino, inicio, fim)
-            var yb = _fatiar_2d(y_treino, inicio, fim)
+            var xb = _fatiar_2d_por_indices(x_treino, perm, inicio, fim)
+            var yb = _fatiar_2d_por_indices(y_treino, perm, inicio, fim)
 
             var ctx = autograd.construir_contexto_mlp(xb, yb, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
             var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, True)
