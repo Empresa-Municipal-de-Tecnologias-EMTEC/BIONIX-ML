@@ -114,8 +114,12 @@ fn construir_contexto(
             atual = ativacoes.relu(z)
             ops.append("relu_" + String(camada + 1))
         else:
-            atual = ativacoes.hard_sigmoid(z)
-            ops.append("hard_sigmoid_out")
+            if pesos[camada].formato[1] > 1:
+                atual = z.copy()
+                ops.append("linear_out")
+            else:
+                atual = ativacoes.hard_sigmoid(z)
+                ops.append("hard_sigmoid_out")
 
         ativs.append(atual.copy())
 
@@ -138,8 +142,10 @@ fn calcular_gradientes(ctx: MLPForwardContext, pesos: List[tensor_defs.Tensor]) 
     var loss = perdas_mse.mse(ctx.pred, ctx.alvos)
 
     var grad_pred = perdas_mse.gradiente_mse(ctx.pred, ctx.alvos)
-    var z_saida = ctx.zs[num_camadas - 1].copy()
-    var grad_z_atual = ativacoes.derivada_hard_sigmoid(z_saida, grad_pred)
+    var grad_z_atual = grad_pred.copy()
+    if ctx.pred.formato[1] == 1:
+        var z_saida = ctx.zs[num_camadas - 1].copy()
+        grad_z_atual = ativacoes.derivada_hard_sigmoid(z_saida, grad_pred)
 
     var grad_ws_reverso = List[tensor_defs.Tensor]()
     var grad_bs_reverso = List[tensor_defs.Tensor]()

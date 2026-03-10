@@ -3,6 +3,7 @@ import src.computacao.dispatcher_gradiente as dispatcher_gradiente
 import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
 import src.perdas.mse as perdas_mse
+import math
 
 struct BlocoMLP(Movable, Copyable):
     var topologia: List[Int]
@@ -27,7 +28,6 @@ struct BlocoMLP(Movable, Copyable):
         self.pesos = List[tensor_defs.Tensor]()
         self.biases = List[tensor_defs.Tensor]()
 
-        var escala: Float32 = 0.05
         var num_camadas = len(self.topologia) - 1
         for camada in range(num_camadas):
             var formato_w = List[Int]()
@@ -40,9 +40,14 @@ struct BlocoMLP(Movable, Copyable):
             formato_b.append(self.topologia[camada + 1])
             var b = tensor_defs.Tensor(formato_b^, self.tipo_computacao)
 
+            var fan_in = self.topologia[camada]
+            var fan_out = self.topologia[camada + 1]
+            var limite = Float32(math.sqrt(6.0 / Float64(fan_in + fan_out)))
+
             for i in range(len(w.dados)):
-                var sinal: Float32 = 1.0 if (i % 2 == 0) else Float32(-1.0)
-                w.dados[i] = Float32(i + 1) * escala * sinal
+                var bucket = (i % 97)
+                var normalizado = (Float32(bucket) / 96.0) * 2.0 - 1.0
+                w.dados[i] = normalizado * limite
             for i in range(len(b.dados)):
                 b.dados[i] = 0.0
 

@@ -92,7 +92,7 @@ fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_comput
         var k = 0
         for yy in range(altura):
             for xx in range(largura):
-                x_t.dados[i * features + k] = m[yy][xx]
+                x_t.dados[i * features + k] = m[yy][xx] * 2.0 - 1.0
                 k = k + 1
 
         for c in range(10):
@@ -305,7 +305,7 @@ def executar_exemplo():
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
     var epocas = 50
     var tamanho_lote = 32
-    var taxa_aprendizado: Float32 = 0.01
+    var taxa_aprendizado: Float32 = 0.003
     print("Epocas:", epocas, "| Lote:", tamanho_lote, "| LR:", taxa_aprendizado)
 
     _treinar_por_lotes_multiclasse(mlp, x_treino, y_treino, x_valid, y_valid, epocas, tamanho_lote, taxa_aprendizado)
