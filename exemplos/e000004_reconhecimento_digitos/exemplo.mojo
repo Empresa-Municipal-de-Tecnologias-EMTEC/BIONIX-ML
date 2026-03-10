@@ -278,6 +278,12 @@ fn _treinar_por_lotes_multiclasse(
     var epocas: Int,
     var tamanho_lote: Int,
     var taxa_aprendizado: Float32,
+    var usar_reduce_on_plateau: Bool = False,
+    var fator_reducao: Float32 = 0.5,
+    var paciencia_reducao: Int = 3,
+    var lr_min: Float32 = 0.00005,
+    var limiar_saida_inercia: Float32 = 0.12,
+    var tolerancia_recuo: Float32 = 0.001,
 ):
     var total = x_treino.formato[0]
     if total <= 0:
@@ -287,14 +293,9 @@ fn _treinar_por_lotes_multiclasse(
         tamanho_lote = total
 
     var lr_atual = taxa_aprendizado
-    var lr_min: Float32 = 0.00005
-    var fator_reducao: Float32 = 0.5
-    var paciencia_reducao = 3
     var melhor_acc_val: Float32 = -1.0
     var epocas_recuando = 0
     var saiu_inercia = False
-    var limiar_saida_inercia: Float32 = 0.12
-    var tolerancia_recuo: Float32 = 0.001
 
     for epoca in range(epocas):
         var soma_loss: Float32 = 0.0
@@ -332,25 +333,26 @@ fn _treinar_por_lotes_multiclasse(
         var loss_val = autograd.calcular_loss_mlp(pred_val, y_valid, bloco.perda_id)
         var acc_val = _acuracia_multiclasse(pred_val, y_valid)
 
-        if acc_val > melhor_acc_val:
-            melhor_acc_val = acc_val
-            epocas_recuando = 0
-        else:
-            if melhor_acc_val >= limiar_saida_inercia:
-                saiu_inercia = True
-            if saiu_inercia and acc_val < melhor_acc_val - tolerancia_recuo:
-                epocas_recuando = epocas_recuando + 1
-            else:
+        if usar_reduce_on_plateau:
+            if acc_val > melhor_acc_val:
+                melhor_acc_val = acc_val
                 epocas_recuando = 0
+            else:
+                if melhor_acc_val >= limiar_saida_inercia:
+                    saiu_inercia = True
+                if saiu_inercia and acc_val < melhor_acc_val - tolerancia_recuo:
+                    epocas_recuando = epocas_recuando + 1
+                else:
+                    epocas_recuando = 0
 
-        if saiu_inercia and epocas_recuando >= paciencia_reducao and lr_atual > lr_min:
-            var nova_lr = lr_atual * fator_reducao
-            if nova_lr < lr_min:
-                nova_lr = lr_min
-            if nova_lr < lr_atual:
-                print("[ReduceLROnPlateau] acc recuou após inércia. LR:", lr_atual, "->", nova_lr)
-                lr_atual = nova_lr
-            epocas_recuando = 0
+            if saiu_inercia and epocas_recuando >= paciencia_reducao and lr_atual > lr_min:
+                var nova_lr = lr_atual * fator_reducao
+                if nova_lr < lr_min:
+                    nova_lr = lr_min
+                if nova_lr < lr_atual:
+                    print("[ReduceLROnPlateau] acc recuou após inércia. LR:", lr_atual, "->", nova_lr)
+                    lr_atual = nova_lr
+                epocas_recuando = 0
 
         var loss_treino_medio = soma_loss / Float32(lotes) if lotes > 0 else 0.0
         print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val, "| Acc validação:", acc_val, "| LR:", lr_atual)
@@ -405,18 +407,29 @@ def executar_exemplo():
     )
 
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
-    var epocas = 500
-    var tamanho_lote = 10
+    var epocas = 1500
+    var tamanho_lote = 64
     var taxa_aprendizado: Float32 = 0.005
+    var usar_reduce_on_plateau = True
     print(
         "Configuração MLP | Ativação saída:",
         mlp_pkg.ativacao_saida_nome_de_id(mlp.ativacao_saida_id),
         "| Perda:",
         mlp_pkg.perda_nome_de_id(mlp.perda_id),
     )
-    print("Epocas:", epocas, "| Lote:", tamanho_lote, "| LR:", taxa_aprendizado)
+    print("Epocas:", epocas, "| Lote:", tamanho_lote, "| LR:", taxa_aprendizado, "| ReduceOnPlateau:", usar_reduce_on_plateau)
 
-    _treinar_por_lotes_multiclasse(mlp, x_treino, y_treino, x_valid, y_valid, epocas, tamanho_lote, taxa_aprendizado)
+    _treinar_por_lotes_multiclasse(
+        mlp,
+        x_treino,
+        y_treino,
+        x_valid,
+        y_valid,
+        epocas,
+        tamanho_lote,
+        taxa_aprendizado,
+        usar_reduce_on_plateau,
+    )
 
     var pred_treino = mlp_pkg.inferir(mlp, x_treino)
     var pred_valid = mlp_pkg.inferir(mlp, x_valid)
