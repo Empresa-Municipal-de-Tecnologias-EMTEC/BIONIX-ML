@@ -31,6 +31,15 @@ fn _parse_label_de_caminho(var caminho: String) -> Int:
 
 
 fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_computacao: String) -> List[tensor_defs.Tensor]:
+    return _carregar_dataset_digitos_de_arquivos(caminhos, tipo_computacao, -1, -1)
+
+
+fn _carregar_dataset_digitos_de_arquivos(
+    caminhos: List[String],
+    var tipo_computacao: String,
+    var altura_alvo: Int,
+    var largura_alvo: Int,
+) -> List[tensor_defs.Tensor]:
     if len(caminhos) == 0:
         var fx = List[Int]()
         fx.append(0)
@@ -48,7 +57,10 @@ fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_comput
     var primeira = List[List[Float32]]()
     try:
         var caminho0 = caminhos[0].copy()
-        primeira = dados_pkg.carregar_bmp_grayscale_matriz(caminho0)
+        if altura_alvo > 0 and largura_alvo > 0:
+            primeira = dados_pkg.carregar_bmp_grayscale_matriz(caminho0, altura_alvo, largura_alvo)
+        else:
+            primeira = dados_pkg.carregar_bmp_grayscale_matriz(caminho0)
     except Exception:
         var fx_erro = List[Int]()
         fx_erro.append(0)
@@ -83,7 +95,10 @@ fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_comput
         var m = List[List[Float32]]()
         try:
             var caminho_i = caminhos[i].copy()
-            m = dados_pkg.carregar_bmp_grayscale_matriz(caminho_i)
+            if altura_alvo > 0 and largura_alvo > 0:
+                m = dados_pkg.carregar_bmp_grayscale_matriz(caminho_i, altura_alvo, largura_alvo)
+            else:
+                m = dados_pkg.carregar_bmp_grayscale_matriz(caminho_i)
         except Exception:
             m = primeira.copy()
 
@@ -92,7 +107,8 @@ fn _carregar_dataset_digitos_de_arquivos(caminhos: List[String], var tipo_comput
         var k = 0
         for yy in range(altura):
             for xx in range(largura):
-                x_t.dados[i * features + k] = m[yy][xx] * 2.0 - 1.0
+                # Usar normalização de pixel não negativa com ReLU
+                x_t.dados[i * features + k] = m[yy][xx]
                 k = k + 1
 
         for c in range(10):
@@ -324,9 +340,13 @@ def executar_exemplo():
     var arquivos_valid = arquivos_split[1].copy()
     var arquivos_teste = arquivos_split[2].copy()
     print("Arquivos split | treino:", len(arquivos_treino), "| valid:", len(arquivos_valid), "| teste:", len(arquivos_teste))
-    var treino = _carregar_dataset_digitos_de_arquivos(arquivos_treino, tipo_computacao)
-    var valid = _carregar_dataset_digitos_de_arquivos(arquivos_valid, tipo_computacao)
-    var teste = _carregar_dataset_digitos_de_arquivos(arquivos_teste, tipo_computacao)
+    var altura_alvo = 32
+    var largura_alvo = 32
+    print("Redimensionamento alvo:", largura_alvo, "x", altura_alvo)
+
+    var treino = _carregar_dataset_digitos_de_arquivos(arquivos_treino, tipo_computacao, altura_alvo, largura_alvo)
+    var valid = _carregar_dataset_digitos_de_arquivos(arquivos_valid, tipo_computacao, altura_alvo, largura_alvo)
+    var teste = _carregar_dataset_digitos_de_arquivos(arquivos_teste, tipo_computacao, altura_alvo, largura_alvo)
 
     var x_treino = treino[0].copy()
     var y_treino = treino[1].copy()
@@ -344,7 +364,6 @@ def executar_exemplo():
 
     var topologia = List[Int]()
     topologia.append(x_treino.formato[1])
-    topologia.append(128)
     topologia.append(64)
     topologia.append(10)
     var mlp = mlp_pkg.BlocoMLP(
@@ -355,9 +374,9 @@ def executar_exemplo():
     )
 
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
-    var epocas = 50
-    var tamanho_lote = 32
-    var taxa_aprendizado: Float32 = 0.003
+    var epocas = 500
+    var tamanho_lote = 10
+    var taxa_aprendizado: Float32 = 0.001
     print(
         "Configuração MLP | Ativação saída:",
         mlp_pkg.ativacao_saida_nome_de_id(mlp.ativacao_saida_id),

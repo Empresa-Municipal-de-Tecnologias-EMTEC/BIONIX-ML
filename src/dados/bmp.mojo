@@ -1,4 +1,5 @@
 import src.dados.arquivo as io
+import src.graficos as graficos
 
 fn _bytes_to_uint32_le(var b: List[Int], var offset: Int) -> Int:
     var v: Int = 0
@@ -189,6 +190,25 @@ fn parse_bmp(var caminho: String, var modo: Int = BMP_MODO_GRAYSCALE) -> BMPInfo
 
     return BMPInfo(width, height, bits_per_pixel, pixel_array_offset, modo, pixels, grayscale, preto_branco)^
 
+
+fn parse_bmp(var caminho: String, var modo: Int, var altura_alvo: Int, var largura_alvo: Int) -> BMPInfo:
+    var info = parse_bmp(caminho, modo)
+    if info.width <= 0 or info.height <= 0:
+        return info^
+    if altura_alvo <= 0 or largura_alvo <= 0:
+        return info^
+
+    if info.modo == BMP_MODO_RGB:
+        var px_redim = graficos.redimensionar_matriz_rgb_nearest(info.pixels, altura_alvo, largura_alvo)
+        return BMPInfo(largura_alvo, altura_alvo, info.bits_per_pixel, info.pixel_array_offset, info.modo, px_redim^, List[List[Float32]](), List[List[Float32]]())^
+
+    if info.modo == BMP_MODO_PRETO_BRANCO:
+        var pb_redim = graficos.redimensionar_matriz_preto_branco_nearest(info.preto_branco, altura_alvo, largura_alvo)
+        return BMPInfo(largura_alvo, altura_alvo, info.bits_per_pixel, info.pixel_array_offset, info.modo, List[List[List[Float32]]](), List[List[Float32]](), pb_redim^)^
+
+    var gs_redim = graficos.redimensionar_matriz_grayscale_nearest(info.grayscale, altura_alvo, largura_alvo)
+    return BMPInfo(largura_alvo, altura_alvo, info.bits_per_pixel, info.pixel_array_offset, info.modo, List[List[List[Float32]]](), gs_redim^, List[List[Float32]]())^
+
 fn parse_bmp_grayscale_matrix(var caminho: String) -> List[List[Float32]]:
     var b = io.ler_arquivo_binario(caminho)
     if not _validar_bmp_bytes(b, False):
@@ -248,3 +268,12 @@ fn parse_bmp_grayscale_matrix(var caminho: String) -> List[List[Float32]]:
         grayscale.append(row_gray^)
 
     return grayscale^
+
+
+fn parse_bmp_grayscale_matrix(var caminho: String, var altura_alvo: Int, var largura_alvo: Int) -> List[List[Float32]]:
+    var m = parse_bmp_grayscale_matrix(caminho)
+    if len(m) == 0:
+        return m^
+    if altura_alvo <= 0 or largura_alvo <= 0:
+        return m^
+    return graficos.redimensionar_matriz_grayscale_nearest(m, altura_alvo, largura_alvo)

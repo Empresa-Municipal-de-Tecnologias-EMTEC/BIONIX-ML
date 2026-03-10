@@ -17,6 +17,87 @@ fn criar_imagem_grayscale(var largura: Int, var altura: Int, var valor_inicial: 
     return imagem^
 
 
+fn redimensionar_matriz_grayscale_nearest(var origem: List[List[Float32]], var altura_alvo: Int, var largura_alvo: Int) -> List[List[Float32]]:
+    var altura_origem = len(origem)
+    if altura_origem <= 0:
+        return List[List[Float32]]()
+    var largura_origem = len(origem[0]) if altura_origem > 0 else 0
+    if largura_origem <= 0:
+        return List[List[Float32]]()
+
+    if altura_alvo <= 0:
+        altura_alvo = altura_origem
+    if largura_alvo <= 0:
+        largura_alvo = largura_origem
+
+    if altura_alvo == altura_origem and largura_alvo == largura_origem:
+        return origem^
+
+    var out = List[List[Float32]]()
+    for y in range(altura_alvo):
+        var linha = List[Float32]()
+        var src_y = (y * altura_origem) // altura_alvo
+        if src_y >= altura_origem:
+            src_y = altura_origem - 1
+        for x in range(largura_alvo):
+            var src_x = (x * largura_origem) // largura_alvo
+            if src_x >= largura_origem:
+                src_x = largura_origem - 1
+            linha.append(origem[src_y][src_x])
+        out.append(linha^)
+    return out^
+
+
+fn redimensionar_matriz_preto_branco_nearest(var origem: List[List[Float32]], var altura_alvo: Int, var largura_alvo: Int) -> List[List[Float32]]:
+    return redimensionar_matriz_grayscale_nearest(origem, altura_alvo, largura_alvo)
+
+
+fn redimensionar_matriz_rgb_nearest(var origem: List[List[List[Float32]]], var altura_alvo: Int, var largura_alvo: Int) -> List[List[List[Float32]]]:
+    var altura_origem = len(origem)
+    if altura_origem <= 0:
+        return List[List[List[Float32]]]()
+    var largura_origem = len(origem[0]) if altura_origem > 0 else 0
+    if largura_origem <= 0:
+        return List[List[List[Float32]]]()
+
+    if altura_alvo <= 0:
+        altura_alvo = altura_origem
+    if largura_alvo <= 0:
+        largura_alvo = largura_origem
+
+    if altura_alvo == altura_origem and largura_alvo == largura_origem:
+        return origem^
+
+    var out = List[List[List[Float32]]]()
+    for y in range(altura_alvo):
+        var linha = List[List[Float32]]()
+        var src_y = (y * altura_origem) // altura_alvo
+        if src_y >= altura_origem:
+            src_y = altura_origem - 1
+        for x in range(largura_alvo):
+            var src_x = (x * largura_origem) // largura_alvo
+            if src_x >= largura_origem:
+                src_x = largura_origem - 1
+
+            var src_px = origem[src_y][src_x]
+            var px = List[Float32]()
+            if len(src_px) > 0:
+                px.append(src_px[0])
+            else:
+                px.append(0.0)
+            if len(src_px) > 1:
+                px.append(src_px[1])
+            else:
+                px.append(px[0])
+            if len(src_px) > 2:
+                px.append(src_px[2])
+            else:
+                px.append(px[0])
+            linha.append(px^)
+        out.append(linha^)
+    return out^
+
+
 fn desenhar_ponto_grayscale(mut imagem: List[Int], var largura: Int, var altura: Int, var x: Int, var y: Int, var valor: Int):
     if x < 0 or x >= largura or y < 0 or y >= altura:
         return

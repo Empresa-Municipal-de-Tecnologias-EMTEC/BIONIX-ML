@@ -29,17 +29,37 @@ def carregar_wav(var caminho: String) -> wav.WAVInfo:
 def carregar_bmp(var caminho: String, var modo: Int = BMP_MODO_GRAYSCALE) -> bmp.BMPInfo:
     return bmp.parse_bmp(caminho, modo)^
 
+
+def carregar_bmp(var caminho: String, var modo: Int, var altura_alvo: Int, var largura_alvo: Int) -> bmp.BMPInfo:
+    return bmp.parse_bmp(caminho, modo, altura_alvo, largura_alvo)^
+
 def carregar_bmp_rgb(var caminho: String) -> bmp.BMPInfo:
     return bmp.parse_bmp(caminho, BMP_MODO_RGB)^
+
+
+def carregar_bmp_rgb(var caminho: String, var altura_alvo: Int, var largura_alvo: Int) -> bmp.BMPInfo:
+    return bmp.parse_bmp(caminho, BMP_MODO_RGB, altura_alvo, largura_alvo)^
 
 def carregar_bmp_preto_branco(var caminho: String) -> bmp.BMPInfo:
     return bmp.parse_bmp(caminho, BMP_MODO_PRETO_BRANCO)^
 
+
+def carregar_bmp_preto_branco(var caminho: String, var altura_alvo: Int, var largura_alvo: Int) -> bmp.BMPInfo:
+    return bmp.parse_bmp(caminho, BMP_MODO_PRETO_BRANCO, altura_alvo, largura_alvo)^
+
 def carregar_bmp_grayscale(var caminho: String) -> bmp.BMPInfo:
     return bmp.parse_bmp(caminho, BMP_MODO_GRAYSCALE)^
 
+
+def carregar_bmp_grayscale(var caminho: String, var altura_alvo: Int, var largura_alvo: Int) -> bmp.BMPInfo:
+    return bmp.parse_bmp(caminho, BMP_MODO_GRAYSCALE, altura_alvo, largura_alvo)^
+
 def carregar_bmp_grayscale_matriz(var caminho: String) -> List[List[Float32]]:
     return bmp.parse_bmp_grayscale_matrix(caminho)
+
+
+def carregar_bmp_grayscale_matriz(var caminho: String, var altura_alvo: Int, var largura_alvo: Int) -> List[List[Float32]]:
+    return bmp.parse_bmp_grayscale_matrix(caminho, altura_alvo, largura_alvo)
 
 def diagnosticar_wav(var caminho: String) -> Bool:
     return wav.diagnosticar_wav(caminho)
