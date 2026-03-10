@@ -286,6 +286,16 @@ fn _treinar_por_lotes_multiclasse(
     if tamanho_lote <= 0:
         tamanho_lote = total
 
+    var lr_atual = taxa_aprendizado
+    var lr_min: Float32 = 0.00005
+    var fator_reducao: Float32 = 0.5
+    var paciencia_reducao = 3
+    var melhor_acc_val: Float32 = -1.0
+    var epocas_recuando = 0
+    var saiu_inercia = False
+    var limiar_saida_inercia: Float32 = 0.12
+    var tolerancia_recuo: Float32 = 0.001
+
     for epoca in range(epocas):
         var soma_loss: Float32 = 0.0
         var lotes = 0
@@ -307,9 +317,9 @@ fn _treinar_por_lotes_multiclasse(
 
             for camada in range(len(bloco.pesos)):
                 for i in range(len(bloco.pesos[camada].dados)):
-                    bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
+                    bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - lr_atual * grads.grad_ws[camada].dados[i]
                 for j in range(len(bloco.biases[camada].dados)):
-                    bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
+                    bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - lr_atual * grads.grad_bs[camada].dados[j]
 
             inicio = fim
 
@@ -321,8 +331,29 @@ fn _treinar_por_lotes_multiclasse(
             return
         var loss_val = autograd.calcular_loss_mlp(pred_val, y_valid, bloco.perda_id)
         var acc_val = _acuracia_multiclasse(pred_val, y_valid)
+
+        if acc_val > melhor_acc_val:
+            melhor_acc_val = acc_val
+            epocas_recuando = 0
+        else:
+            if melhor_acc_val >= limiar_saida_inercia:
+                saiu_inercia = True
+            if saiu_inercia and acc_val < melhor_acc_val - tolerancia_recuo:
+                epocas_recuando = epocas_recuando + 1
+            else:
+                epocas_recuando = 0
+
+        if saiu_inercia and epocas_recuando >= paciencia_reducao and lr_atual > lr_min:
+            var nova_lr = lr_atual * fator_reducao
+            if nova_lr < lr_min:
+                nova_lr = lr_min
+            if nova_lr < lr_atual:
+                print("[ReduceLROnPlateau] acc recuou após inércia. LR:", lr_atual, "->", nova_lr)
+                lr_atual = nova_lr
+            epocas_recuando = 0
+
         var loss_treino_medio = soma_loss / Float32(lotes) if lotes > 0 else 0.0
-        print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val, "| Acc validação:", acc_val)
+        print("Época", epoca, "| Loss treino médio:", loss_treino_medio, "| Loss validação:", loss_val, "| Acc validação:", acc_val, "| LR:", lr_atual)
 
 
 def executar_exemplo():
@@ -376,7 +407,7 @@ def executar_exemplo():
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
     var epocas = 500
     var tamanho_lote = 10
-    var taxa_aprendizado: Float32 = 0.001
+    var taxa_aprendizado: Float32 = 0.005
     print(
         "Configuração MLP | Ativação saída:",
         mlp_pkg.ativacao_saida_nome_de_id(mlp.ativacao_saida_id),

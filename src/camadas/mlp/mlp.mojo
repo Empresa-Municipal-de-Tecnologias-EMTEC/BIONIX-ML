@@ -63,9 +63,14 @@ struct BlocoMLP(Movable, Copyable):
             var fan_out = self.topologia[camada + 1]
             var limite = Float32(math.sqrt(6.0 / Float64(fan_in + fan_out)))
 
+            var seed = (fan_in * 1103515245 + fan_out * 12345 + (camada + 1) * 97) % 2147483647
+            if seed <= 0:
+                seed = 1234567 + camada
+
             for i in range(len(w.dados)):
-                var bucket = (i % 97)
-                var normalizado = (Float32(bucket) / 96.0) * 2.0 - 1.0
+                seed = (seed * 1664525 + 1013904223 + i) % 2147483647
+                var u01 = Float32(seed) / Float32(2147483647)
+                var normalizado = u01 * 2.0 - 1.0
                 w.dados[i] = normalizado * limite
             for i in range(len(b.dados)):
                 b.dados[i] = 0.01 if camada < num_camadas - 1 else Float32(0.0)
