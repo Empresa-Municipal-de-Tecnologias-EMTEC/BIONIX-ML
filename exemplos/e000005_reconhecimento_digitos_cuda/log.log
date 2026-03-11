@@ -1,44 +1,3 @@
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/mlp/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/camadas/mlp/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/camadas/mlp/mlp.mojo:23:22: warning: 'BlocoMLP' value is unused
-        self.__init__(topologia_local^, tipo_computacao_in, -1, -1)
-        ~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        _ = 
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:176:22: warning: assignment to 'pred' was never used; assign to '_' instead?
-    var pred = x.copy()
-                     ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:252:36: warning: assignment to 'm' was never used; assign to '_' instead?
-        var m = List[List[Float32]]()
-                                   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:214:39: warning: assignment to 'primeira' was never used; assign to '_' instead?
-    var primeira = List[List[Float32]]()
-                                      ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:302:36: warning: assignment to 'arquivos' was never used; assign to '_' instead?
-        var arquivos = List[String]()
-                                   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:487:36: warning: assignment to 'pred_val' was never used; assign to '_' instead?
-        var pred_val = x_valid.copy()
-                                   ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/autograd/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/autograd/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/autograd/mlp.mojo:236:25: warning: assignment to 'loss' was never used; assign to '_' instead?
-    var loss: Float32 = 0.0
-                        ^
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/autograd/__init__.mojo:1:
-Included from /mnt/c/PROJETOS/BIONIX-ML/src/autograd/__init__.mojo:1:
-/mnt/c/PROJETOS/BIONIX-ML/src/autograd/mlp.mojo:237:37: warning: assignment to 'grad_z_atual' was never used; assign to '_' instead?
-    var grad_z_atual = ctx.pred.copy()
-                                    ^
 --- Validação CUDA real (std.gpu) antes do treino ---
 GPU CUDA compatível não detectada no ambiente atual. Seguindo com backend 'cuda' em modo de compatibilidade.
 --- Exemplo e000005_cuda: reconhecimento de dígitos (0-9) com MLP ---
@@ -56,62 +15,54 @@ Amostras validação: 480 | Amostras teste: 480 | Classes: 10
 Carregando pesos salvos de: exemplos/e000005_reconhecimento_digitos_cuda/pesos_mlp_digits_cuda.txt
 Configuração MLP | Ativação saída: softmax | Perda: cross_entropy
 Epocas: 1500 | Lote: 64 | LR: 0.005 | ReduceOnPlateau: True | FatorReduceLR: 0.5 | PacienciaReduceLR: 5 | LRMinReduce: 0.0001 | InferenciaSomente: False | SalvarCheckpoint: True
-Época 0 | Loss treino médio: 3.6934445 | Loss validação: 2.7549007 | Acc validação: 0.12083333 | LR: 0.005
-Época 1 | Loss treino médio: 2.7854314 | Loss validação: 2.6536133 | Acc validação: 0.09583333 | LR: 0.005
-Época 2 | Loss treino médio: 2.7046359 | Loss validação: 2.64849 | Acc validação: 0.09583333 | LR: 0.005
-Época 3 | Loss treino médio: 2.64911 | Loss validação: 2.5615218 | Acc validação: 0.11666667 | LR: 0.005
-Época 4 | Loss treino médio: 2.5952745 | Loss validação: 2.5417871 | Acc validação: 0.079166666 | LR: 0.005
-Época 5 | Loss treino médio: 2.5578244 | Loss validação: 2.478379 | Acc validação: 0.13333334 | LR: 0.005
-Época 6 | Loss treino médio: 2.5368931 | Loss validação: 2.5019567 | Acc validação: 0.14583333 | LR: 0.005
-Época 7 | Loss treino médio: 2.4907367 | Loss validação: 2.428543 | Acc validação: 0.12083333 | LR: 0.005
-Época 8 | Loss treino médio: 2.4571712 | Loss validação: 2.421917 | Acc validação: 0.14583333 | LR: 0.005
-Época 9 | Loss treino médio: 2.4333773 | Loss validação: 2.4060988 | Acc validação: 0.110416666 | LR: 0.005
-Época 10 | Loss treino médio: 2.4057894 | Loss validação: 2.365959 | Acc validação: 0.11875 | LR: 0.005
-Época 11 | Loss treino médio: 2.387994 | Loss validação: 2.3923886 | Acc validação: 0.13125 | LR: 0.005
-Época 12 | Loss treino médio: 2.3754437 | Loss validação: 2.3971787 | Acc validação: 0.15 | LR: 0.005
-Época 13 | Loss treino médio: 2.3442526 | Loss validação: 2.3560705 | Acc validação: 0.15625 | LR: 0.005
-Época 14 | Loss treino médio: 2.3441768 | Loss validação: 2.3419876 | Acc validação: 0.13125 | LR: 0.005
-Época 15 | Loss treino médio: 2.3226082 | Loss validação: 2.318985 | Acc validação: 0.13541667 | LR: 0.005
-Época 16 | Loss treino médio: 2.3167791 | Loss validação: 2.321105 | Acc validação: 0.15833333 | LR: 0.005
-Época 17 | Loss treino médio: 2.2942329 | Loss validação: 2.3582902 | Acc validação: 0.1125 | LR: 0.005
-Época 18 | Loss treino médio: 2.2892194 | Loss validação: 2.3208158 | Acc validação: 0.14166667 | LR: 0.005
-Época 19 | Loss treino médio: 2.2674649 | Loss validação: 2.2596092 | Acc validação: 0.1875 | LR: 0.005
-Época 20 | Loss treino médio: 2.2561882 | Loss validação: 2.247993 | Acc validação: 0.15625 | LR: 0.005
-Época 21 | Loss treino médio: 2.252406 | Loss validação: 2.2380622 | Acc validação: 0.15625 | LR: 0.005
-Época 22 | Loss treino médio: 2.2350173 | Loss validação: 2.2220788 | Acc validação: 0.18958333 | LR: 0.005
-Época 23 | Loss treino médio: 2.2249465 | Loss validação: 2.252776 | Acc validação: 0.15625 | LR: 0.005
-Época 24 | Loss treino médio: 2.2242777 | Loss validação: 2.2263494 | Acc validação: 0.18333334 | LR: 0.005
-Época 25 | Loss treino médio: 2.2012138 | Loss validação: 2.2250721 | Acc validação: 0.21041666 | LR: 0.005
-Época 26 | Loss treino médio: 2.21024 | Loss validação: 2.191285 | Acc validação: 0.17291667 | LR: 0.005
-Época 27 | Loss treino médio: 2.1959498 | Loss validação: 2.2231293 | Acc validação: 0.18125 | LR: 0.005
-Época 28 | Loss treino médio: 2.1847158 | Loss validação: 2.1976113 | Acc validação: 0.20208333 | LR: 0.005
-Época 29 | Loss treino médio: 2.1808915 | Loss validação: 2.1758745 | Acc validação: 0.21041666 | LR: 0.005
-Época 30 | Loss treino médio: 2.1785011 | Loss validação: 2.1849694 | Acc validação: 0.2125 | LR: 0.005
-Época 31 | Loss treino médio: 2.1706047 | Loss validação: 2.187264 | Acc validação: 0.19791667 | LR: 0.005
-Época 32 | Loss treino médio: 2.1675735 | Loss validação: 2.182138 | Acc validação: 0.20416667 | LR: 0.005
-Época 33 | Loss treino médio: 2.1747246 | Loss validação: 2.1628613 | Acc validação: 0.19375 | LR: 0.005
-Época 34 | Loss treino médio: 2.1520236 | Loss validação: 2.160423 | Acc validação: 0.19166666 | LR: 0.005
+Época 0 | Loss treino médio: 2.45471 | Loss validação: 2.310375 | Acc validação: 0.14375 | LR: 0.005
+Época 1 | Loss treino médio: 2.2996593 | Loss validação: 2.2571366 | Acc validação: 0.16041666 | LR: 0.005
+Época 2 | Loss treino médio: 2.2733677 | Loss validação: 2.2883775 | Acc validação: 0.16875 | LR: 0.005
+Época 3 | Loss treino médio: 2.2456346 | Loss validação: 2.2198591 | Acc validação: 0.19375 | LR: 0.005
+Época 4 | Loss treino médio: 2.2221234 | Loss validação: 2.2407353 | Acc validação: 0.19583334 | LR: 0.005
+Época 5 | Loss treino médio: 2.2199783 | Loss validação: 2.2246215 | Acc validação: 0.21458334 | LR: 0.005
+Época 6 | Loss treino médio: 2.2151217 | Loss validação: 2.2450368 | Acc validação: 0.20416667 | LR: 0.005
+Época 7 | Loss treino médio: 2.197795 | Loss validação: 2.1984167 | Acc validação: 0.19166666 | LR: 0.005
+Época 8 | Loss treino médio: 2.1834466 | Loss validação: 2.193009 | Acc validação: 0.2 | LR: 0.005
+Época 9 | Loss treino médio: 2.1799266 | Loss validação: 2.2043505 | Acc validação: 0.17083333 | LR: 0.005
+Época 10 | Loss treino médio: 2.1687088 | Loss validação: 2.1672778 | Acc validação: 0.22083333 | LR: 0.005
+Época 11 | Loss treino médio: 2.1644096 | Loss validação: 2.2040067 | Acc validação: 0.17291667 | LR: 0.005
+Época 12 | Loss treino médio: 2.159193 | Loss validação: 2.2482216 | Acc validação: 0.21041666 | LR: 0.005
+Época 13 | Loss treino médio: 2.140892 | Loss validação: 2.1918254 | Acc validação: 0.21875 | LR: 0.005
+Época 14 | Loss treino médio: 2.152879 | Loss validação: 2.1917694 | Acc validação: 0.175 | LR: 0.005
 [ReduceLROnPlateau] acc recuou após inércia. LR: 0.005 -> 0.0025
-Época 35 | Loss treino médio: 2.1492176 | Loss validação: 2.1718679 | Acc validação: 0.20208333 | LR: 0.0025
-Época 36 | Loss treino médio: 2.1205533 | Loss validação: 2.1588233 | Acc validação: 0.19791667 | LR: 0.0025
-Época 37 | Loss treino médio: 2.1182585 | Loss validação: 2.140436 | Acc validação: 0.21041666 | LR: 0.0025
-Época 38 | Loss treino médio: 2.1212978 | Loss validação: 2.1407113 | Acc validação: 0.22916667 | LR: 0.0025
-Época 39 | Loss treino médio: 2.116717 | Loss validação: 2.140003 | Acc validação: 0.225 | LR: 0.0025
-Época 40 | Loss treino médio: 2.1084697 | Loss validação: 2.1431918 | Acc validação: 0.2 | LR: 0.0025
-Época 41 | Loss treino médio: 2.1092186 | Loss validação: 2.135105 | Acc validação: 0.23541667 | LR: 0.0025
-Época 42 | Loss treino médio: 2.1059115 | Loss validação: 2.1352208 | Acc validação: 0.22083333 | LR: 0.0025
-Época 43 | Loss treino médio: 2.1024582 | Loss validação: 2.1393974 | Acc validação: 0.2125 | LR: 0.0025
-Época 44 | Loss treino médio: 2.1010294 | Loss validação: 2.1272542 | Acc validação: 0.23125 | LR: 0.0025
-Época 45 | Loss treino médio: 2.0972054 | Loss validação: 2.1216807 | Acc validação: 0.2375 | LR: 0.0025
-Época 46 | Loss treino médio: 2.095967 | Loss validação: 2.1209958 | Acc validação: 0.23333333 | LR: 0.0025
-Época 47 | Loss treino médio: 2.095299 | Loss validação: 2.1269481 | Acc validação: 0.22916667 | LR: 0.0025
-Época 48 | Loss treino médio: 2.0931096 | Loss validação: 2.1303115 | Acc validação: 0.20625 | LR: 0.0025
-Época 49 | Loss treino médio: 2.088941 | Loss validação: 2.1231349 | Acc validação: 0.23333333 | LR: 0.0025
+Época 15 | Loss treino médio: 2.136266 | Loss validação: 2.1672227 | Acc validação: 0.21458334 | LR: 0.0025
+Época 16 | Loss treino médio: 2.0952747 | Loss validação: 2.131897 | Acc validação: 0.2375 | LR: 0.0025
+Época 17 | Loss treino médio: 2.087201 | Loss validação: 2.1559129 | Acc validação: 0.17083333 | LR: 0.0025
+Época 18 | Loss treino médio: 2.0913608 | Loss validação: 2.1302822 | Acc validação: 0.21458334 | LR: 0.0025
+Época 19 | Loss treino médio: 2.080601 | Loss validação: 2.1223486 | Acc validação: 0.23958333 | LR: 0.0025
+Época 20 | Loss treino médio: 2.0807674 | Loss validação: 2.1164262 | Acc validação: 0.22083333 | LR: 0.0025
+Época 21 | Loss treino médio: 2.0780842 | Loss validação: 2.1145794 | Acc validação: 0.22916667 | LR: 0.0025
+Época 22 | Loss treino médio: 2.0732954 | Loss validação: 2.1070979 | Acc validação: 0.24166666 | LR: 0.0025
+Época 23 | Loss treino médio: 2.0702257 | Loss validação: 2.1170173 | Acc validação: 0.23541667 | LR: 0.0025
+Época 24 | Loss treino médio: 2.0708294 | Loss validação: 2.1110673 | Acc validação: 0.2375 | LR: 0.0025
+Época 25 | Loss treino médio: 2.0603383 | Loss validação: 2.11015 | Acc validação: 0.25625 | LR: 0.0025
+Época 26 | Loss treino médio: 2.0671992 | Loss validação: 2.1003418 | Acc validação: 0.24583334 | LR: 0.0025
+Época 27 | Loss treino médio: 2.0606778 | Loss validação: 2.1153772 | Acc validação: 0.225 | LR: 0.0025
+Época 28 | Loss treino médio: 2.0568426 | Loss validação: 2.1003966 | Acc validação: 0.23333333 | LR: 0.0025
+Época 29 | Loss treino médio: 2.0567658 | Loss validação: 2.0971582 | Acc validação: 0.24166666 | LR: 0.0025
+Época 30 | Loss treino médio: 2.0571225 | Loss validação: 2.105943 | Acc validação: 0.26041666 | LR: 0.0025
+Época 31 | Loss treino médio: 2.052447 | Loss validação: 2.0988498 | Acc validação: 0.23958333 | LR: 0.0025
+Época 32 | Loss treino médio: 2.054191 | Loss validação: 2.102239 | Acc validação: 0.23958333 | LR: 0.0025
+Época 33 | Loss treino médio: 2.0574396 | Loss validação: 2.0902467 | Acc validação: 0.24166666 | LR: 0.0025
+Época 34 | Loss treino médio: 2.0476267 | Loss validação: 2.09327 | Acc validação: 0.24791667 | LR: 0.0025
 [ReduceLROnPlateau] acc recuou após inércia. LR: 0.0025 -> 0.00125
-Época 50 | Loss treino médio: 2.088971 | Loss validação: 2.1161306 | Acc validação: 0.23333333 | LR: 0.00125
-Época 51 | Loss treino médio: 2.0778134 | Loss validação: 2.1135662 | Acc validação: 0.22916667 | LR: 0.00125
-Época 52 | Loss treino médio: 2.0769868 | Loss validação: 2.1114857 | Acc validação: 0.22916667 | LR: 0.00125
-Época 53 | Loss treino médio: 2.07396 | Loss validação: 2.1121817 | Acc validação: 0.24166666 | LR: 0.00125
-Época 54 | Loss treino médio: 2.0746875 | Loss validação: 2.1097066 | Acc validação: 0.2375 | LR: 0.00125
-Época 55 | Loss treino médio: 2.075258 | Loss validação: 2.1090252 | Acc validação: 0.225 | LR: 0.00125
-Época 56 | Loss treino médio: 2.074214 | Loss validação: 2.1051009 | Acc validação: 0.23958333 | LR: 0.00125
+Época 35 | Loss treino médio: 2.0487425 | Loss validação: 2.0961 | Acc validação: 0.23333333 | LR: 0.00125
+Época 36 | Loss treino médio: 2.0324767 | Loss validação: 2.0902398 | Acc validação: 0.24166666 | LR: 0.00125
+Época 37 | Loss treino médio: 2.0314586 | Loss validação: 2.081057 | Acc validação: 0.24375 | LR: 0.00125
+Época 38 | Loss treino médio: 2.0337977 | Loss validação: 2.0795717 | Acc validação: 0.25416666 | LR: 0.00125
+Época 39 | Loss treino médio: 2.0314849 | Loss validação: 2.0811687 | Acc validação: 0.25625 | LR: 0.00125
+[ReduceLROnPlateau] acc recuou após inércia. LR: 0.00125 -> 0.000625
+Época 40 | Loss treino médio: 2.0266817 | Loss validação: 2.0835598 | Acc validação: 0.225 | LR: 0.000625
+Época 41 | Loss treino médio: 2.0249484 | Loss validação: 2.0767753 | Acc validação: 0.24791667 | LR: 0.000625
+Época 42 | Loss treino médio: 2.0221226 | Loss validação: 2.0769901 | Acc validação: 0.24791667 | LR: 0.000625
+Época 43 | Loss treino médio: 2.0212142 | Loss validação: 2.077208 | Acc validação: 0.22916667 | LR: 0.000625
+Época 44 | Loss treino médio: 2.0209596 | Loss validação: 2.0758393 | Acc validação: 0.24583334 | LR: 0.000625
+[ReduceLROnPlateau] acc recuou após inércia. LR: 0.000625 -> 0.0003125
+Época 45 | Loss treino médio: 2.020524 | Loss validação: 2.0737887 | Acc validação: 0.25416666 | LR: 0.0003125
+Época 46 | Loss treino médio: 2.0176094 | Loss validação: 2.0740626 | Acc validação: 0.25208333 | LR: 0.0003125

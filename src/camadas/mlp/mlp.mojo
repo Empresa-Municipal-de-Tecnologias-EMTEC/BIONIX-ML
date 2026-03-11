@@ -20,7 +20,7 @@ struct BlocoMLP(Movable, Copyable):
         topologia_local.append(num_ocultas)
         topologia_local.append(1)
 
-        self.__init__(topologia_local^, tipo_computacao_in, -1, -1)
+        _ = self.__init__(topologia_local^, tipo_computacao_in, -1, -1)
 
     fn __init__(
         out self,

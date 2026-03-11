@@ -19,10 +19,10 @@ def main():
     #exemplo_espirais.executar_exemplo()
 
     print("\n[4/5] Exemplo 4: Reconhecimento de dígitos 0-9 com MLP...")
-    exemplo_digitos.executar_exemplo()
+    #exemplo_digitos.executar_exemplo()
 
     print("\n[5/5] Exemplo 5: Reconhecimento de dígitos 0-9 com MLP (CUDA)...")
-    #exemplo_digitos_cuda.executar_exemplo()
+    exemplo_digitos_cuda.executar_exemplo()
 
     print("\n" + "="*60)
     print("CONCLUÍDO: EXEMPLOS")

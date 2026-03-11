@@ -174,6 +174,7 @@ fn _log_inferencia_10_classes(
         return
 
     var pred = x.copy()
+    _ = pred
     try:
         pred = mlp_pkg.inferir(bloco, x)
     except Exception:
@@ -212,6 +213,7 @@ fn _carregar_dataset_digitos_de_arquivos(
         return out_vazio^
 
     var primeira = List[List[Float32]]()
+    _ = primeira
     try:
         var caminho0 = caminhos[0].copy()
         if altura_alvo > 0 and largura_alvo > 0:
@@ -250,6 +252,7 @@ fn _carregar_dataset_digitos_de_arquivos(
 
     for i in range(amostras):
         var m = List[List[Float32]]()
+        _ = m
         try:
             var caminho_i = caminhos[i].copy()
             if altura_alvo > 0 and largura_alvo > 0:
@@ -300,6 +303,7 @@ fn _dividir_arquivos_treino_valid_teste(var dir_dataset: String) -> List[List[St
             continue
 
         var arquivos = List[String]()
+        _ = arquivos
         try:
             arquivos = os.listdir(dir_classe)
         except Exception:
@@ -485,6 +489,7 @@ fn _treinar_por_lotes_multiclasse(
             inicio = fim
 
         var pred_val = x_valid.copy()
+        _ = pred_val
         try:
             pred_val = mlp_pkg.inferir(bloco, x_valid)
         except Exception:

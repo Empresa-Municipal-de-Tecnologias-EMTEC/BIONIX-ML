@@ -234,7 +234,9 @@ fn calcular_gradientes(ctx: MLPForwardContext, pesos: List[tensor_defs.Tensor]) 
     debug_assert(num_camadas == len(ctx.zs), "contexto inconsistente com número de camadas")
 
     var loss: Float32 = 0.0
+    _ = loss
     var grad_z_atual = ctx.pred.copy()
+    _ = grad_z_atual
     if ctx.perda_id == tipos_mlp.perda_cross_entropy_id():
         debug_assert(ctx.ativacao_saida_id == tipos_mlp.ativacao_saida_softmax_id(), "cross-entropy requer ativação de saída softmax")
         loss = _loss_cross_entropy_media(ctx.pred, ctx.alvos)
