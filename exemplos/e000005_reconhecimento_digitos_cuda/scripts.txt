@@ -3,3 +3,24 @@ pixi run mojo run exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo
 pixi run mojo run exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo >> exemplos/e000005_reconhecimento_digitos_cuda/log.log 2>&1
 
 pixi run mojo run exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo 2>&1 >/dev/null | grep -i "error:" > exemplos/e000005_reconhecimento_digitos_cuda/log.log
+
+# Kaggle (Notebook com Internet=On e Accelerator=GPU)
+
+# 1) Clonar repositório (ou atualizar com pull se já existir)
+if [ -d BIONIX-ML/.git ]; then
+	cd BIONIX-ML && git pull --ff-only
+else
+	git clone https://github.com/Empresa-Municipal-de-Tecnologias-EMTEC/BIONIX-ML.git
+	cd BIONIX-ML
+fi
+
+# 2) Instalar pixi no Linux do Kaggle
+curl -fsSL https://pixi.sh/install.sh | bash
+export PATH="$HOME/.pixi/bin:$PATH"
+pixi --version
+
+# 3) Instalar ambiente do projeto
+pixi install
+
+# 4) Executar exemplo 5 (CUDA)
+pixi run mojo run exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo
