@@ -1,5 +1,6 @@
 import src.nucleo.Tensor as tensor_defs
 import src.computacao.tipos as tipos
+import os
 
 
 # Fachada CUDA (placeholder): API pronta para futura implementação real.
@@ -26,14 +27,60 @@ struct CUDABackend(Movable, Copyable):
         return "CUDA backend (fachada, compute pendente)"
 
 
+fn _extrair_modelo_de_information(var conteudo: String) -> String:
+    var linhas = conteudo.split("\n")
+    for linha in linhas:
+        var t = String(linha.strip())
+        if t.startswith("Model:"):
+            var partes = t.split(":")
+            if len(partes) >= 2:
+                return String(partes[1].strip())
+            return "GPU NVIDIA"
+    return "GPU NVIDIA"
+
+
+fn listar_dispositivos_disponiveis_cuda() -> List[String]:
+    var dispositivos = List[String]()
+    var base = "/proc/driver/nvidia/gpus"
+    if not os.path.isdir(base):
+        dispositivos.append("nenhum dispositivo CUDA disponivel")
+        return dispositivos^
+
+    try:
+        var gpus = os.listdir(base)
+        for gpu_dir in gpus:
+            var nome_dir = String(gpu_dir)
+            var info_path = os.path.join(base, nome_dir, "information")
+            if not os.path.isfile(info_path):
+                continue
+            try:
+                var f = open(info_path, "r")
+                var txt = f.read()
+                f.close()
+                var modelo = _extrair_modelo_de_information(txt)
+                dispositivos.append(nome_dir + " - " + modelo)
+            except Exception:
+                dispositivos.append(nome_dir + " - GPU NVIDIA")
+    except Exception:
+        dispositivos.append("nenhum dispositivo CUDA disponivel")
+
+    if len(dispositivos) == 0:
+        dispositivos.append("nenhum dispositivo CUDA disponivel")
+    return dispositivos^
+
+
 fn gpu_disponivel_cuda() -> Bool:
-    # Compatibilidade: nesta versão do Mojo não usamos std.gpu/std.sys aqui.
-    # Mantemos API estável e deixamos a detecção real para um backend futuro.
-    return False
+    var dispositivos = listar_dispositivos_disponiveis_cuda()
+    if len(dispositivos) <= 0:
+        return False
+    return not dispositivos[0].startswith("nenhum dispositivo CUDA disponivel")
 
 
 fn gpu_nome_dispositivo() -> String:
-    return "indisponivel"
+    var dispositivos = listar_dispositivos_disponiveis_cuda()
+    if len(dispositivos) <= 0:
+        return "indisponivel"
+    return dispositivos[0]
 
 
 fn smoke_test_vector_add_cuda(var tolerancia_abs: Float32 = 1e-4) -> Bool:
