@@ -14,19 +14,19 @@ struct WAVInfo(Movable, Copyable):
         self.data_offset = off
         self.samples = amostras^
 
-fn _bytes_to_uint32_le(var b: List[Int], var offset: Int) -> Int:
+fn _bytes_to_uint32_le(b: List[Int], var offset: Int) -> Int:
     var v: Int = 0
     for i in range(4):
         v = v | (b[offset + i] << (8 * i))
     return v
 
-fn _bytes_to_uint16_le(var b: List[Int], var offset: Int) -> Int:
+fn _bytes_to_uint16_le(b: List[Int], var offset: Int) -> Int:
     return (b[offset] | (b[offset+1] << 8))
 
 fn _eh_bits_suportado(var bps: Int) -> Bool:
     return bps == 8 or bps == 16 or bps == 24 or bps == 32
 
-fn _validar_wav_bytes(var b: List[Int], var log: Bool = False) -> Bool:
+fn _validar_wav_bytes(b: List[Int], var log: Bool = False) -> Bool:
     if len(b) < 44:
         if log:
             print("[diag.wav] inválido: menos de 44 bytes (", len(b), ")")

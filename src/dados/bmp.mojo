@@ -1,19 +1,19 @@
 import src.dados.arquivo as io
 import src.graficos as graficos
 
-fn _bytes_to_uint32_le(var b: List[Int], var offset: Int) -> Int:
+fn _bytes_to_uint32_le(b: List[Int], var offset: Int) -> Int:
     var v: Int = 0
     for i in range(4):
         v = v | (b[offset + i] << (8 * i))
     return v
 
-fn _bytes_to_int32_le(var b: List[Int], var offset: Int) -> Int:
+fn _bytes_to_int32_le(b: List[Int], var offset: Int) -> Int:
     var uv = _bytes_to_uint32_le(b, offset)
     if uv >= (1 << 31):
         return uv - (1 << 32)
     return uv
 
-fn _bytes_to_uint16_le(var b: List[Int], var offset: Int) -> Int:
+fn _bytes_to_uint16_le(b: List[Int], var offset: Int) -> Int:
     return (b[offset] | (b[offset+1] << 8))
 
 alias BMP_MODO_RGB = 0
@@ -40,7 +40,7 @@ struct BMPInfo(Movable, Copyable):
         self.grayscale = gs^
         self.preto_branco = pb^
 
-fn _validar_bmp_bytes(var b: List[Int], var log: Bool = False) -> Bool:
+fn _validar_bmp_bytes(b: List[Int], var log: Bool = False) -> Bool:
     if len(b) < 54:
         if log:
             print("[diag.bmp] inválido: menos de 54 bytes (", len(b), ")")
@@ -276,4 +276,4 @@ fn parse_bmp_grayscale_matrix(var caminho: String, var altura_alvo: Int, var lar
         return m^
     if altura_alvo <= 0 or largura_alvo <= 0:
         return m^
-    return graficos.redimensionar_matriz_grayscale_nearest(m, altura_alvo, largura_alvo)
+    return graficos.redimensionar_matriz_grayscale_nearest(m^, altura_alvo, largura_alvo)

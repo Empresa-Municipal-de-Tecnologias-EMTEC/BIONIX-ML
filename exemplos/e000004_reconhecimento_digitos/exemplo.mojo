@@ -590,11 +590,11 @@ def executar_exemplo_configuravel(
     # Imagens 128x128 possuem alta dimensionalidade; configuração mais estável para esse cenário
     var epocas = 1500
     var tamanho_lote = 64
-    var taxa_aprendizado: Float32 = 0.0001
+    var taxa_aprendizado: Float32 = 0.005
     var usar_reduce_on_plateau = True
     var fator_reducao_lr: Float32 = 0.5
     var paciencia_reducao_lr = 5
-    var lr_min_reduce_on_plateau: Float32 = 0.00001
+    var lr_min_reduce_on_plateau: Float32 = 0.0001
     print(
         "Configuração MLP | Ativação saída:",
         mlp_pkg.ativacao_saida_nome_de_id(mlp.ativacao_saida_id),

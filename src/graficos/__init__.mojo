@@ -6,15 +6,15 @@ fn criar_imagem_grayscale(var largura: Int, var altura: Int, var valor_inicial: 
 
 
 fn redimensionar_matriz_grayscale_nearest(var origem: List[List[Float32]], var altura_alvo: Int, var largura_alvo: Int) -> List[List[Float32]]:
-    return bmp.redimensionar_matriz_grayscale_nearest(origem, altura_alvo, largura_alvo)
+    return bmp.redimensionar_matriz_grayscale_nearest(origem^, altura_alvo, largura_alvo)
 
 
 fn redimensionar_matriz_preto_branco_nearest(var origem: List[List[Float32]], var altura_alvo: Int, var largura_alvo: Int) -> List[List[Float32]]:
-    return bmp.redimensionar_matriz_preto_branco_nearest(origem, altura_alvo, largura_alvo)
+    return bmp.redimensionar_matriz_preto_branco_nearest(origem^, altura_alvo, largura_alvo)
 
 
 fn redimensionar_matriz_rgb_nearest(var origem: List[List[List[Float32]]], var altura_alvo: Int, var largura_alvo: Int) -> List[List[List[Float32]]]:
-    return bmp.redimensionar_matriz_rgb_nearest(origem, altura_alvo, largura_alvo)
+    return bmp.redimensionar_matriz_rgb_nearest(origem^, altura_alvo, largura_alvo)
 
 
 fn desenhar_ponto_grayscale(mut imagem: List[Int], var largura: Int, var altura: Int, var x: Int, var y: Int, var valor: Int):
