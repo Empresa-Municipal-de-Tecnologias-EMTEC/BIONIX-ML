@@ -471,7 +471,8 @@ fn _treinar_por_lotes_multiclasse(
             var yb = _fatiar_2d_por_indices(y_treino, perm, inicio, fim)
 
             var ctx = autograd.construir_contexto_mlp(xb, yb, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
-            var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, True)
+            var manter_gradientes_na_ram_principal = bloco.tipo_computacao == "cpu"
+            var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
             soma_loss = soma_loss + grads.loss
             lotes = lotes + 1
 
@@ -520,10 +521,13 @@ fn _treinar_por_lotes_multiclasse(
             _salvar_checkpoint_mlp(bloco, caminho_checkpoint, epoca)
 
 
-def executar_exemplo():
-    print("--- Exemplo e000004: reconhecimento de dígitos (0-9) com MLP ---")
+def executar_exemplo_configuravel(
+    var tipo_computacao: String,
+    var caminho_checkpoint: String,
+    var id_exemplo: String,
+):
+    print("--- Exemplo " + id_exemplo + ": reconhecimento de dígitos (0-9) com MLP ---")
 
-    var tipo_computacao = "cpu"
     var dir_dataset = "exemplos/e000004_reconhecimento_digitos/dataset"
 
     if not _dataset_tem_classes_0_a_9(dir_dataset):
@@ -564,7 +568,6 @@ def executar_exemplo():
 
     var usar_pesos_salvos = True
     var inferencia_somente = False
-    var caminho_checkpoint = "exemplos/e000004_reconhecimento_digitos/pesos_mlp_digits.txt"
     var salvar_checkpoint_a_cada_epoca = True
 
     var mlp = mlp_pkg.BlocoMLP(
@@ -658,4 +661,12 @@ def executar_exemplo():
     var amostras_inferencia = _selecionar_uma_imagem_por_classe(arquivos_todos)
     _log_inferencia_10_classes(mlp, amostras_inferencia, tipo_computacao, altura_alvo, largura_alvo)
 
-    print("--- Fim do exemplo e000004 ---")
+    print("--- Fim do exemplo " + id_exemplo + " ---")
+
+
+def executar_exemplo():
+    executar_exemplo_configuravel(
+        "cpu",
+        "exemplos/e000004_reconhecimento_digitos/pesos_mlp_digits.txt",
+        "e000004",
+    )

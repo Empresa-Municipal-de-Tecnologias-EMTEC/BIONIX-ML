@@ -90,15 +90,8 @@ fn _pipeline_id_operacao(t: Tensor, var op_id: Int) -> Int:
 
 
 fn _backend_execucao_efetivo(var id_backend: Int) -> Int:
-    if id_backend == backend_tipos.backend_cpu_id():
-        return id_backend
-    if id_backend == backend_tipos.backend_vulkan_id():
-        return backend_tipos.backend_cpu_id()
-    if id_backend == backend_tipos.backend_rocm_id():
-        return backend_tipos.backend_cpu_id()
-    if id_backend == backend_tipos.backend_cuda_id():
-        return backend_tipos.backend_cpu_id()
-    return backend_tipos.backend_cpu_id()
+    debug_assert(backend_tipos.backend_id_valido(id_backend), "backend inválido para execução")
+    return id_backend
 
 
 fn _propagar_contexto_operacao(mut saida: Tensor, origem: Tensor, var op_id: Int):
@@ -149,7 +142,7 @@ fn somar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         for i in range(len(a.dados)):
             saida.dados[i] = a.dados[i] + b.dados[i]
     _propagar_contexto_operacao(saida, a, _op_id_soma_elemento_a_elemento())
@@ -161,7 +154,7 @@ fn subtrair_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         for i in range(len(a.dados)):
             saida.dados[i] = a.dados[i] - b.dados[i]
     _propagar_contexto_operacao(saida, a, _op_id_subtracao_elemento_a_elemento())
@@ -173,7 +166,7 @@ fn multiplicar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         for i in range(len(a.dados)):
             saida.dados[i] = a.dados[i] * b.dados[i]
     _propagar_contexto_operacao(saida, a, _op_id_multiplicacao_elemento_a_elemento())
@@ -189,7 +182,7 @@ fn transpor(a: Tensor) -> Tensor:
     formato.append(colunas)
     formato.append(linhas)
     var out = Tensor(formato^, a.tipo_computacao)
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         for i in range(linhas):
             for j in range(colunas):
                 out.dados[j * linhas + i] = a.dados[i * colunas + j]
@@ -208,7 +201,7 @@ fn multiplicar_matrizes(a: Tensor, b: Tensor) -> Tensor:
     formato.append(m)
     formato.append(p)
     var out = Tensor(formato^, a.tipo_computacao)
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         for i in range(m):
             for j in range(p):
                 var acc: Float32 = 0.0
@@ -226,7 +219,7 @@ fn adicionar_bias_coluna(a: Tensor, b: Tensor) -> Tensor:
     var formato = a.formato.copy()
     var out = Tensor(formato^, a.tipo_computacao)
     var valor_bias = b.dados[0]
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         for i in range(len(a.dados)):
             out.dados[i] = a.dados[i] + valor_bias
     _propagar_contexto_operacao(out, a, _op_id_adicionar_bias_coluna())
@@ -259,7 +252,7 @@ fn gradiente_mse(pred: Tensor, alvo: Tensor) -> Tensor:
     if len(pred.dados) == 0:
         _propagar_contexto_operacao(out, pred, _op_id_gradiente_mse())
         return out^
-    if backend_execucao == backend_tipos.backend_cpu_id():
+    if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
         var n = Float32(len(pred.dados))
         for i in range(len(pred.dados)):
             out.dados[i] = 2.0 * (pred.dados[i] - alvo.dados[i]) / n

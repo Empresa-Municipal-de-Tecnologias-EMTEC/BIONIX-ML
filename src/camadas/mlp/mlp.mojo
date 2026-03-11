@@ -122,7 +122,7 @@ fn treinar_por_lotes(
     lotes_validacao: List[lotes_sup.LoteSupervisionado],
     var taxa_aprendizado: Float32 = 0.03,
     var imprimir_cada_epoca: Int = 1,
-    var manter_gradientes_na_ram_principal: Bool = True,
+    var manter_gradientes_na_ram_principal: Bool = False,
 ) -> Float32:
     if len(lotes_treino_por_epoca) == 0:
         return 0.0
@@ -174,7 +174,7 @@ fn treinar(
     var taxa_aprendizado: Float32 = 0.03,
     var epocas: Int = 1200,
     var imprimir_cada: Int = 200,
-    var manter_gradientes_na_ram_principal: Bool = True,
+    var manter_gradientes_na_ram_principal: Bool = False,
 ) -> Float32:
     debug_assert(len(entradas.formato) == 2, "entradas deve ser tensor 2D")
     debug_assert(len(alvos.formato) == 2 and alvos.formato[1] == 1, "alvos deve ser tensor 2D [N,1]")

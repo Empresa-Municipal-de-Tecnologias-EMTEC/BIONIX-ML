@@ -24,3 +24,18 @@ struct CUDABackend(Movable, Copyable):
 
     fn descricao(self) -> String:
         return "CUDA backend (fachada, compute pendente)"
+
+
+fn gpu_disponivel_cuda() -> Bool:
+    # Compatibilidade: nesta versão do Mojo não usamos std.gpu/std.sys aqui.
+    # Mantemos API estável e deixamos a detecção real para um backend futuro.
+    return False
+
+
+fn gpu_nome_dispositivo() -> String:
+    return "indisponivel"
+
+
+fn smoke_test_vector_add_cuda(var tolerancia_abs: Float32 = 1e-4) -> Bool:
+    _ = tolerancia_abs
+    return gpu_disponivel_cuda()

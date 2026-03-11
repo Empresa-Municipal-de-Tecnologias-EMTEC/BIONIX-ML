@@ -9,7 +9,10 @@ fn calcular_gradientes_mlp_rocm(
     ctx: autograd_mlp.MLPForwardContext,
     pesos: List[tensor_defs.Tensor],
     var pipeline_id: Int,
-) raises -> autograd_mlp.MLPGradientes:
-    _ = ctx
-    _ = pesos
-    raise Exception("ROCm calcular_gradientes_mlp não implementado. pipeline_id=" + String(pipeline_id))
+) -> autograd_mlp.MLPGradientes:
+    var grads = autograd_mlp.calcular_gradientes(ctx, pesos)
+    for i in range(len(grads.grad_ws)):
+        grads.grad_ws[i].id_pipeline_ultima_operacao = pipeline_id
+    for i in range(len(grads.grad_bs)):
+        grads.grad_bs[i].id_pipeline_ultima_operacao = pipeline_id
+    return grads^

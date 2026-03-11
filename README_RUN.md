@@ -27,3 +27,16 @@ pixi --version
 ```
 
 If `pixi` is missing and you want installation steps, tell me your Ubuntu version and I will provide commands.
+
+Kaggle GPU execution
+--------------------
+
+For remote GPU validation (no local GPU), use:
+
+- `README_KAGGLE_GPU.md`
+- `scripts/run_cuda_smoke_kaggle.sh`
+
+This path executes:
+
+1. CUDA smoke test (`std.gpu`) in `exemplos/e000005_reconhecimento_digitos_cuda/smoke_test_cuda.mojo`
+2. Full CUDA example entrypoint `exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo`

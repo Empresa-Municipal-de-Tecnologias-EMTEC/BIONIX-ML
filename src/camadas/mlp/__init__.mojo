@@ -57,7 +57,7 @@ def treinar(
     var taxa_aprendizado: Float32 = 0.03,
     var epocas: Int = 1200,
     var imprimir_cada: Int = 200,
-    var manter_gradientes_na_ram_principal: Bool = True,
+    var manter_gradientes_na_ram_principal: Bool = False,
 ) -> Float32:
     return mlp_impl.treinar(
         bloco,
@@ -76,7 +76,7 @@ def treinar_por_lotes(
     lotes_validacao: List[lotes_sup.LoteSupervisionado],
     var taxa_aprendizado: Float32 = 0.03,
     var imprimir_cada_epoca: Int = 1,
-    var manter_gradientes_na_ram_principal: Bool = True,
+    var manter_gradientes_na_ram_principal: Bool = False,
 ) -> Float32:
     return mlp_impl.treinar_por_lotes(
         bloco,
