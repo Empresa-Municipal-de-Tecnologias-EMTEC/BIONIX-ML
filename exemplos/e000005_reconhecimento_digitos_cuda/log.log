@@ -1,4 +1,74 @@
---- Validação CUDA real antes do treino ---
-Checando dispositivos disponíveis...
-[ 0 ]  nenhum dispositivo CUDA disponivel
-Nenhuma GPU CUDA disponível. Encerrando exemplo e000005 sem fallback para CPU.
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:2:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/cuda.mojo:59:16: warning: 'except' logic is unreachable, try doesn't raise an exception
+        return False
+               ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:2:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/cuda.mojo:58:12: warning: variable 'Exception' was never used, remove it?
+    except Exception:
+           ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/cuda.mojo:3:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_tensor.mojo:127:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/cuda.mojo:3:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_tensor.mojo:221:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/cuda.mojo:3:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_tensor.mojo:257:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:2:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/cuda.mojo:3:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_tensor.mojo:322:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_ativacoes.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_ativacoes.mojo:88:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_ativacoes.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_ativacoes.mojo:114:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_ativacoes.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_ativacoes.mojo:142:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_ativacoes.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_ativacoes.mojo:168:27: warning: assignment to 'Exception' was never used; assign to '_' instead?
+        with DeviceContext(0, api="cuda") as ctx:
+                          ^
+open-source/max/mojo/stdlib/stdlib/builtin/_startup.mojo:110:4: error: call expansion failed
+open-source/max/mojo/stdlib/stdlib/builtin/_startup.mojo:72:4: note: function instantiation failed
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/ativacoes/__init__.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_ativacoes.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_ativacoes.mojo:148:68: note: call expansion failed
+            ctx.enqueue_function_experimental[_kernel_hard_sigmoid](
+                                                                   ^
+open-source/max/mojo/stdlib/stdlib/gpu/host/device_context.mojo:4503:8: note: function instantiation failed
+open-source/max/mojo/stdlib/stdlib/gpu/host/device_context.mojo:4503:8: note: call expansion failed
+open-source/max/mojo/stdlib/stdlib/gpu/host/info.mojo:1406:8: note: function instantiation failed
+open-source/max/mojo/stdlib/stdlib/gpu/host/info.mojo:1416:43: note: call expansion failed
+open-source/max/mojo/stdlib/stdlib/gpu/host/info.mojo:1566:4: note: function instantiation failed
+open-source/max/mojo/stdlib/stdlib/gpu/host/info.mojo:1625:6: note: call expansion failed
+open-source/max/mojo/stdlib/stdlib/builtin/constrained.mojo:58:6: note: constraint failed: the target architecture '' is invalid or not currently supported
+/mnt/c/PROJETOS/BIONIX-ML/.pixi/envs/default/bin/mojo: error: failed to run the pass manager

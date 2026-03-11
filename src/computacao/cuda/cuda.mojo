@@ -1,6 +1,8 @@
 import src.nucleo.Tensor as tensor_defs
 import src.computacao.tipos as tipos
-import os
+import src.computacao.cuda.kernels_tensor as kernels_tensor
+from gpu.host import DeviceContext
+from sys import has_nvidia_gpu_accelerator
 
 
 # Fachada CUDA (placeholder): API pronta para futura implementação real.
@@ -27,40 +29,21 @@ struct CUDABackend(Movable, Copyable):
         return "CUDA backend (fachada, compute pendente)"
 
 
-fn _extrair_modelo_de_information(var conteudo: String) -> String:
-    var linhas = conteudo.split("\n")
-    for linha in linhas:
-        var t = String(linha.strip())
-        if t.startswith("Model:"):
-            var partes = t.split(":")
-            if len(partes) >= 2:
-                return String(partes[1].strip())
-            return "GPU NVIDIA"
-    return "GPU NVIDIA"
-
-
 fn listar_dispositivos_disponiveis_cuda() -> List[String]:
     var dispositivos = List[String]()
-    var base = "/proc/driver/nvidia/gpus"
-    if not os.path.isdir(base):
+    if not gpu_disponivel_cuda():
         dispositivos.append("nenhum dispositivo CUDA disponivel")
         return dispositivos^
 
     try:
-        var gpus = os.listdir(base)
-        for gpu_dir in gpus:
-            var nome_dir = String(gpu_dir)
-            var info_path = os.path.join(base, nome_dir, "information")
-            if not os.path.isfile(info_path):
-                continue
+        var n = DeviceContext.number_of_devices()
+        for i in range(n):
             try:
-                var f = open(info_path, "r")
-                var txt = f.read()
-                f.close()
-                var modelo = _extrair_modelo_de_information(txt)
-                dispositivos.append(nome_dir + " - " + modelo)
+                with DeviceContext(i, api="cuda") as ctx:
+                    dispositivos.append(String(i) + " - " + ctx.name())
             except Exception:
-                dispositivos.append(nome_dir + " - GPU NVIDIA")
+                with DeviceContext(i) as ctx:
+                    dispositivos.append(String(i) + " - " + ctx.name())
     except Exception:
         dispositivos.append("nenhum dispositivo CUDA disponivel")
 
@@ -70,10 +53,10 @@ fn listar_dispositivos_disponiveis_cuda() -> List[String]:
 
 
 fn gpu_disponivel_cuda() -> Bool:
-    var dispositivos = listar_dispositivos_disponiveis_cuda()
-    if len(dispositivos) <= 0:
+    try:
+        return has_nvidia_gpu_accelerator()
+    except Exception:
         return False
-    return not dispositivos[0].startswith("nenhum dispositivo CUDA disponivel")
 
 
 fn gpu_nome_dispositivo() -> String:
@@ -84,5 +67,25 @@ fn gpu_nome_dispositivo() -> String:
 
 
 fn smoke_test_vector_add_cuda(var tolerancia_abs: Float32 = 1e-4) -> Bool:
-    _ = tolerancia_abs
-    return gpu_disponivel_cuda()
+    if not gpu_disponivel_cuda():
+        return False
+
+    var shape = List[Int]()
+    shape.append(1)
+    shape.append(8)
+    var a = tensor_defs.Tensor(shape.copy(), tipos.backend_nome_de_id(tipos.backend_cuda_id()))
+    var b = tensor_defs.Tensor(shape.copy(), tipos.backend_nome_de_id(tipos.backend_cuda_id()))
+
+    for i in range(8):
+        a.dados[i] = Float32(i)
+        b.dados[i] = 1.0
+
+    var out = kernels_tensor.somar_elemento_a_elemento_cuda(a, b, pipeline_id=1)
+    for i in range(8):
+        var esperado = Float32(i) + 1.0
+        var diff = out.dados[i] - esperado
+        if diff < 0.0:
+            diff = -diff
+        if diff > tolerancia_abs:
+            return False
+    return True

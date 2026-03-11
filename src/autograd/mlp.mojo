@@ -1,6 +1,7 @@
 import src.nucleo.Tensor as tensor_defs
 import src.ativacoes as ativacoes
 import src.perdas.mse as perdas_mse
+import src.computacao.dispatcher_tensor as dispatcher_tensor
 import src.autograd.grafo as grafo
 import src.autograd.tipos_mlp as tipos_mlp
 import math
@@ -194,7 +195,7 @@ fn construir_contexto(
         perda_id = tipos_mlp.perda_padrao_id(num_saidas)
 
     for camada in range(num_camadas):
-        var z_bruto = tensor_defs.multiplicar_matrizes(atual, pesos[camada])
+        var z_bruto = dispatcher_tensor.multiplicar_matrizes(atual, pesos[camada])
         ops.append("matmul(a" + String(camada) + ",w" + String(camada + 1) + ")")
 
         var z = adicionar_bias_vetor_coluna(z_bruto, biases[camada])
@@ -256,8 +257,8 @@ fn calcular_gradientes(ctx: MLPForwardContext, pesos: List[tensor_defs.Tensor]) 
         var camada = num_camadas - 1 - passo
 
         var ativ_prev = ctx.ativacoes[camada].copy()
-        var ativ_prev_t = tensor_defs.transpor(ativ_prev)
-        var grad_w = tensor_defs.multiplicar_matrizes(ativ_prev_t, grad_z_atual)
+        var ativ_prev_t = dispatcher_tensor.transpor(ativ_prev)
+        var grad_w = dispatcher_tensor.multiplicar_matrizes(ativ_prev_t, grad_z_atual)
         var grad_b = somar_linhas(grad_z_atual)
 
         grad_ws_reverso.append(grad_w.copy())
@@ -265,8 +266,8 @@ fn calcular_gradientes(ctx: MLPForwardContext, pesos: List[tensor_defs.Tensor]) 
 
         if camada > 0:
             var peso_camada = pesos[camada].copy()
-            var w_t = tensor_defs.transpor(peso_camada)
-            var grad_a_prev = tensor_defs.multiplicar_matrizes(grad_z_atual, w_t)
+            var w_t = dispatcher_tensor.transpor(peso_camada)
+            var grad_a_prev = dispatcher_tensor.multiplicar_matrizes(grad_z_atual, w_t)
             var z_anterior = ctx.zs[camada - 1].copy()
             grad_z_atual = ativacoes.derivada_relu(z_anterior, grad_a_prev)
 
