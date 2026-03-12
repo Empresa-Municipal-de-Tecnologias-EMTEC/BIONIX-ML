@@ -41,7 +41,8 @@ fn calcular_gradientes_mlp(
         return kernels_cuda.calcular_gradientes_mlp_cuda(ctx, pesos, pipeline_id)
     if backend == tipos.backend_cpu_id():
         return kernels_cpu.calcular_gradientes_mlp_cpu(ctx, pesos)
-    raise Exception("dispatcher_gradiente.calcular_gradientes_mlp: backend inválido")
+    debug_assert(False, "dispatcher_gradiente.calcular_gradientes_mlp: backend inválido")
+    return kernels_cpu.calcular_gradientes_mlp_cpu(ctx, pesos)
 
 
 fn criar_workspace_gradiente_cuda() -> CUDAGradienteWorkspace:

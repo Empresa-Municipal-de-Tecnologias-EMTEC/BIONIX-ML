@@ -28,7 +28,8 @@ fn identidade(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
         return kernels_rocm.identidade_rocm(x)
     if backend == tipos.backend_cuda_id():
         return kernels_cuda.identidade_cuda(x)
-    raise Exception("dispatcher_ativacoes.identidade: backend inválido")
+    debug_assert(False, "dispatcher_ativacoes.identidade: backend inválido")
+    return kernels_cpu.identidade_cpu(x)
 
 
 fn derivada_identidade(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -41,7 +42,8 @@ fn derivada_identidade(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Tens
         return kernels_rocm.derivada_identidade_rocm(entrada, grad_saida)
     if backend == tipos.backend_cuda_id():
         return kernels_cuda.derivada_identidade_cuda(entrada, grad_saida)
-    raise Exception("dispatcher_ativacoes.derivada_identidade: backend inválido")
+    debug_assert(False, "dispatcher_ativacoes.derivada_identidade: backend inválido")
+    return kernels_cpu.derivada_identidade_cpu(entrada, grad_saida)
 
 
 fn relu(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -54,7 +56,8 @@ fn relu(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
         return kernels_rocm.relu_rocm(x)
     if backend == tipos.backend_cuda_id():
         return kernels_cuda.relu_cuda(x)
-    raise Exception("dispatcher_ativacoes.relu: backend inválido")
+    debug_assert(False, "dispatcher_ativacoes.relu: backend inválido")
+    return kernels_cpu.relu_cpu(x)
 
 
 fn derivada_relu(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -67,7 +70,8 @@ fn derivada_relu(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Tensor) ->
         return kernels_rocm.derivada_relu_rocm(entrada, grad_saida)
     if backend == tipos.backend_cuda_id():
         return kernels_cuda.derivada_relu_cuda(entrada, grad_saida)
-    raise Exception("dispatcher_ativacoes.derivada_relu: backend inválido")
+    debug_assert(False, "dispatcher_ativacoes.derivada_relu: backend inválido")
+    return kernels_cpu.derivada_relu_cpu(entrada, grad_saida)
 
 
 fn hard_sigmoid(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -80,7 +84,8 @@ fn hard_sigmoid(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
         return kernels_rocm.hard_sigmoid_rocm(x)
     if backend == tipos.backend_cuda_id():
         return kernels_cuda.hard_sigmoid_cuda(x)
-    raise Exception("dispatcher_ativacoes.hard_sigmoid: backend inválido")
+    debug_assert(False, "dispatcher_ativacoes.hard_sigmoid: backend inválido")
+    return kernels_cpu.hard_sigmoid_cpu(x)
 
 
 fn derivada_hard_sigmoid(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -93,4 +98,5 @@ fn derivada_hard_sigmoid(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Te
         return kernels_rocm.derivada_hard_sigmoid_rocm(entrada, grad_saida)
     if backend == tipos.backend_cuda_id():
         return kernels_cuda.derivada_hard_sigmoid_cuda(entrada, grad_saida)
-    raise Exception("dispatcher_ativacoes.derivada_hard_sigmoid: backend inválido")
+    debug_assert(False, "dispatcher_ativacoes.derivada_hard_sigmoid: backend inválido")
+    return kernels_cpu.derivada_hard_sigmoid_cpu(entrada, grad_saida)

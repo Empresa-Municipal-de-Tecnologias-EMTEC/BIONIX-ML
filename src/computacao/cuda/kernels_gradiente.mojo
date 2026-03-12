@@ -151,10 +151,20 @@ fn calcular_gradientes_mlp_cuda_com_workspace(
                 grad_saida_hard.dados[i] = grad_pred.dados[i] * d
             grad_z_atual = grad_saida_hard^
 
+    var ativacoes_forward = List[tensor_defs.Tensor]()
+    for a in ctx.ativacoes:
+        ativacoes_forward.append(a.copy())
+    var zs_forward = List[tensor_defs.Tensor]()
+    for z in ctx.zs:
+        zs_forward.append(z.copy())
+    var pesos_local = List[tensor_defs.Tensor]()
+    for w in pesos:
+        pesos_local.append(w.copy())
+
     kernels_cuda_tensor.backward_mlp_cuda_em_tensores(
-        ctx.ativacoes,
-        ctx.zs,
-        pesos,
+        ativacoes_forward,
+        zs_forward,
+        pesos_local,
         grad_z_atual,
         workspace.grad_ws_por_camada,
         workspace.grad_bs_por_camada,
@@ -169,7 +179,7 @@ fn calcular_gradientes_mlp_cuda_com_workspace(
         var gb = workspace.grad_bs_por_camada[i].copy()
         gw.id_pipeline_ultima_operacao = pipeline_id
         gb.id_pipeline_ultima_operacao = pipeline_id
-        grad_ws.append(gw)
-        grad_bs.append(gb)
+        grad_ws.append(gw.copy())
+        grad_bs.append(gb.copy())
 
     return autograd_mlp.MLPGradientes(grad_ws^, grad_bs^, loss)

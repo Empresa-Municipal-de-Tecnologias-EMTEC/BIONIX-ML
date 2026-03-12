@@ -947,8 +947,8 @@ fn backward_mlp_cuda_em_tensores(
 
                 for passo in range(num_camadas):
                     var camada = num_camadas - 1 - passo
-                    var ativ_prev = ativacoes_forward[camada]
-                    var peso_camada = pesos[camada]
+                    var ativ_prev = ativacoes_forward[camada].copy()
+                    var peso_camada = pesos[camada].copy()
                     var calcular_grad_a_prev = camada > 0
 
                     var batch = ativ_prev.formato[0]
@@ -1031,7 +1031,7 @@ fn backward_mlp_cuda_em_tensores(
                             block_dim=(block_dim),
                         )
 
-                        var z_anterior = zs_forward[camada - 1]
+                        var z_anterior = zs_forward[camada - 1].copy()
                         var z_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
                         _copiar_lista_para_device(z_prev_dev, z_anterior.dados, len_grad_a_prev)
                         var grid_relu = (len_grad_a_prev + block_dim - 1) // block_dim

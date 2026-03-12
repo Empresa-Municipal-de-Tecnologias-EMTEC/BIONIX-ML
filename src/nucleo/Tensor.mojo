@@ -96,9 +96,10 @@ fn _backend_execucao_efetivo(var id_backend: Int) -> Int:
 
 fn _assegurar_backend_cpu_para_ops_locais(var backend_execucao: Int, var op: String):
     if backend_execucao != backend_tipos.backend_cpu_id():
-        raise Exception(
+        debug_assert(
+            False,
             "src.nucleo.Tensor." + op + " opera em CPU local; use src.computacao.dispatcher_tensor para backend "
-            + backend_tipos.backend_nome_de_id(backend_execucao)
+            + backend_tipos.backend_nome_de_id(backend_execucao),
         )
 
 
