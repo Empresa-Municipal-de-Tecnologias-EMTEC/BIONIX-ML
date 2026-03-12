@@ -534,6 +534,25 @@ def executar_exemplo_configuravel(
     print("--- Exemplo " + id_exemplo + ": reconhecimento de dígitos (0-9) com MLP ---")
 
     var dir_dataset = "exemplos/e000004_reconhecimento_digitos/dataset"
+    if not _dataset_tem_classes_0_a_9(dir_dataset):
+        var candidatos_dataset = List[String]()
+        candidatos_dataset.append("../exemplos/e000004_reconhecimento_digitos/dataset")
+        candidatos_dataset.append("../../exemplos/e000004_reconhecimento_digitos/dataset")
+        candidatos_dataset.append("../../../exemplos/e000004_reconhecimento_digitos/dataset")
+        for c in candidatos_dataset:
+            if _dataset_tem_classes_0_a_9(c):
+                dir_dataset = c
+                break
+
+    if not os.path.isfile(caminho_checkpoint):
+        var candidatos_checkpoint = List[String]()
+        candidatos_checkpoint.append("../" + caminho_checkpoint)
+        candidatos_checkpoint.append("../../" + caminho_checkpoint)
+        candidatos_checkpoint.append("../../../" + caminho_checkpoint)
+        for ckp in candidatos_checkpoint:
+            if os.path.isfile(ckp):
+                caminho_checkpoint = ckp
+                break
 
     if not _dataset_tem_classes_0_a_9(dir_dataset):
         print("Dataset inválido: esperado", dir_dataset, "com subpastas 0..9 contendo BMPs.")

@@ -1,5 +1,6 @@
 import exemplos.e000004_reconhecimento_digitos.exemplo as exemplo_base
 import src.computacao.cuda.cuda as cuda_backend
+import os
 
 
 def executar_exemplo():
@@ -21,8 +22,20 @@ def executar_exemplo():
     else:
         print("Smoke test vector_add CUDA: FALHOU")
 
+    var caminho_checkpoint = "exemplos/e000005_reconhecimento_digitos_cuda/pesos_mlp_digits_cuda.txt"
+    if not os.path.isdir("exemplos/e000005_reconhecimento_digitos_cuda"):
+        var candidatos = List[String]()
+        candidatos.append("../exemplos/e000005_reconhecimento_digitos_cuda/pesos_mlp_digits_cuda.txt")
+        candidatos.append("../../exemplos/e000005_reconhecimento_digitos_cuda/pesos_mlp_digits_cuda.txt")
+        candidatos.append("../../../exemplos/e000005_reconhecimento_digitos_cuda/pesos_mlp_digits_cuda.txt")
+        for c in candidatos:
+            var dir_parent = os.path.dirname(c)
+            if os.path.isdir(dir_parent):
+                caminho_checkpoint = c
+                break
+
     exemplo_base.executar_exemplo_configuravel(
         "cuda",
-        "exemplos/e000005_reconhecimento_digitos_cuda/pesos_mlp_digits_cuda.txt",
+        caminho_checkpoint,
         "e000005_cuda",
     )
