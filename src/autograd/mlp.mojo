@@ -2,6 +2,8 @@ import src.nucleo.Tensor as tensor_defs
 import src.ativacoes as ativacoes
 import src.perdas.mse as perdas_mse
 import src.computacao.dispatcher_tensor as dispatcher_tensor
+import src.computacao.tipos as backend_tipos
+import src.computacao.cuda.kernels_tensor as kernels_cuda_tensor
 import src.autograd.grafo as grafo
 import src.autograd.tipos_mlp as tipos_mlp
 import math
@@ -67,6 +69,10 @@ struct MLPGradientes(Movable, Copyable):
 fn adicionar_bias_vetor_coluna(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:
     debug_assert(len(a.formato) == 2, "entrada deve ser 2D")
     debug_assert(len(b.formato) == 2 and b.formato[0] == 1 and b.formato[1] == a.formato[1], "bias deve ser [1, colunas]")
+    if a.id_backend == backend_tipos.backend_cuda_id():
+        var pipeline_id = a.id_pipeline_memoria * 1000 + 601
+        return kernels_cuda_tensor.adicionar_bias_vetor_coluna_cuda(a, b, pipeline_id)
+
     var linhas = a.formato[0]
     var colunas = a.formato[1]
     var formato = a.formato.copy()
@@ -79,6 +85,10 @@ fn adicionar_bias_vetor_coluna(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> 
 
 fn somar_linhas(a: tensor_defs.Tensor) -> tensor_defs.Tensor:
     debug_assert(len(a.formato) == 2, "entrada deve ser 2D")
+    if a.id_backend == backend_tipos.backend_cuda_id():
+        var pipeline_id = a.id_pipeline_memoria * 1000 + 602
+        return kernels_cuda_tensor.somar_linhas_cuda(a, pipeline_id)
+
     var linhas = a.formato[0]
     var colunas = a.formato[1]
     var formato = List[Int]()
@@ -95,6 +105,10 @@ fn somar_linhas(a: tensor_defs.Tensor) -> tensor_defs.Tensor:
 
 fn _softmax_linhas(z: tensor_defs.Tensor) -> tensor_defs.Tensor:
     debug_assert(len(z.formato) == 2, "softmax espera tensor 2D")
+    if z.id_backend == backend_tipos.backend_cuda_id():
+        var pipeline_id = z.id_pipeline_memoria * 1000 + 603
+        return kernels_cuda_tensor.softmax_linhas_cuda(z, pipeline_id)
+
     var linhas = z.formato[0]
     var colunas = z.formato[1]
     var formato = z.formato.copy()
@@ -149,6 +163,10 @@ fn _loss_cross_entropy_media(pred_prob: tensor_defs.Tensor, alvos: tensor_defs.T
 fn _grad_softmax_cross_entropy(pred_prob: tensor_defs.Tensor, alvos: tensor_defs.Tensor) -> tensor_defs.Tensor:
     debug_assert(len(pred_prob.formato) == 2 and len(alvos.formato) == 2, "grad softmax+ce espera tensores 2D")
     debug_assert(pred_prob.formato[0] == alvos.formato[0] and pred_prob.formato[1] == alvos.formato[1], "pred e alvo incompatíveis")
+    if pred_prob.id_backend == backend_tipos.backend_cuda_id():
+        var pipeline_id = pred_prob.id_pipeline_memoria * 1000 + 604
+        return kernels_cuda_tensor.grad_softmax_cross_entropy_cuda(pred_prob, alvos, pipeline_id)
+
     var linhas = pred_prob.formato[0]
     var formato = pred_prob.formato.copy()
     var out = tensor_defs.Tensor(formato^, pred_prob.tipo_computacao)

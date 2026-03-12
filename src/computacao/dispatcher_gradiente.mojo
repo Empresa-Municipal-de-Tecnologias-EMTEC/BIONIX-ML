@@ -7,6 +7,9 @@ import src.autograd.mlp as autograd_mlp
 import src.nucleo.Tensor as tensor_defs
 
 
+alias CUDAGradienteWorkspace = kernels_cuda.CUDAGradienteWorkspace
+
+
 fn _backend_execucao_efetivo(var backend_id: Int) -> Int:
     if backend_id == tipos.backend_cpu_id():
         return backend_id
@@ -38,5 +41,25 @@ fn calcular_gradientes_mlp(
         return kernels_cuda.calcular_gradientes_mlp_cuda(ctx, pesos, pipeline_id)
     if backend == tipos.backend_cpu_id():
         return kernels_cpu.calcular_gradientes_mlp_cpu(ctx, pesos)
-    debug_assert(False, "dispatcher_gradiente.calcular_gradientes_mlp: backend inválido")
-    return kernels_cpu.calcular_gradientes_mlp_cpu(ctx, pesos)
+    raise Exception("dispatcher_gradiente.calcular_gradientes_mlp: backend inválido")
+
+
+fn criar_workspace_gradiente_cuda() -> CUDAGradienteWorkspace:
+    return kernels_cuda.criar_workspace_gradiente_cuda()
+
+
+fn calcular_gradientes_mlp_com_workspace_cuda(
+    ctx: autograd_mlp.MLPForwardContext,
+    pesos: List[tensor_defs.Tensor],
+    mut workspace_cuda: CUDAGradienteWorkspace,
+    var manter_gradientes_na_ram_principal: Bool = False,
+) -> autograd_mlp.MLPGradientes:
+    var backend = _backend_execucao_efetivo(ctx.entradas.id_backend)
+    if manter_gradientes_na_ram_principal:
+        backend = tipos.backend_cpu_id()
+
+    if backend == tipos.backend_cuda_id():
+        var pipeline_id = ctx.entradas.id_pipeline_memoria * 1000 + 401
+        return kernels_cuda.calcular_gradientes_mlp_cuda_com_workspace(ctx, pesos, pipeline_id, workspace_cuda)
+
+    return calcular_gradientes_mlp(ctx, pesos, manter_gradientes_na_ram_principal)

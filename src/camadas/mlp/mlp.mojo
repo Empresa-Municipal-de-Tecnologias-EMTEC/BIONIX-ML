@@ -131,6 +131,8 @@ fn treinar_por_lotes(
     var epoca_atual = lotes_treino_por_epoca[0].epoca
     var soma_loss_epoca: Float32 = 0.0
     var quantidade_lotes_epoca: Int = 0
+    var usar_workspace_cuda = bloco.tipo_computacao == "cuda" and not manter_gradientes_na_ram_principal
+    var workspace_cuda = dispatcher_gradiente.criar_workspace_gradiente_cuda()
 
     for item in lotes_treino_por_epoca:
         if item.epoca != epoca_atual:
@@ -147,7 +149,16 @@ fn treinar_por_lotes(
         var alvos = item.lote.alvos.copy()
 
         var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
-        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
+        var grads = autograd.MLPGradientes(List[tensor_defs.Tensor](), List[tensor_defs.Tensor](), 0.0)
+        if usar_workspace_cuda:
+            grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda(
+                ctx,
+                bloco.pesos,
+                workspace_cuda,
+                manter_gradientes_na_ram_principal,
+            )
+        else:
+            grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
         loss_lote_final = grads.loss
 
         for camada in range(len(bloco.pesos)):
@@ -182,9 +193,20 @@ fn treinar(
     debug_assert(entradas.formato[1] == bloco.topologia[0], "número de features incompatível")
 
     var loss_final: Float32 = 0.0
+    var usar_workspace_cuda = bloco.tipo_computacao == "cuda" and not manter_gradientes_na_ram_principal
+    var workspace_cuda = dispatcher_gradiente.criar_workspace_gradiente_cuda()
     for epoca in range(epocas):
         var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
-        var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
+        var grads = autograd.MLPGradientes(List[tensor_defs.Tensor](), List[tensor_defs.Tensor](), 0.0)
+        if usar_workspace_cuda:
+            grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda(
+                ctx,
+                bloco.pesos,
+                workspace_cuda,
+                manter_gradientes_na_ram_principal,
+            )
+        else:
+            grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
         loss_final = grads.loss
 
         for camada in range(len(bloco.pesos)):

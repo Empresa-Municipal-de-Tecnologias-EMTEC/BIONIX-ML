@@ -459,6 +459,7 @@ fn _treinar_por_lotes_multiclasse(
     var melhor_acc_val: Float32 = -1.0
     var epocas_recuando = 0
     var saiu_inercia = False
+    var workspace_cuda = dispatcher_gradiente.criar_workspace_gradiente_cuda()
 
     for epoca in range(epocas):
         var soma_loss: Float32 = 0.0
@@ -476,7 +477,16 @@ fn _treinar_por_lotes_multiclasse(
 
             var ctx = autograd.construir_contexto_mlp(xb, yb, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
             var manter_gradientes_na_ram_principal = bloco.tipo_computacao == "cpu"
-            var grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
+            var grads = autograd.MLPGradientes(List[tensor_defs.Tensor](), List[tensor_defs.Tensor](), 0.0)
+            if bloco.tipo_computacao == "cuda":
+                grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda(
+                    ctx,
+                    bloco.pesos,
+                    workspace_cuda,
+                    manter_gradientes_na_ram_principal,
+                )
+            else:
+                grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
             soma_loss = soma_loss + grads.loss
             lotes = lotes + 1
 

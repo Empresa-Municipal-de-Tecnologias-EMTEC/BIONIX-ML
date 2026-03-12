@@ -31,8 +31,7 @@ fn somar_elemento_a_elemento(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> te
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(a.id_pipeline_memoria, 1)
         return kernels_cuda.somar_elemento_a_elemento_cuda(a, b, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.somar_elemento_a_elemento: backend inválido")
-    return kernels_cpu.somar_elemento_a_elemento_cpu(a, b)
+    raise Exception("dispatcher_tensor.somar_elemento_a_elemento: backend inválido")
 
 
 fn subtrair_elemento_a_elemento(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -48,8 +47,7 @@ fn subtrair_elemento_a_elemento(a: tensor_defs.Tensor, b: tensor_defs.Tensor) ->
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(a.id_pipeline_memoria, 2)
         return kernels_cuda.subtrair_elemento_a_elemento_cuda(a, b, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.subtrair_elemento_a_elemento: backend inválido")
-    return kernels_cpu.subtrair_elemento_a_elemento_cpu(a, b)
+    raise Exception("dispatcher_tensor.subtrair_elemento_a_elemento: backend inválido")
 
 
 fn multiplicar_elemento_a_elemento(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -65,8 +63,7 @@ fn multiplicar_elemento_a_elemento(a: tensor_defs.Tensor, b: tensor_defs.Tensor)
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(a.id_pipeline_memoria, 3)
         return kernels_cuda.multiplicar_elemento_a_elemento_cuda(a, b, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.multiplicar_elemento_a_elemento: backend inválido")
-    return kernels_cpu.multiplicar_elemento_a_elemento_cpu(a, b)
+    raise Exception("dispatcher_tensor.multiplicar_elemento_a_elemento: backend inválido")
 
 
 fn transpor(a: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -82,8 +79,7 @@ fn transpor(a: tensor_defs.Tensor) -> tensor_defs.Tensor:
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(a.id_pipeline_memoria, 4)
         return kernels_cuda.transpor_cuda(a, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.transpor: backend inválido")
-    return kernels_cpu.transpor_cpu(a)
+    raise Exception("dispatcher_tensor.transpor: backend inválido")
 
 
 fn multiplicar_matrizes(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -99,8 +95,7 @@ fn multiplicar_matrizes(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(a.id_pipeline_memoria, 5)
         return kernels_cuda.multiplicar_matrizes_cuda(a, b, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.multiplicar_matrizes: backend inválido")
-    return kernels_cpu.multiplicar_matrizes_cpu(a, b)
+    raise Exception("dispatcher_tensor.multiplicar_matrizes: backend inválido")
 
 
 fn adicionar_bias_coluna(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -116,8 +111,7 @@ fn adicionar_bias_coluna(a: tensor_defs.Tensor, b: tensor_defs.Tensor) -> tensor
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(a.id_pipeline_memoria, 6)
         return kernels_cuda.adicionar_bias_coluna_cuda(a, b, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.adicionar_bias_coluna: backend inválido")
-    return kernels_cpu.adicionar_bias_coluna_cpu(a, b)
+    raise Exception("dispatcher_tensor.adicionar_bias_coluna: backend inválido")
 
 
 fn soma_total(a: tensor_defs.Tensor) -> Float32:
@@ -151,5 +145,4 @@ fn gradiente_mse(pred: tensor_defs.Tensor, alvo: tensor_defs.Tensor) -> tensor_d
     if backend == tipos.backend_cuda_id():
         var pipeline_id = kernels_cuda.pipeline_id_cuda(pred.id_pipeline_memoria, 7)
         return kernels_cuda.gradiente_mse_cuda(pred, alvo, pipeline_id)
-    debug_assert(False, "dispatcher_tensor.gradiente_mse: backend inválido")
-    return kernels_cpu.gradiente_mse_cpu(pred, alvo)
+    raise Exception("dispatcher_tensor.gradiente_mse: backend inválido")

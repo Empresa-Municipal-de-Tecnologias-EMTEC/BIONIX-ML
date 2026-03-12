@@ -94,6 +94,14 @@ fn _backend_execucao_efetivo(var id_backend: Int) -> Int:
     return id_backend
 
 
+fn _assegurar_backend_cpu_para_ops_locais(var backend_execucao: Int, var op: String):
+    if backend_execucao != backend_tipos.backend_cpu_id():
+        raise Exception(
+            "src.nucleo.Tensor." + op + " opera em CPU local; use src.computacao.dispatcher_tensor para backend "
+            + backend_tipos.backend_nome_de_id(backend_execucao)
+        )
+
+
 fn _propagar_contexto_operacao(mut saida: Tensor, origem: Tensor, var op_id: Int):
     saida.id_dispositivo = origem.id_dispositivo
     saida.id_pipeline_memoria = origem.id_pipeline_memoria
@@ -140,6 +148,7 @@ fn acumular_gradiente(mut t: Tensor, g: Tensor):
 fn somar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "somar_elemento_a_elemento")
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
     if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
@@ -152,6 +161,7 @@ fn somar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
 fn subtrair_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "subtrair_elemento_a_elemento")
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
     if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
@@ -164,6 +174,7 @@ fn subtrair_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
 fn multiplicar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.dados) == len(b.dados), "tensores devem ter mesmo tamanho")
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "multiplicar_elemento_a_elemento")
     var formato = a.formato.copy()
     var saida = Tensor(formato^, a.tipo_computacao)
     if backend_execucao == backend_tipos.backend_cpu_id() or backend_execucao == backend_tipos.backend_vulkan_id() or backend_execucao == backend_tipos.backend_rocm_id() or backend_execucao == backend_tipos.backend_cuda_id():
@@ -176,6 +187,7 @@ fn multiplicar_elemento_a_elemento(a: Tensor, b: Tensor) -> Tensor:
 fn transpor(a: Tensor) -> Tensor:
     debug_assert(len(a.formato) == 2, "transpor requer tensor 2D")
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "transpor")
     var linhas = a.formato[0]
     var colunas = a.formato[1]
     var formato = List[Int]()
@@ -193,6 +205,7 @@ fn transpor(a: Tensor) -> Tensor:
 fn multiplicar_matrizes(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.formato) == 2 and len(b.formato) == 2, "matmul requer tensores 2D")
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "multiplicar_matrizes")
     var m = a.formato[0]
     var n = a.formato[1]
     debug_assert(n == b.formato[0], "dimensões incompatíveis para matmul")
@@ -216,6 +229,7 @@ fn adicionar_bias_coluna(a: Tensor, b: Tensor) -> Tensor:
     debug_assert(len(a.formato) == 2, "entrada deve ser 2D")
     debug_assert(len(b.formato) == 2 and b.formato[0] == 1 and b.formato[1] == 1, "bias deve ter formato [1,1]")
     var backend_execucao = _backend_execucao_efetivo(a.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "adicionar_bias_coluna")
     var formato = a.formato.copy()
     var out = Tensor(formato^, a.tipo_computacao)
     var valor_bias = b.dados[0]
@@ -247,6 +261,7 @@ fn erro_quadratico_medio_escalar(pred: Tensor, alvo: Tensor) -> Float32:
 fn gradiente_mse(pred: Tensor, alvo: Tensor) -> Tensor:
     debug_assert(len(pred.dados) == len(alvo.dados), "pred e alvo devem ter mesmo tamanho")
     var backend_execucao = _backend_execucao_efetivo(pred.id_backend)
+    _assegurar_backend_cpu_para_ops_locais(backend_execucao, "gradiente_mse")
     var formato = pred.formato.copy()
     var out = Tensor(formato^, pred.tipo_computacao)
     if len(pred.dados) == 0:
