@@ -31,20 +31,16 @@ struct CUDABackend(Movable, Copyable):
 
 fn listar_dispositivos_disponiveis_cuda() -> List[String]:
     var dispositivos = List[String]()
-    if not gpu_disponivel_cuda():
-        dispositivos.append("nenhum dispositivo CUDA disponivel")
-        return dispositivos^
-
-    try:
-        var n = DeviceContext.number_of_devices()
-        for i in range(n):
-            try:
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            var n = DeviceContext.number_of_devices()
+            for i in range(n):
                 with DeviceContext(i, api="cuda") as ctx:
                     dispositivos.append(String(i) + " - " + ctx.name())
-            except Exception:
-                with DeviceContext(i) as ctx:
-                    dispositivos.append(String(i) + " - " + ctx.name())
-    except Exception:
+        except _:
+            dispositivos.append("nenhum dispositivo CUDA disponivel")
+    else:
         dispositivos.append("nenhum dispositivo CUDA disponivel")
 
     if len(dispositivos) == 0:
@@ -53,10 +49,7 @@ fn listar_dispositivos_disponiveis_cuda() -> List[String]:
 
 
 fn gpu_disponivel_cuda() -> Bool:
-    try:
-        return has_nvidia_gpu_accelerator()
-    except Exception:
-        return False
+    return has_nvidia_gpu_accelerator()
 
 
 fn gpu_nome_dispositivo() -> String:

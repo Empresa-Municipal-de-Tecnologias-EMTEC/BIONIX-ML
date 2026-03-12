@@ -1,6 +1,7 @@
 import src.nucleo.Tensor as tensor_defs
 from gpu import global_idx
 from gpu.host import DeviceContext, DeviceBuffer
+from sys import has_nvidia_gpu_accelerator
 
 
 fn _kernel_relu(
@@ -84,24 +85,28 @@ fn relu_cuda(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
     var formato = x.formato.copy()
     var out = tensor_defs.Tensor(formato^, x.tipo_computacao)
     var len_total = len(x.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_host_para_dev(in_dev, x.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_relu](
-                in_dev,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_dev_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de relu")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_host_para_dev(in_dev, x.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_relu](
+                    in_dev,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_dev_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de relu")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     return out^
 
 
@@ -110,27 +115,31 @@ fn derivada_relu_cuda(entrada: tensor_defs.Tensor, grad_saida: tensor_defs.Tenso
     var formato = entrada.formato.copy()
     var grad = tensor_defs.Tensor(formato^, entrada.tipo_computacao)
     var len_total = len(entrada.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var grad_saida_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_host_para_dev(in_dev, entrada.dados, len_total)
-            _copiar_host_para_dev(grad_saida_dev, grad_saida.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_derivada_relu](
-                in_dev,
-                grad_saida_dev,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_dev_para_tensor(out_dev, grad, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de derivada relu")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var grad_saida_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_host_para_dev(in_dev, entrada.dados, len_total)
+                _copiar_host_para_dev(grad_saida_dev, grad_saida.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_derivada_relu](
+                    in_dev,
+                    grad_saida_dev,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_dev_para_tensor(out_dev, grad, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de derivada relu")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     return grad^
 
 
@@ -138,24 +147,28 @@ fn hard_sigmoid_cuda(x: tensor_defs.Tensor) -> tensor_defs.Tensor:
     var formato = x.formato.copy()
     var out = tensor_defs.Tensor(formato^, x.tipo_computacao)
     var len_total = len(x.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_host_para_dev(in_dev, x.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_hard_sigmoid](
-                in_dev,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_dev_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de hard_sigmoid")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_host_para_dev(in_dev, x.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_hard_sigmoid](
+                    in_dev,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_dev_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de hard_sigmoid")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     return out^
 
 
@@ -164,25 +177,29 @@ fn derivada_hard_sigmoid_cuda(entrada: tensor_defs.Tensor, grad_saida: tensor_de
     var formato = entrada.formato.copy()
     var grad = tensor_defs.Tensor(formato^, entrada.tipo_computacao)
     var len_total = len(entrada.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var grad_saida_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_host_para_dev(in_dev, entrada.dados, len_total)
-            _copiar_host_para_dev(grad_saida_dev, grad_saida.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_derivada_hard_sigmoid](
-                in_dev,
-                grad_saida_dev,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_dev_para_tensor(out_dev, grad, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de derivada hard_sigmoid")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var grad_saida_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_host_para_dev(in_dev, entrada.dados, len_total)
+                _copiar_host_para_dev(grad_saida_dev, grad_saida.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_derivada_hard_sigmoid](
+                    in_dev,
+                    grad_saida_dev,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_dev_para_tensor(out_dev, grad, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de derivada hard_sigmoid")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     return grad^

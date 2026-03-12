@@ -1,6 +1,7 @@
 import src.nucleo.Tensor as tensor_defs
 from gpu import global_idx
 from gpu.host import DeviceContext, DeviceBuffer
+from sys import has_nvidia_gpu_accelerator
 
 
 # Implementação de referência para backend CUDA sem fallback para kernels CPU.
@@ -123,27 +124,31 @@ fn somar_elemento_a_elemento_cuda(a: tensor_defs.Tensor, b: tensor_defs.Tensor, 
     var formato = a.formato.copy()
     var out = tensor_defs.Tensor(formato^, a.tipo_computacao)
     var len_total = len(a.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var in1 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_lista_para_device(in0, a.dados, len_total)
-            _copiar_lista_para_device(in1, b.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_add](
-                in0,
-                in1,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de soma")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var in1 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_lista_para_device(in0, a.dados, len_total)
+                _copiar_lista_para_device(in1, b.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_add](
+                    in0,
+                    in1,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de soma")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
 
@@ -153,27 +158,31 @@ fn subtrair_elemento_a_elemento_cuda(a: tensor_defs.Tensor, b: tensor_defs.Tenso
     var formato = a.formato.copy()
     var out = tensor_defs.Tensor(formato^, a.tipo_computacao)
     var len_total = len(a.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var in1 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_lista_para_device(in0, a.dados, len_total)
-            _copiar_lista_para_device(in1, b.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_sub](
-                in0,
-                in1,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de subtracao")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var in1 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_lista_para_device(in0, a.dados, len_total)
+                _copiar_lista_para_device(in1, b.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_sub](
+                    in0,
+                    in1,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de subtracao")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
 
@@ -183,27 +192,31 @@ fn multiplicar_elemento_a_elemento_cuda(a: tensor_defs.Tensor, b: tensor_defs.Te
     var formato = a.formato.copy()
     var out = tensor_defs.Tensor(formato^, a.tipo_computacao)
     var len_total = len(a.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var in1 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_lista_para_device(in0, a.dados, len_total)
-            _copiar_lista_para_device(in1, b.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_mul](
-                in0,
-                in1,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de multiplicacao")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var in1 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_lista_para_device(in0, a.dados, len_total)
+                _copiar_lista_para_device(in1, b.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_mul](
+                    in0,
+                    in1,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de multiplicacao")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
 
@@ -217,25 +230,29 @@ fn transpor_cuda(a: tensor_defs.Tensor, var pipeline_id: Int) -> tensor_defs.Ten
     formato.append(linhas)
     var out = tensor_defs.Tensor(formato^, a.tipo_computacao)
     var len_total = len(a.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_lista_para_device(in0, a.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_transpose](
-                in0,
-                out_dev,
-                linhas,
-                colunas,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de transposicao")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_lista_para_device(in0, a.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_transpose](
+                    in0,
+                    out_dev,
+                    linhas,
+                    colunas,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de transposicao")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
 
@@ -253,29 +270,33 @@ fn multiplicar_matrizes_cuda(a: tensor_defs.Tensor, b: tensor_defs.Tensor, var p
     var len_a = len(a.dados)
     var len_b = len(b.dados)
     var len_out = len(out.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var a_dev = ctx.enqueue_create_buffer[DType.float32](len_a)
-            var b_dev = ctx.enqueue_create_buffer[DType.float32](len_b)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_out)
-            _copiar_lista_para_device(a_dev, a.dados, len_a)
-            _copiar_lista_para_device(b_dev, b.dados, len_b)
-            var block_dim = 256
-            var grid_dim = (len_out + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_matmul](
-                a_dev,
-                b_dev,
-                out_dev,
-                m,
-                n,
-                p,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_out)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de matmul")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var a_dev = ctx.enqueue_create_buffer[DType.float32](len_a)
+                var b_dev = ctx.enqueue_create_buffer[DType.float32](len_b)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_out)
+                _copiar_lista_para_device(a_dev, a.dados, len_a)
+                _copiar_lista_para_device(b_dev, b.dados, len_b)
+                var block_dim = 256
+                var grid_dim = (len_out + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_matmul](
+                    a_dev,
+                    b_dev,
+                    out_dev,
+                    m,
+                    n,
+                    p,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_out)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de matmul")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
 
@@ -287,25 +308,29 @@ fn adicionar_bias_coluna_cuda(a: tensor_defs.Tensor, b: tensor_defs.Tensor, var 
     var out = tensor_defs.Tensor(formato^, a.tipo_computacao)
     var valor_bias = b.dados[0]
     var len_total = len(a.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_lista_para_device(in0, a.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_add_bias](
-                in0,
-                out_dev,
-                len_total,
-                valor_bias,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de add_bias")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in0 = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_lista_para_device(in0, a.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_add_bias](
+                    in0,
+                    out_dev,
+                    len_total,
+                    valor_bias,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de add_bias")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
 
@@ -318,26 +343,30 @@ fn gradiente_mse_cuda(pred: tensor_defs.Tensor, alvo: tensor_defs.Tensor, var pi
         out.id_pipeline_ultima_operacao = pipeline_id
         return out^
     var len_total = len(pred.dados)
-    try:
-        with DeviceContext(0, api="cuda") as ctx:
-            var pred_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var alvo_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
-            _copiar_lista_para_device(pred_dev, pred.dados, len_total)
-            _copiar_lista_para_device(alvo_dev, alvo.dados, len_total)
-            var block_dim = 256
-            var grid_dim = (len_total + block_dim - 1) // block_dim
-            ctx.enqueue_function_experimental[_kernel_grad_mse](
-                pred_dev,
-                alvo_dev,
-                out_dev,
-                len_total,
-                grid_dim=(grid_dim),
-                block_dim=(block_dim),
-            )
-            ctx.synchronize()
-            _copiar_device_para_tensor(out_dev, out, len_total)
-    except Exception:
-        debug_assert(False, "falha ao executar kernel CUDA de grad_mse")
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var pred_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var alvo_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](len_total)
+                _copiar_lista_para_device(pred_dev, pred.dados, len_total)
+                _copiar_lista_para_device(alvo_dev, alvo.dados, len_total)
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_grad_mse](
+                    pred_dev,
+                    alvo_dev,
+                    out_dev,
+                    len_total,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+        except _:
+            debug_assert(False, "falha ao executar kernel CUDA de grad_mse")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
     out.id_pipeline_ultima_operacao = pipeline_id
     return out^
