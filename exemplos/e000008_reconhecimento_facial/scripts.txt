@@ -1,0 +1,2 @@
+mojo run exemplos/e000008_reconhecimento_facial/exemplo.mojo
+mojo build exemplos/e000008_reconhecimento_facial/exemplo.mojo -o build/e000008_reconhecimento_facial

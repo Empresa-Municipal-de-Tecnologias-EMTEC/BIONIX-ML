@@ -212,27 +212,77 @@ fn construir_contexto(
     if not tipos_mlp.perda_id_valido(perda_id):
         perda_id = tipos_mlp.perda_padrao_id(num_saidas)
 
-    for camada in range(num_camadas):
-        var z_bruto = dispatcher_tensor.multiplicar_matrizes(atual, pesos[camada])
-        ops.append("matmul(a" + String(camada) + ",w" + String(camada + 1) + ")")
-
-        var z = adicionar_bias_vetor_coluna(z_bruto, biases[camada])
-        ops.append("add_bias_" + String(camada + 1))
-        zs.append(z.copy())
-
-        if camada < num_camadas - 1:
-            atual = ativacoes.relu(z)
-            ops.append("relu_" + String(camada + 1))
-        else:
-            if ativacao_saida_id == tipos_mlp.ativacao_saida_softmax_id():
-                atual = _softmax_linhas(z)
-                ops.append("softmax_out")
-            elif ativacao_saida_id == tipos_mlp.ativacao_saida_linear_id():
-                atual = z.copy()
-                ops.append("linear_out")
+    if entradas.id_backend == backend_tipos.backend_cuda_id():
+        var pipeline_id = entradas.id_pipeline_memoria * 1000 + 630
+        var pred_cuda = kernels_cuda_tensor.mlp_forward_cuda_fused(
+            entradas,
+            pesos,
+            biases,
+            ativacao_saida_id,
+            tipos_mlp.ativacao_saida_softmax_id(),
+            tipos_mlp.ativacao_saida_linear_id(),
+            tipos_mlp.ativacao_saida_hard_sigmoid_id(),
+            zs,
+            ativs,
+            pipeline_id,
+        )
+        for camada in range(num_camadas):
+            if camada < num_camadas - 1:
+                ops.append("matmul+add_bias+relu_fused_" + String(camada + 1))
             else:
-                atual = ativacoes.hard_sigmoid(z)
-                ops.append("hard_sigmoid_out")
+                if ativacao_saida_id == tipos_mlp.ativacao_saida_softmax_id():
+                    ops.append("matmul+add_bias+softmax_fused_out")
+                elif ativacao_saida_id == tipos_mlp.ativacao_saida_linear_id():
+                    ops.append("matmul+add_bias+linear_fused_out")
+                else:
+                    ops.append("matmul+add_bias+hard_sigmoid_fused_out")
+
+        var topologia_cuda = List[Int]()
+        topologia_cuda.append(entradas.formato[1])
+        for p in pesos:
+            topologia_cuda.append(p.formato[1])
+
+        var g_cuda = grafo.criar_grafo_mlp_forward_topologia(topologia_cuda)
+        return MLPForwardContext(entradas, alvos, zs^, ativs^, pred_cuda, ativacao_saida_id, perda_id, ops^, g_cuda)
+
+    for camada in range(num_camadas):
+        var usar_fusao_cuda_oculta = atual.id_backend == backend_tipos.backend_cuda_id() and camada < num_camadas - 1
+        var usar_fusao_cuda_saida_softmax = atual.id_backend == backend_tipos.backend_cuda_id() and camada == num_camadas - 1 and ativacao_saida_id == tipos_mlp.ativacao_saida_softmax_id()
+        var z = atual.copy()
+        if usar_fusao_cuda_oculta:
+            var pipeline_id = atual.id_pipeline_memoria * 1000 + 620
+            var fusion = kernels_cuda_tensor.linear_bias_relu_forward_cuda(atual, pesos[camada], biases[camada], pipeline_id)
+            z = fusion[0].copy()
+            atual = fusion[1].copy()
+            ops.append("matmul+add_bias+relu_fused_" + String(camada + 1))
+        elif usar_fusao_cuda_saida_softmax:
+            var pipeline_id = atual.id_pipeline_memoria * 1000 + 621
+            var fusion_out = kernels_cuda_tensor.linear_bias_softmax_forward_cuda(atual, pesos[camada], biases[camada], pipeline_id)
+            z = fusion_out[0].copy()
+            atual = fusion_out[1].copy()
+            ops.append("matmul+add_bias+softmax_fused_out")
+        else:
+            var z_bruto = dispatcher_tensor.multiplicar_matrizes(atual, pesos[camada])
+            ops.append("matmul(a" + String(camada) + ",w" + String(camada + 1) + ")")
+
+            z = adicionar_bias_vetor_coluna(z_bruto, biases[camada])
+            ops.append("add_bias_" + String(camada + 1))
+
+            if camada < num_camadas - 1:
+                atual = ativacoes.relu(z)
+                ops.append("relu_" + String(camada + 1))
+            else:
+                if ativacao_saida_id == tipos_mlp.ativacao_saida_softmax_id():
+                    atual = _softmax_linhas(z)
+                    ops.append("softmax_out")
+                elif ativacao_saida_id == tipos_mlp.ativacao_saida_linear_id():
+                    atual = z.copy()
+                    ops.append("linear_out")
+                else:
+                    atual = ativacoes.hard_sigmoid(z)
+                    ops.append("hard_sigmoid_out")
+
+        zs.append(z.copy())
 
         ativs.append(atual.copy())
 

@@ -1,6 +1,10 @@
 import src.autograd as autograd
 import src.autograd.tipos_mlp as tipos_mlp
 import src.computacao.dispatcher_gradiente as dispatcher_gradiente
+import src.computacao.sessao as sessao_driver
+import src.computacao.storage_sessao as storage_sessao
+import src.computacao.captura_camadas as captura_camadas
+import src.computacao.cuda.cuda as cuda_backend
 import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
 import math
@@ -104,6 +108,49 @@ fn inferir(bloco: BlocoMLP, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
     return prever(bloco, entradas)
 
 
+fn _chave_storage_peso(var camada: Int) -> String:
+    return "mlp/peso/" + String(camada)
+
+
+fn _chave_storage_bias(var camada: Int) -> String:
+    return "mlp/bias/" + String(camada)
+
+
+fn _carregar_bloco_de_storage(mut bloco: BlocoMLP, storage: storage_sessao.StorageSessao):
+    for camada in range(len(bloco.pesos)):
+        bloco.pesos[camada] = storage_sessao.carregar_tensor_sessao(storage, _chave_storage_peso(camada), bloco.pesos[camada])
+        bloco.biases[camada] = storage_sessao.carregar_tensor_sessao(storage, _chave_storage_bias(camada), bloco.biases[camada])
+
+
+fn _salvar_bloco_em_storage(mut bloco: BlocoMLP, mut storage: storage_sessao.StorageSessao):
+    for camada in range(len(bloco.pesos)):
+        _ = storage_sessao.salvar_tensor_sessao(storage, _chave_storage_peso(camada), bloco.pesos[camada])
+        _ = storage_sessao.salvar_tensor_sessao(storage, _chave_storage_bias(camada), bloco.biases[camada])
+
+
+fn prever_com_sessao(
+    mut bloco: BlocoMLP,
+    entradas: tensor_defs.Tensor,
+    driver_sessao: sessao_driver.DriverSessao = sessao_driver.driver_sessao_nenhum(),
+    mut captura_adaptador: captura_camadas.CapturaCamadasAdaptador = captura_camadas.criar_captura_camadas_desativado(),
+) -> tensor_defs.Tensor:
+    var storage = storage_sessao.criar_storage_sessao(driver_sessao)
+    if driver_sessao.modo != "nenhum":
+        _carregar_bloco_de_storage(bloco, storage)
+    var saida = prever(bloco, entradas)
+    _ = captura_camadas.capturar_io_camada(captura_adaptador, "infer", "mlp/bloco", entradas, saida)
+    return saida^
+
+
+fn inferir_com_sessao(
+    mut bloco: BlocoMLP,
+    entradas: tensor_defs.Tensor,
+    driver_sessao: sessao_driver.DriverSessao = sessao_driver.driver_sessao_nenhum(),
+    mut captura_adaptador: captura_camadas.CapturaCamadasAdaptador = captura_camadas.criar_captura_camadas_desativado(),
+) -> tensor_defs.Tensor:
+    return prever_com_sessao(bloco, entradas, driver_sessao, captura_adaptador)
+
+
 fn _loss_medio_lotes_validacao(bloco: BlocoMLP, lotes_validacao: List[lotes_sup.LoteSupervisionado]) -> Float32:
     if len(lotes_validacao) == 0:
         return 0.0
@@ -123,6 +170,10 @@ fn treinar_por_lotes(
     var taxa_aprendizado: Float32 = 0.03,
     var imprimir_cada_epoca: Int = 1,
     var manter_gradientes_na_ram_principal: Bool = False,
+    driver_sessao: sessao_driver.DriverSessao = sessao_driver.driver_sessao_nenhum(),
+    var checkpoint_interval: Int = 0,
+    var max_itens_ram_cache: Int = 0,
+    mut captura_adaptador: captura_camadas.CapturaCamadasAdaptador = captura_camadas.criar_captura_camadas_desativado(),
 ) -> Float32:
     if len(lotes_treino_por_epoca) == 0:
         return 0.0
@@ -133,6 +184,21 @@ fn treinar_por_lotes(
     var quantidade_lotes_epoca: Int = 0
     var usar_workspace_cuda = bloco.tipo_computacao == "cuda" and not manter_gradientes_na_ram_principal
     var workspace_cuda = dispatcher_gradiente.criar_workspace_gradiente_cuda()
+    var storage = storage_sessao.criar_storage_sessao(driver_sessao)
+    storage_sessao.configurar_checkpoint_incremental(storage, checkpoint_interval)
+    storage_sessao.configurar_paginacao_ram(storage, max_itens_ram_cache)
+    var sessao_execucao_cuda = cuda_backend.criar_sessao_execucao_cuda(driver_sessao, 0, 0, 0)
+    dispatcher_gradiente.configurar_driver_sessao_workspace_cuda(
+        workspace_cuda,
+        sessao_execucao_cuda.driver_sessao.modo,
+        sessao_execucao_cuda.driver_sessao.diretorio_disco,
+    )
+
+    if driver_sessao.modo != "nenhum":
+        _carregar_bloco_de_storage(bloco, storage)
+        for camada in range(len(bloco.pesos)):
+            _ = storage_sessao.prefetch_tensor_sessao(storage, _chave_storage_peso(camada), bloco.pesos[camada])
+            _ = storage_sessao.prefetch_tensor_sessao(storage, _chave_storage_bias(camada), bloco.biases[camada])
 
     for item in lotes_treino_por_epoca:
         if item.epoca != epoca_atual:
@@ -149,11 +215,14 @@ fn treinar_por_lotes(
         var alvos = item.lote.alvos.copy()
 
         var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
+        _ = captura_camadas.capturar_io_camada(captura_adaptador, "train", "mlp/bloco", ctx.entradas, ctx.pred)
         var grads = autograd.MLPGradientes(List[tensor_defs.Tensor](), List[tensor_defs.Tensor](), 0.0)
         if usar_workspace_cuda:
-            grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda(
+            grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda_e_aplicar_sgd(
                 ctx,
                 bloco.pesos,
+                bloco.biases,
+                taxa_aprendizado,
                 workspace_cuda,
                 manter_gradientes_na_ram_principal,
             )
@@ -161,11 +230,15 @@ fn treinar_por_lotes(
             grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
         loss_lote_final = grads.loss
 
-        for camada in range(len(bloco.pesos)):
-            for i in range(len(bloco.pesos[camada].dados)):
-                bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
-            for j in range(len(bloco.biases[camada].dados)):
-                bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
+        if not usar_workspace_cuda:
+            for camada in range(len(bloco.pesos)):
+                for i in range(len(bloco.pesos[camada].dados)):
+                    bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
+                for j in range(len(bloco.biases[camada].dados)):
+                    bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
+
+        if driver_sessao.modo != "nenhum":
+            _salvar_bloco_em_storage(bloco, storage)
 
         soma_loss_epoca = soma_loss_epoca + grads.loss
         quantidade_lotes_epoca = quantidade_lotes_epoca + 1
@@ -186,6 +259,10 @@ fn treinar(
     var epocas: Int = 1200,
     var imprimir_cada: Int = 200,
     var manter_gradientes_na_ram_principal: Bool = False,
+    driver_sessao: sessao_driver.DriverSessao = sessao_driver.driver_sessao_nenhum(),
+    var checkpoint_interval: Int = 0,
+    var max_itens_ram_cache: Int = 0,
+    mut captura_adaptador: captura_camadas.CapturaCamadasAdaptador = captura_camadas.criar_captura_camadas_desativado(),
 ) -> Float32:
     debug_assert(len(entradas.formato) == 2, "entradas deve ser tensor 2D")
     debug_assert(len(alvos.formato) == 2 and alvos.formato[1] == 1, "alvos deve ser tensor 2D [N,1]")
@@ -195,13 +272,32 @@ fn treinar(
     var loss_final: Float32 = 0.0
     var usar_workspace_cuda = bloco.tipo_computacao == "cuda" and not manter_gradientes_na_ram_principal
     var workspace_cuda = dispatcher_gradiente.criar_workspace_gradiente_cuda()
+    var storage = storage_sessao.criar_storage_sessao(driver_sessao)
+    storage_sessao.configurar_checkpoint_incremental(storage, checkpoint_interval)
+    storage_sessao.configurar_paginacao_ram(storage, max_itens_ram_cache)
+    var sessao_execucao_cuda = cuda_backend.criar_sessao_execucao_cuda(driver_sessao, 0, 0, 0)
+    dispatcher_gradiente.configurar_driver_sessao_workspace_cuda(
+        workspace_cuda,
+        sessao_execucao_cuda.driver_sessao.modo,
+        sessao_execucao_cuda.driver_sessao.diretorio_disco,
+    )
+
+    if driver_sessao.modo != "nenhum":
+        _carregar_bloco_de_storage(bloco, storage)
+        for camada in range(len(bloco.pesos)):
+            _ = storage_sessao.prefetch_tensor_sessao(storage, _chave_storage_peso(camada), bloco.pesos[camada])
+            _ = storage_sessao.prefetch_tensor_sessao(storage, _chave_storage_bias(camada), bloco.biases[camada])
+
     for epoca in range(epocas):
         var ctx = autograd.construir_contexto_mlp(entradas, alvos, bloco.pesos, bloco.biases, bloco.ativacao_saida_id, bloco.perda_id)
+        _ = captura_camadas.capturar_io_camada(captura_adaptador, "train", "mlp/bloco", ctx.entradas, ctx.pred)
         var grads = autograd.MLPGradientes(List[tensor_defs.Tensor](), List[tensor_defs.Tensor](), 0.0)
         if usar_workspace_cuda:
-            grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda(
+            grads = dispatcher_gradiente.calcular_gradientes_mlp_com_workspace_cuda_e_aplicar_sgd(
                 ctx,
                 bloco.pesos,
+                bloco.biases,
+                taxa_aprendizado,
                 workspace_cuda,
                 manter_gradientes_na_ram_principal,
             )
@@ -209,11 +305,15 @@ fn treinar(
             grads = dispatcher_gradiente.calcular_gradientes_mlp(ctx, bloco.pesos, manter_gradientes_na_ram_principal)
         loss_final = grads.loss
 
-        for camada in range(len(bloco.pesos)):
-            for i in range(len(bloco.pesos[camada].dados)):
-                bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
-            for j in range(len(bloco.biases[camada].dados)):
-                bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
+        if not usar_workspace_cuda:
+            for camada in range(len(bloco.pesos)):
+                for i in range(len(bloco.pesos[camada].dados)):
+                    bloco.pesos[camada].dados[i] = bloco.pesos[camada].dados[i] - taxa_aprendizado * grads.grad_ws[camada].dados[i]
+                for j in range(len(bloco.biases[camada].dados)):
+                    bloco.biases[camada].dados[j] = bloco.biases[camada].dados[j] - taxa_aprendizado * grads.grad_bs[camada].dados[j]
+
+        if driver_sessao.modo != "nenhum":
+            _salvar_bloco_em_storage(bloco, storage)
 
         if imprimir_cada > 0 and (epoca % imprimir_cada == 0 or epoca == epocas - 1):
             print("Época", epoca, "| Loss:", loss_final)

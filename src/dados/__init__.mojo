@@ -1,5 +1,6 @@
 # Pacote `dados` (lowercase) - utilitários para leitura e normalização de dados
 import src.dados.csv as csv
+import src.dados.txt as txt
 import src.dados.arquivo as arquivo
 import src.dados.wav as wav
 import src.dados.bmp as bmp
@@ -18,6 +19,21 @@ def carregar_csv_de_texto(var texto: String, var delimitador: String = ",", var 
 def carregar_csv(var caminho: String, var delimitador: String = ",", var detectar_cabecalho: Bool = True) -> csv.CSVData:
     var texto = arquivo.ler_arquivo_texto(caminho)
     return csv.parse_csv(texto, delimitador, detectar_cabecalho)
+
+
+alias TXTData = txt.TXTData
+
+
+def carregar_txt(var caminho: String) -> txt.TXTData:
+    return txt.carregar_txt(caminho)
+
+
+def carregar_txt_texto(var caminho: String) -> String:
+    return txt.carregar_txt_texto(caminho)
+
+
+def carregar_txt_linhas(var caminho: String) -> List[String]:
+    return txt.carregar_txt_linhas(caminho)
 
 
 fn gravar_arquivo_binario(var caminho: String, var dados: List[Int]) -> Bool:

@@ -1,4 +1,5 @@
 import src.nucleo.Tensor as tensor_defs
+import src.computacao.cuda.device_buffer_pool as buffer_pool
 from gpu import global_idx
 from gpu.host import DeviceContext, DeviceBuffer
 from sys import has_nvidia_gpu_accelerator
@@ -77,6 +78,48 @@ fn _kernel_matmul(
     var acc: Float32 = 0.0
     for k in range(n):
         acc = acc + a[i * n + k] * b[k * p + j]
+    out_ptr[idx] = acc
+
+
+fn _kernel_matmul_a_transposto_b(
+    a: UnsafePointer[Float32],
+    b: UnsafePointer[Float32],
+    out_ptr: UnsafePointer[Float32],
+    batch: Int,
+    fan_in: Int,
+    fan_out: Int,
+):
+    var tid = global_idx.x
+    var total = UInt(fan_in * fan_out)
+    if tid >= total:
+        return
+    var idx = Int(tid)
+    var i = idx // fan_out
+    var j = idx - i * fan_out
+    var acc: Float32 = 0.0
+    for k in range(batch):
+        acc = acc + a[k * fan_in + i] * b[k * fan_out + j]
+    out_ptr[idx] = acc
+
+
+fn _kernel_matmul_b_transposto(
+    a: UnsafePointer[Float32],
+    b: UnsafePointer[Float32],
+    out_ptr: UnsafePointer[Float32],
+    m: Int,
+    n: Int,
+    p: Int,
+):
+    var tid = global_idx.x
+    var total = UInt(m * p)
+    if tid >= total:
+        return
+    var idx = Int(tid)
+    var i = idx // p
+    var j = idx - i * p
+    var acc: Float32 = 0.0
+    for k in range(n):
+        acc = acc + a[i * n + k] * b[j * n + k]
     out_ptr[idx] = acc
 
 
@@ -181,6 +224,43 @@ fn _kernel_derivada_relu_local(
     grad[tid] = grad_saida[tid] if entrada[tid] > 0.0 else Float32(0.0)
 
 
+fn _kernel_relu_inplace(
+    dados: UnsafePointer[Float32],
+    len_total: Int,
+):
+    var tid = global_idx.x
+    if tid >= UInt(len_total):
+        return
+    var v = dados[tid]
+    dados[tid] = v if v > 0.0 else Float32(0.0)
+
+
+fn _kernel_copy(
+    origem: UnsafePointer[Float32],
+    destino: UnsafePointer[Float32],
+    len_total: Int,
+):
+    var tid = global_idx.x
+    if tid >= UInt(len_total):
+        return
+    destino[tid] = origem[tid]
+
+
+fn _kernel_hard_sigmoid_inplace_local(
+    dados: UnsafePointer[Float32],
+    len_total: Int,
+):
+    var tid = global_idx.x
+    if tid >= UInt(len_total):
+        return
+    var v = 0.2 * dados[tid] + 0.5
+    if v < 0.0:
+        v = 0.0
+    if v > 1.0:
+        v = 1.0
+    dados[tid] = v
+
+
 fn _kernel_grad_mse(
     pred: UnsafePointer[Float32],
     alvo: UnsafePointer[Float32],
@@ -192,6 +272,19 @@ fn _kernel_grad_mse(
         return
     var n = Float32(len_total)
     out_ptr[tid] = 2.0 * (pred[tid] - alvo[tid]) / n
+
+
+fn _kernel_sgd_step(
+    param: UnsafePointer[Float32],
+    grad: UnsafePointer[Float32],
+    out_ptr: UnsafePointer[Float32],
+    len_total: Int,
+    taxa_aprendizado: Float32,
+):
+    var tid = global_idx.x
+    if tid >= UInt(len_total):
+        return
+    out_ptr[tid] = param[tid] - taxa_aprendizado * grad[tid]
 
 
 fn _copiar_lista_para_device(mut dev: DeviceBuffer[DType.float32], dados: List[Float32], var len_total: Int) raises:
@@ -207,6 +300,56 @@ fn _copiar_device_para_tensor(mut dev: DeviceBuffer[DType.float32], mut out: ten
 
 fn pipeline_id_cuda(var pipeline_memoria_id: Int, var operacao_id: Int) -> Int:
     return pipeline_memoria_id * 1000 + operacao_id
+
+
+fn aplicar_sgd_em_tensor_cuda(
+    param: tensor_defs.Tensor,
+    grad: tensor_defs.Tensor,
+    var taxa_aprendizado: Float32,
+    var pipeline_id: Int,
+) -> tensor_defs.Tensor:
+    debug_assert(len(param.dados) == len(grad.dados), "param e grad devem ter mesmo tamanho")
+    debug_assert(param.formato == grad.formato, "param e grad com formatos incompatíveis")
+
+    var formato = param.formato.copy()
+    var out = tensor_defs.Tensor(formato^, param.tipo_computacao)
+    var len_total = len(param.dados)
+
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var param_dev = buffer_pool.device_buffer_pool.acquire(len_total)
+                var grad_dev = buffer_pool.device_buffer_pool.acquire(len_total)
+                var out_dev = buffer_pool.device_buffer_pool.acquire(len_total)
+
+                _copiar_lista_para_device(param_dev, param.dados, len_total)
+                _copiar_lista_para_device(grad_dev, grad.dados, len_total)
+
+                var block_dim = 256
+                var grid_dim = (len_total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_sgd_step](
+                    param_dev,
+                    grad_dev,
+                    out_dev,
+                    len_total,
+                    taxa_aprendizado,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, len_total)
+                buffer_pool.device_buffer_pool.release(param_dev)
+                buffer_pool.device_buffer_pool.release(grad_dev)
+                buffer_pool.device_buffer_pool.release(out_dev)
+        except _:
+            debug_assert(False, "falha ao executar aplicar_sgd_em_tensor_cuda")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+
+    out.id_pipeline_ultima_operacao = pipeline_id
+    return out^
 
 
 fn somar_elemento_a_elemento_cuda(a: tensor_defs.Tensor, b: tensor_defs.Tensor, var pipeline_id: Int) -> tensor_defs.Tensor:
@@ -622,6 +765,372 @@ fn grad_softmax_cross_entropy_cuda(pred_prob: tensor_defs.Tensor, alvos: tensor_
     return out^
 
 
+fn linear_bias_relu_forward_cuda(
+    entrada: tensor_defs.Tensor,
+    pesos: tensor_defs.Tensor,
+    bias: tensor_defs.Tensor,
+    var pipeline_id: Int,
+) -> List[tensor_defs.Tensor]:
+    debug_assert(len(entrada.formato) == 2 and len(pesos.formato) == 2, "linear+relu espera tensores 2D")
+    debug_assert(entrada.formato[1] == pesos.formato[0], "dimensões incompatíveis para matmul")
+    debug_assert(len(bias.formato) == 2 and bias.formato[0] == 1 and bias.formato[1] == pesos.formato[1], "bias deve ser [1, fan_out]")
+
+    var batch = entrada.formato[0]
+    var fan_in = entrada.formato[1]
+    var fan_out = pesos.formato[1]
+
+    var formato_z = List[Int]()
+    formato_z.append(batch)
+    formato_z.append(fan_out)
+    var z_out = tensor_defs.Tensor(formato_z.copy(), entrada.tipo_computacao)
+    var relu_out = tensor_defs.Tensor(formato_z^, entrada.tipo_computacao)
+
+    var len_a = len(entrada.dados)
+    var len_w = len(pesos.dados)
+    var len_b = len(bias.dados)
+    var len_out = len(z_out.dados)
+
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var a_dev = ctx.enqueue_create_buffer[DType.float32](len_a)
+                var w_dev = ctx.enqueue_create_buffer[DType.float32](len_w)
+                var b_dev = ctx.enqueue_create_buffer[DType.float32](len_b)
+                var z_dev = ctx.enqueue_create_buffer[DType.float32](len_out)
+
+                _copiar_lista_para_device(a_dev, entrada.dados, len_a)
+                _copiar_lista_para_device(w_dev, pesos.dados, len_w)
+                _copiar_lista_para_device(b_dev, bias.dados, len_b)
+
+                var block_dim = 256
+
+                var grid_matmul = (len_out + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_matmul](
+                    a_dev,
+                    w_dev,
+                    z_dev,
+                    batch,
+                    fan_in,
+                    fan_out,
+                    grid_dim=(grid_matmul),
+                    block_dim=(block_dim),
+                )
+
+                var grid_bias = (len_out + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_add_bias_vetor_coluna](
+                    z_dev,
+                    b_dev,
+                    z_dev,
+                    batch,
+                    fan_out,
+                    grid_dim=(grid_bias),
+                    block_dim=(block_dim),
+                )
+
+                # Copiamos z (pré-ativação) para manter contexto de autograd.
+                ctx.synchronize()
+                _copiar_device_para_tensor(z_dev, z_out, len_out)
+
+                # Aplica ReLU in-place no mesmo fluxo/contexto.
+                var grid_relu = (len_out + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_relu_inplace](
+                    z_dev,
+                    len_out,
+                    grid_dim=(grid_relu),
+                    block_dim=(block_dim),
+                )
+
+                ctx.synchronize()
+                _copiar_device_para_tensor(z_dev, relu_out, len_out)
+        except _:
+            debug_assert(False, "falha ao executar linear_bias_relu_forward_cuda")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+
+    z_out.id_pipeline_ultima_operacao = pipeline_id
+    relu_out.id_pipeline_ultima_operacao = pipeline_id
+    var out = List[tensor_defs.Tensor]()
+    out.append(z_out.copy())
+    out.append(relu_out.copy())
+    return out^
+
+
+fn linear_bias_softmax_forward_cuda(
+    entrada: tensor_defs.Tensor,
+    pesos: tensor_defs.Tensor,
+    bias: tensor_defs.Tensor,
+    var pipeline_id: Int,
+) -> List[tensor_defs.Tensor]:
+    debug_assert(len(entrada.formato) == 2 and len(pesos.formato) == 2, "linear+softmax espera tensores 2D")
+    debug_assert(entrada.formato[1] == pesos.formato[0], "dimensões incompatíveis para matmul")
+    debug_assert(len(bias.formato) == 2 and bias.formato[0] == 1 and bias.formato[1] == pesos.formato[1], "bias deve ser [1, fan_out]")
+
+    var batch = entrada.formato[0]
+    var fan_in = entrada.formato[1]
+    var fan_out = pesos.formato[1]
+
+    var formato = List[Int]()
+    formato.append(batch)
+    formato.append(fan_out)
+    var z_out = tensor_defs.Tensor(formato.copy(), entrada.tipo_computacao)
+    var pred_out = tensor_defs.Tensor(formato^, entrada.tipo_computacao)
+
+    var len_a = len(entrada.dados)
+    var len_w = len(pesos.dados)
+    var len_b = len(bias.dados)
+    var len_out = len(z_out.dados)
+
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var a_dev = ctx.enqueue_create_buffer[DType.float32](len_a)
+                var w_dev = ctx.enqueue_create_buffer[DType.float32](len_w)
+                var b_dev = ctx.enqueue_create_buffer[DType.float32](len_b)
+                var z_dev = ctx.enqueue_create_buffer[DType.float32](len_out)
+
+                _copiar_lista_para_device(a_dev, entrada.dados, len_a)
+                _copiar_lista_para_device(w_dev, pesos.dados, len_w)
+                _copiar_lista_para_device(b_dev, bias.dados, len_b)
+
+                var block_dim = 256
+
+                var grid_matmul = (len_out + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_matmul](
+                    a_dev,
+                    w_dev,
+                    z_dev,
+                    batch,
+                    fan_in,
+                    fan_out,
+                    grid_dim=(grid_matmul),
+                    block_dim=(block_dim),
+                )
+
+                var grid_bias = (len_out + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_add_bias_vetor_coluna](
+                    z_dev,
+                    b_dev,
+                    z_dev,
+                    batch,
+                    fan_out,
+                    grid_dim=(grid_bias),
+                    block_dim=(block_dim),
+                )
+
+                ctx.synchronize()
+                _copiar_device_para_tensor(z_dev, z_out, len_out)
+
+                var softmax_block = 128
+                var softmax_grid = (batch + softmax_block - 1) // softmax_block
+                ctx.enqueue_function_experimental[_kernel_softmax_linhas](
+                    z_dev,
+                    z_dev,
+                    batch,
+                    fan_out,
+                    grid_dim=(softmax_grid),
+                    block_dim=(softmax_block),
+                )
+
+                ctx.synchronize()
+                _copiar_device_para_tensor(z_dev, pred_out, len_out)
+        except _:
+            debug_assert(False, "falha ao executar linear_bias_softmax_forward_cuda")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+
+    z_out.id_pipeline_ultima_operacao = pipeline_id
+    pred_out.id_pipeline_ultima_operacao = pipeline_id
+    var out = List[tensor_defs.Tensor]()
+    out.append(z_out.copy())
+    out.append(pred_out.copy())
+    return out^
+
+
+fn mlp_forward_cuda_fused(
+    entradas: tensor_defs.Tensor,
+    pesos: List[tensor_defs.Tensor],
+    biases: List[tensor_defs.Tensor],
+    var ativacao_saida_id: Int,
+    var ativacao_saida_softmax_id: Int,
+    var ativacao_saida_linear_id: Int,
+    var ativacao_saida_hard_sigmoid_id: Int,
+    mut zs_out: List[tensor_defs.Tensor],
+    mut ativs_out: List[tensor_defs.Tensor],
+    var pipeline_id: Int,
+) -> tensor_defs.Tensor:
+    debug_assert(len(pesos) > 0 and len(pesos) == len(biases), "pesos e biases invalidos")
+    debug_assert(len(entradas.formato) == 2, "entradas deve ser 2D")
+
+    zs_out = List[tensor_defs.Tensor]()
+    ativs_out = List[tensor_defs.Tensor]()
+    ativs_out.append(entradas.copy())
+
+    var num_camadas = len(pesos)
+    var pred_host = entradas.copy()
+    var batch = entradas.formato[0]
+    var fan_in_atual = entradas.formato[1]
+
+    var max_len_a = len(entradas.dados)
+    var max_len_w = 1
+    var max_len_b = 1
+    var max_len_out = 1
+    for camada in range(num_camadas):
+        var w = pesos[camada].copy()
+        var b = biases[camada].copy()
+        var len_w = len(w.dados)
+        var len_b = len(b.dados)
+        var len_out = entradas.formato[0] * w.formato[1]
+        if len_w > max_len_w:
+            max_len_w = len_w
+        if len_b > max_len_b:
+            max_len_b = len_b
+        if len_out > max_len_out:
+            max_len_out = len_out
+        if len_out > max_len_a:
+            max_len_a = len_out
+
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var a_dev = ctx.enqueue_create_buffer[DType.float32](max_len_a)
+                var w_dev = ctx.enqueue_create_buffer[DType.float32](max_len_w)
+                var b_dev = ctx.enqueue_create_buffer[DType.float32](max_len_b)
+                var z_dev = ctx.enqueue_create_buffer[DType.float32](max_len_out)
+
+                var block_dim = 256
+
+                var len_entrada = len(entradas.dados)
+                _copiar_lista_para_device(a_dev, entradas.dados, len_entrada)
+
+                for camada in range(num_camadas):
+                    var w = pesos[camada].copy()
+                    var b = biases[camada].copy()
+
+                    var fan_in = fan_in_atual
+                    var fan_out = w.formato[1]
+
+                    var len_a = batch * fan_in
+                    var len_w = len(w.dados)
+                    var len_b = len(b.dados)
+                    var len_out = batch * fan_out
+
+                    _copiar_lista_para_device(w_dev, w.dados, len_w)
+                    _copiar_lista_para_device(b_dev, b.dados, len_b)
+
+                    var grid_matmul = (len_out + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_matmul](
+                        a_dev,
+                        w_dev,
+                        z_dev,
+                        batch,
+                        fan_in,
+                        fan_out,
+                        grid_dim=(grid_matmul),
+                        block_dim=(block_dim),
+                    )
+
+                    var grid_bias = (len_out + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_add_bias_vetor_coluna](
+                        z_dev,
+                        b_dev,
+                        z_dev,
+                        batch,
+                        fan_out,
+                        grid_dim=(grid_bias),
+                        block_dim=(block_dim),
+                    )
+
+                    var eh_saida = camada == num_camadas - 1
+                    if not eh_saida:
+                        var grid_relu = (len_out + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_relu_inplace](
+                            z_dev,
+                            len_out,
+                            grid_dim=(grid_relu),
+                            block_dim=(block_dim),
+                        )
+
+                        # Mantém ativação no device para a próxima camada, evitando upload host->device.
+                        var grid_copy_hidden = (len_out + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_copy](
+                            z_dev,
+                            a_dev,
+                            len_out,
+                            grid_dim=(grid_copy_hidden),
+                            block_dim=(block_dim),
+                        )
+
+                        # Para ReLU, a derivada depende apenas do sinal; usar ativação como proxy de z evita uma cópia extra.
+                        ctx.synchronize()
+                        var formato_a_hidden = List[Int]()
+                        formato_a_hidden.append(batch)
+                        formato_a_hidden.append(fan_out)
+                        var ativ_hidden = tensor_defs.Tensor(formato_a_hidden^, entradas.tipo_computacao)
+                        _copiar_device_para_tensor(z_dev, ativ_hidden, len_out)
+                        ativ_hidden.id_pipeline_ultima_operacao = pipeline_id
+                        zs_out.append(ativ_hidden.copy())
+                        ativs_out.append(ativ_hidden.copy())
+                        fan_in_atual = fan_out
+                    else:
+                        var preservar_pre_ativacao = ativacao_saida_id == ativacao_saida_hard_sigmoid_id
+                        if preservar_pre_ativacao:
+                            ctx.synchronize()
+                            var formato_z = List[Int]()
+                            formato_z.append(batch)
+                            formato_z.append(fan_out)
+                            var z_host = tensor_defs.Tensor(formato_z^, entradas.tipo_computacao)
+                            _copiar_device_para_tensor(z_dev, z_host, len_out)
+                            z_host.id_pipeline_ultima_operacao = pipeline_id
+                            zs_out.append(z_host.copy())
+
+                        if ativacao_saida_id == ativacao_saida_softmax_id:
+                            var softmax_block = 128
+                            var softmax_grid = (batch + softmax_block - 1) // softmax_block
+                            ctx.enqueue_function_experimental[_kernel_softmax_linhas](
+                                z_dev,
+                                z_dev,
+                                batch,
+                                fan_out,
+                                grid_dim=(softmax_grid),
+                                block_dim=(softmax_block),
+                            )
+                        elif ativacao_saida_id == ativacao_saida_hard_sigmoid_id:
+                            var grid_hs = (len_out + block_dim - 1) // block_dim
+                            ctx.enqueue_function_experimental[_kernel_hard_sigmoid_inplace_local](
+                                z_dev,
+                                len_out,
+                                grid_dim=(grid_hs),
+                                block_dim=(block_dim),
+                            )
+                        elif ativacao_saida_id == ativacao_saida_linear_id:
+                            pass
+
+                        ctx.synchronize()
+                        var formato_a = List[Int]()
+                        formato_a.append(batch)
+                        formato_a.append(fan_out)
+                        var ativ_host = tensor_defs.Tensor(formato_a^, entradas.tipo_computacao)
+                        _copiar_device_para_tensor(z_dev, ativ_host, len_out)
+                        ativ_host.id_pipeline_ultima_operacao = pipeline_id
+
+                        # Para softmax/linear, o backward atual nao depende de z de saida;
+                        # usar ativacao como proxy reduz uma copia device->host por iteracao.
+                        if not preservar_pre_ativacao:
+                            zs_out.append(ativ_host.copy())
+
+                        ativs_out.append(ativ_host.copy())
+                        pred_host = ativ_host.copy()
+        except _:
+            debug_assert(False, "falha ao executar mlp_forward_cuda_fused")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+
+    return pred_host^
+
+
 fn passo_backprop_mlp_cuda(
     ativ_prev: tensor_defs.Tensor,
     grad_z_atual: tensor_defs.Tensor,
@@ -663,7 +1172,6 @@ fn passo_backprop_mlp_cuda(
     var len_grad_w = len(grad_w.dados)
     var len_grad_b = len(grad_b.dados)
     var len_peso = len(peso_camada.dados)
-    var len_w_t = len_peso
     var len_grad_a_prev = len(grad_a_prev.dados)
 
     @parameter
@@ -675,29 +1183,20 @@ fn passo_backprop_mlp_cuda(
                 _copiar_lista_para_device(ativ_prev_dev, ativ_prev.dados, len_ativ_prev)
                 _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z)
 
-                var ativ_prev_t_dev = ctx.enqueue_create_buffer[DType.float32](len_ativ_prev)
                 var grad_w_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_w)
                 var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_b)
+                var peso_dev = buffer_pool.device_buffer_pool.acquire(len_peso)
+                var grad_a_prev_dev = buffer_pool.device_buffer_pool.acquire(len_grad_a_prev)
 
                 var block_dim = 256
 
-                var grid_t_ativ = (len_ativ_prev + block_dim - 1) // block_dim
-                ctx.enqueue_function_experimental[_kernel_transpose](
-                    ativ_prev_dev,
-                    ativ_prev_t_dev,
-                    batch,
-                    fan_in,
-                    grid_dim=(grid_t_ativ),
-                    block_dim=(block_dim),
-                )
-
                 var grid_matmul_w = (len_grad_w + block_dim - 1) // block_dim
-                ctx.enqueue_function_experimental[_kernel_matmul](
-                    ativ_prev_t_dev,
+                ctx.enqueue_function_experimental[_kernel_matmul_a_transposto_b](
+                    ativ_prev_dev,
                     grad_z_dev,
                     grad_w_dev,
-                    fan_in,
                     batch,
+                    fan_in,
                     fan_out,
                     grid_dim=(grid_matmul_w),
                     block_dim=(block_dim),
@@ -714,25 +1213,10 @@ fn passo_backprop_mlp_cuda(
                 )
 
                 if calcular_grad_a_prev:
-                    var peso_dev = ctx.enqueue_create_buffer[DType.float32](len_peso)
-                    var w_t_dev = ctx.enqueue_create_buffer[DType.float32](len_w_t)
-                    var grad_a_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
-                    _copiar_lista_para_device(peso_dev, peso_camada.dados, len_peso)
-
-                    var grid_t_peso = (len_peso + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_transpose](
-                        peso_dev,
-                        w_t_dev,
-                        fan_in,
-                        fan_out,
-                        grid_dim=(grid_t_peso),
-                        block_dim=(block_dim),
-                    )
-
                     var grid_matmul_a = (len_grad_a_prev + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_matmul](
+                    ctx.enqueue_function_experimental[_kernel_matmul_b_transposto](
                         grad_z_dev,
-                        w_t_dev,
+                        peso_dev,
                         grad_a_prev_dev,
                         batch,
                         fan_out,
@@ -742,11 +1226,9 @@ fn passo_backprop_mlp_cuda(
                     )
 
                     if aplicar_derivada_relu:
-                        var z_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
-                        _copiar_lista_para_device(z_prev_dev, z_derivada_relu.dados, len_grad_a_prev)
                         var grid_relu = (len_grad_a_prev + block_dim - 1) // block_dim
                         ctx.enqueue_function_experimental[_kernel_derivada_relu_local](
-                            z_prev_dev,
+                            ativ_prev_dev,
                             grad_a_prev_dev,
                             grad_a_prev_dev,
                             len_grad_a_prev,
@@ -812,7 +1294,6 @@ fn passo_backprop_mlp_cuda_em_tensores(
     var len_grad_w = len(grad_w_out.dados)
     var len_grad_b = len(grad_b_out.dados)
     var len_peso = len(peso_camada.dados)
-    var len_w_t = len_peso
     var len_grad_a_prev = len(grad_a_prev_out.dados)
 
     @parameter
@@ -821,81 +1302,73 @@ fn passo_backprop_mlp_cuda_em_tensores(
             with DeviceContext(0, api="cuda") as ctx:
                 var ativ_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_ativ_prev)
                 var grad_z_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_z)
-                _copiar_lista_para_device(ativ_prev_dev, ativ_prev.dados, len_ativ_prev)
-                _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z)
-
-                var ativ_prev_t_dev = ctx.enqueue_create_buffer[DType.float32](len_ativ_prev)
                 var grad_w_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_w)
                 var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_b)
+                var peso_dev = buffer_pool.device_buffer_pool.acquire(len_peso)
+                var grad_a_prev_dev = buffer_pool.device_buffer_pool.acquire(len_grad_a_prev)
 
-                var block_dim = 256
+                var len_grad_z_atual = len(grad_z_atual.dados)
+                _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z_atual)
 
-                var grid_t_ativ = (len_ativ_prev + block_dim - 1) // block_dim
-                ctx.enqueue_function_experimental[_kernel_transpose](
-                    ativ_prev_dev,
-                    ativ_prev_t_dev,
-                    batch,
-                    fan_in,
-                    grid_dim=(grid_t_ativ),
-                    block_dim=(block_dim),
-                )
+                for passo in range(num_camadas):
+                    var camada = num_camadas - 1 - passo
+                    var ativ_prev = ativacoes_forward[camada]
+                    var peso_camada = pesos[camada]
+                    var calcular_grad_a_prev = camada > 0
 
-                var grid_matmul_w = (len_grad_w + block_dim - 1) // block_dim
-                ctx.enqueue_function_experimental[_kernel_matmul](
-                    ativ_prev_t_dev,
-                    grad_z_dev,
-                    grad_w_dev,
-                    fan_in,
-                    batch,
-                    fan_out,
-                    grid_dim=(grid_matmul_w),
-                    block_dim=(block_dim),
-                )
+                    var batch = ativ_prev.formato[0]
+                    var fan_in = ativ_prev.formato[1]
+                    var fan_out = peso_camada.formato[1]
 
-                var grid_sum_cols = (fan_out + block_dim - 1) // block_dim
-                ctx.enqueue_function_experimental[_kernel_somar_linhas](
-                    grad_z_dev,
-                    grad_b_dev,
-                    batch,
-                    fan_out,
-                    grid_dim=(grid_sum_cols),
-                    block_dim=(block_dim),
-                )
+                    var len_ativ_prev = len(ativ_prev.dados)
+                    var len_grad_z = len_grad_z_atual
+                    var len_grad_w = len(grad_ws_out[camada].dados)
+                    var len_grad_b = len(grad_bs_out[camada].dados)
+                    var len_peso = len(peso_camada.dados)
+                    var len_grad_a_prev = len(grad_a_prev_out[camada].dados)
 
-                if calcular_grad_a_prev:
-                    var peso_dev = ctx.enqueue_create_buffer[DType.float32](len_peso)
-                    var w_t_dev = ctx.enqueue_create_buffer[DType.float32](len_w_t)
-                    var grad_a_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
+                    _copiar_lista_para_device(ativ_prev_dev, ativ_prev.dados, len_ativ_prev)
                     _copiar_lista_para_device(peso_dev, peso_camada.dados, len_peso)
+                    _copiar_lista_para_device(bias_dev, bias_camada.dados, len_grad_b)
 
-                    var grid_t_peso = (len_peso + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_transpose](
-                        peso_dev,
-                        w_t_dev,
+                    var grid_matmul_w = (len_grad_w + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_matmul_a_transposto_b](
+                        ativ_prev_dev,
+                        grad_z_dev,
+                        grad_w_dev,
+                        batch,
                         fan_in,
                         fan_out,
-                        grid_dim=(grid_t_peso),
+                        grid_dim=(grid_matmul_w),
                         block_dim=(block_dim),
                     )
 
-                    var grid_matmul_a = (len_grad_a_prev + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_matmul](
+                    var grid_sum_cols = (fan_out + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_somar_linhas](
                         grad_z_dev,
-                        w_t_dev,
-                        grad_a_prev_dev,
+                        grad_b_dev,
                         batch,
                         fan_out,
-                        fan_in,
-                        grid_dim=(grid_matmul_a),
+                        grid_dim=(grid_sum_cols),
                         block_dim=(block_dim),
                     )
 
-                    if aplicar_derivada_relu:
-                        var z_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
-                        _copiar_lista_para_device(z_prev_dev, z_derivada_relu.dados, len_grad_a_prev)
+                    if calcular_grad_a_prev:
+                        var grid_matmul_a = (len_grad_a_prev + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_matmul_b_transposto](
+                            grad_z_dev,
+                            peso_dev,
+                            grad_a_prev_dev,
+                            batch,
+                            fan_out,
+                            fan_in,
+                            grid_dim=(grid_matmul_a),
+                            block_dim=(block_dim),
+                        )
+
                         var grid_relu = (len_grad_a_prev + block_dim - 1) // block_dim
                         ctx.enqueue_function_experimental[_kernel_derivada_relu_local](
-                            z_prev_dev,
+                            ativ_prev_dev,
                             grad_a_prev_dev,
                             grad_a_prev_dev,
                             len_grad_a_prev,
@@ -903,13 +1376,35 @@ fn passo_backprop_mlp_cuda_em_tensores(
                             block_dim=(block_dim),
                         )
 
-                    ctx.synchronize()
-                    _copiar_device_para_tensor(grad_a_prev_dev, grad_a_prev_out, len_grad_a_prev)
-                else:
-                    ctx.synchronize()
+                        var grid_copy_grad = (len_grad_a_prev + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_copy](
+                            grad_a_prev_dev,
+                            grad_z_dev,
+                            len_grad_a_prev,
+                            grid_dim=(grid_copy_grad),
+                            block_dim=(block_dim),
+                        )
 
-                _copiar_device_para_tensor(grad_w_dev, grad_w_out, len_grad_w)
-                _copiar_device_para_tensor(grad_b_dev, grad_b_out, len_grad_b)
+                        len_grad_z_atual = len_grad_a_prev
+                    else:
+                        ctx.synchronize()
+
+                    _copiar_device_para_tensor(grad_w_dev, grad_ws_out[camada], len_grad_w)
+                    _copiar_device_para_tensor(grad_b_dev, grad_bs_out[camada], len_grad_b)
+                    grad_ws_out[camada].id_pipeline_ultima_operacao = pipeline_id
+                    grad_bs_out[camada].id_pipeline_ultima_operacao = pipeline_id
+
+                    var formato_peso = peso_camada.formato.copy()
+                    var peso_atualizado = tensor_defs.Tensor(formato_peso^, peso_camada.tipo_computacao)
+                    _copiar_device_para_tensor(peso_upd_dev, peso_atualizado, len_peso)
+                    peso_atualizado.id_pipeline_ultima_operacao = pipeline_id
+                    pesos[camada] = peso_atualizado.copy()
+
+                    var formato_bias = bias_camada.formato.copy()
+                    var bias_atualizado = tensor_defs.Tensor(formato_bias^, bias_camada.tipo_computacao)
+                    _copiar_device_para_tensor(bias_upd_dev, bias_atualizado, len_grad_b)
+                    bias_atualizado.id_pipeline_ultima_operacao = pipeline_id
+                    biases[camada] = bias_atualizado.copy()
         except _:
             debug_assert(False, "falha ao executar passo_backprop_mlp_cuda_em_tensores")
     else:
@@ -929,6 +1424,13 @@ fn backward_mlp_cuda_em_tensores(
     mut grad_ws_out: List[tensor_defs.Tensor],
     mut grad_bs_out: List[tensor_defs.Tensor],
     mut grad_a_prev_out: List[tensor_defs.Tensor],
+    var pool_max_len_ativ_prev: Int,
+    var pool_max_len_grad_z: Int,
+    var pool_max_len_grad_w: Int,
+    var pool_max_len_grad_b: Int,
+    var pool_max_len_peso: Int,
+    var pool_max_len_grad_a_prev: Int,
+    var copiar_grad_a_prev_para_host: Bool = False,
     var pipeline_id: Int,
 ):
     var num_camadas = len(pesos)
@@ -945,49 +1447,64 @@ fn backward_mlp_cuda_em_tensores(
             with DeviceContext(0, api="cuda") as ctx:
                 var block_dim = 256
 
+                # Reuso inter-iteracao via workspace: usa plano persistente de tamanhos maximos.
+                var max_len_ativ_prev = pool_max_len_ativ_prev
+                var max_len_grad_z = pool_max_len_grad_z
+                var max_len_grad_w = pool_max_len_grad_w
+                var max_len_grad_b = pool_max_len_grad_b
+                var max_len_peso = pool_max_len_peso
+                var max_len_grad_a_prev = pool_max_len_grad_a_prev
+
+                if max_len_ativ_prev <= 0:
+                    max_len_ativ_prev = 1
+                if max_len_grad_z <= 0:
+                    max_len_grad_z = len(grad_z_atual.dados)
+                if max_len_grad_w <= 0:
+                    max_len_grad_w = 1
+                if max_len_grad_b <= 0:
+                    max_len_grad_b = 1
+                if max_len_peso <= 0:
+                    max_len_peso = 1
+                if max_len_grad_a_prev <= 0:
+                    max_len_grad_a_prev = 1
+
+                var ativ_prev_dev = ctx.enqueue_create_buffer[DType.float32](max_len_ativ_prev)
+                var grad_z_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_z)
+                var grad_w_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_w)
+                var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
+                var peso_dev = buffer_pool.device_buffer_pool.acquire(len_peso)
+                var grad_a_prev_dev = buffer_pool.device_buffer_pool.acquire(len_grad_a_prev)
+
+                var len_grad_z_atual = len(grad_z_atual.dados)
+                _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z_atual)
+
                 for passo in range(num_camadas):
                     var camada = num_camadas - 1 - passo
-                    var ativ_prev = ativacoes_forward[camada].copy()
-                    var peso_camada = pesos[camada].copy()
+                    var ativ_prev = ativacoes_forward[camada]
+                    var peso_camada = pesos[camada]
                     var calcular_grad_a_prev = camada > 0
 
                     var batch = ativ_prev.formato[0]
                     var fan_in = ativ_prev.formato[1]
-                    var fan_out = grad_z_atual.formato[1]
+                    var fan_out = peso_camada.formato[1]
 
                     var len_ativ_prev = len(ativ_prev.dados)
-                    var len_grad_z = len(grad_z_atual.dados)
                     var len_grad_w = len(grad_ws_out[camada].dados)
                     var len_grad_b = len(grad_bs_out[camada].dados)
                     var len_peso = len(peso_camada.dados)
                     var len_grad_a_prev = len(grad_a_prev_out[camada].dados)
 
-                    var ativ_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_ativ_prev)
-                    var grad_z_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_z)
                     _copiar_lista_para_device(ativ_prev_dev, ativ_prev.dados, len_ativ_prev)
-                    _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z)
-
-                    var ativ_prev_t_dev = ctx.enqueue_create_buffer[DType.float32](len_ativ_prev)
-                    var grad_w_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_w)
-                    var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_b)
-
-                    var grid_t_ativ = (len_ativ_prev + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_transpose](
-                        ativ_prev_dev,
-                        ativ_prev_t_dev,
-                        batch,
-                        fan_in,
-                        grid_dim=(grid_t_ativ),
-                        block_dim=(block_dim),
-                    )
+                    _copiar_lista_para_device(peso_dev, peso_camada.dados, len_peso)
+                    _copiar_lista_para_device(bias_dev, bias_camada.dados, len_grad_b)
 
                     var grid_matmul_w = (len_grad_w + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_matmul](
-                        ativ_prev_t_dev,
+                    ctx.enqueue_function_experimental[_kernel_matmul_a_transposto_b](
+                        ativ_prev_dev,
                         grad_z_dev,
                         grad_w_dev,
-                        fan_in,
                         batch,
+                        fan_in,
                         fan_out,
                         grid_dim=(grid_matmul_w),
                         block_dim=(block_dim),
@@ -1004,25 +1521,10 @@ fn backward_mlp_cuda_em_tensores(
                     )
 
                     if calcular_grad_a_prev:
-                        var peso_dev = ctx.enqueue_create_buffer[DType.float32](len_peso)
-                        var w_t_dev = ctx.enqueue_create_buffer[DType.float32](len_peso)
-                        var grad_a_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
-                        _copiar_lista_para_device(peso_dev, peso_camada.dados, len_peso)
-
-                        var grid_t_peso = (len_peso + block_dim - 1) // block_dim
-                        ctx.enqueue_function_experimental[_kernel_transpose](
-                            peso_dev,
-                            w_t_dev,
-                            fan_in,
-                            fan_out,
-                            grid_dim=(grid_t_peso),
-                            block_dim=(block_dim),
-                        )
-
                         var grid_matmul_a = (len_grad_a_prev + block_dim - 1) // block_dim
-                        ctx.enqueue_function_experimental[_kernel_matmul](
+                        ctx.enqueue_function_experimental[_kernel_matmul_b_transposto](
                             grad_z_dev,
-                            w_t_dev,
+                            peso_dev,
                             grad_a_prev_dev,
                             batch,
                             fan_out,
@@ -1031,12 +1533,9 @@ fn backward_mlp_cuda_em_tensores(
                             block_dim=(block_dim),
                         )
 
-                        var z_anterior = zs_forward[camada - 1].copy()
-                        var z_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_a_prev)
-                        _copiar_lista_para_device(z_prev_dev, z_anterior.dados, len_grad_a_prev)
                         var grid_relu = (len_grad_a_prev + block_dim - 1) // block_dim
                         ctx.enqueue_function_experimental[_kernel_derivada_relu_local](
-                            z_prev_dev,
+                            ativ_prev_dev,
                             grad_a_prev_dev,
                             grad_a_prev_dev,
                             len_grad_a_prev,
@@ -1044,9 +1543,16 @@ fn backward_mlp_cuda_em_tensores(
                             block_dim=(block_dim),
                         )
 
-                        ctx.synchronize()
-                        _copiar_device_para_tensor(grad_a_prev_dev, grad_a_prev_out[camada], len_grad_a_prev)
-                        grad_z_atual = grad_a_prev_out[camada].copy()
+                        var grid_copy_grad = (len_grad_a_prev + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_copy](
+                            grad_a_prev_dev,
+                            grad_z_dev,
+                            len_grad_a_prev,
+                            grid_dim=(grid_copy_grad),
+                            block_dim=(block_dim),
+                        )
+
+                        len_grad_z_atual = len_grad_a_prev
                     else:
                         ctx.synchronize()
 
@@ -1054,9 +1560,213 @@ fn backward_mlp_cuda_em_tensores(
                     _copiar_device_para_tensor(grad_b_dev, grad_bs_out[camada], len_grad_b)
                     grad_ws_out[camada].id_pipeline_ultima_operacao = pipeline_id
                     grad_bs_out[camada].id_pipeline_ultima_operacao = pipeline_id
-                    if calcular_grad_a_prev:
-                        grad_a_prev_out[camada].id_pipeline_ultima_operacao = pipeline_id
+
+                    var formato_peso = peso_camada.formato.copy()
+                    var peso_atualizado = tensor_defs.Tensor(formato_peso^, peso_camada.tipo_computacao)
+                    _copiar_device_para_tensor(peso_upd_dev, peso_atualizado, len_peso)
+                    peso_atualizado.id_pipeline_ultima_operacao = pipeline_id
+                    pesos[camada] = peso_atualizado.copy()
+
+                    var formato_bias = bias_camada.formato.copy()
+                    var bias_atualizado = tensor_defs.Tensor(formato_bias^, bias_camada.tipo_computacao)
+                    _copiar_device_para_tensor(bias_upd_dev, bias_atualizado, len_grad_b)
+                    bias_atualizado.id_pipeline_ultima_operacao = pipeline_id
+                    biases[camada] = bias_atualizado.copy()
         except _:
             debug_assert(False, "falha ao executar backward_mlp_cuda_em_tensores")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+
+
+fn backward_mlp_cuda_em_tensores_com_sgd(
+    ativacoes_forward: List[tensor_defs.Tensor],
+    zs_forward: List[tensor_defs.Tensor],
+    mut pesos: List[tensor_defs.Tensor],
+    mut biases: List[tensor_defs.Tensor],
+    grad_z_saida: tensor_defs.Tensor,
+    mut grad_ws_out: List[tensor_defs.Tensor],
+    mut grad_bs_out: List[tensor_defs.Tensor],
+    mut grad_a_prev_out: List[tensor_defs.Tensor],
+    var pool_max_len_ativ_prev: Int,
+    var pool_max_len_grad_z: Int,
+    var pool_max_len_grad_w: Int,
+    var pool_max_len_grad_b: Int,
+    var pool_max_len_peso: Int,
+    var pool_max_len_grad_a_prev: Int,
+    var taxa_aprendizado: Float32,
+    var copiar_grad_a_prev_para_host: Bool = False,
+    var pipeline_id: Int,
+):
+    var num_camadas = len(pesos)
+    debug_assert(num_camadas > 0, "MLP precisa de ao menos uma camada")
+    debug_assert(len(biases) == num_camadas, "biases inconsistente")
+    debug_assert(len(ativacoes_forward) == num_camadas + 1, "ativacoes_forward inconsistente")
+    debug_assert(len(zs_forward) == num_camadas, "zs_forward inconsistente")
+    debug_assert(len(grad_ws_out) == num_camadas and len(grad_bs_out) == num_camadas and len(grad_a_prev_out) == num_camadas, "buffers de saída inconsistentes")
+
+    var grad_z_atual = grad_z_saida.copy()
+
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var block_dim = 256
+
+                var max_len_ativ_prev = pool_max_len_ativ_prev
+                var max_len_grad_z = pool_max_len_grad_z
+                var max_len_grad_w = pool_max_len_grad_w
+                var max_len_grad_b = pool_max_len_grad_b
+                var max_len_peso = pool_max_len_peso
+                var max_len_grad_a_prev = pool_max_len_grad_a_prev
+
+                if max_len_ativ_prev <= 0:
+                    max_len_ativ_prev = 1
+                if max_len_grad_z <= 0:
+                    max_len_grad_z = len(grad_z_atual.dados)
+                if max_len_grad_w <= 0:
+                    max_len_grad_w = 1
+                if max_len_grad_b <= 0:
+                    max_len_grad_b = 1
+                if max_len_peso <= 0:
+                    max_len_peso = 1
+                if max_len_grad_a_prev <= 0:
+                    max_len_grad_a_prev = 1
+
+                var ativ_prev_dev = ctx.enqueue_create_buffer[DType.float32](max_len_ativ_prev)
+                var grad_z_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_z)
+                var grad_w_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_w)
+                var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
+                var peso_dev = buffer_pool.device_buffer_pool.acquire(len_peso)
+                var bias_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
+                var peso_upd_dev = ctx.enqueue_create_buffer[DType.float32](max_len_peso)
+                var bias_upd_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
+                var grad_a_prev_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_a_prev)
+
+                var len_grad_z_atual = len(grad_z_atual.dados)
+                _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z_atual)
+
+                for passo in range(num_camadas):
+                    var camada = num_camadas - 1 - passo
+                    var ativ_prev = ativacoes_forward[camada]
+                    var peso_camada = pesos[camada]
+                    var bias_camada = biases[camada]
+                    var calcular_grad_a_prev = camada > 0
+
+                    var batch = ativ_prev.formato[0]
+                    var fan_in = ativ_prev.formato[1]
+                    var fan_out = peso_camada.formato[1]
+
+                    var len_ativ_prev = len(ativ_prev.dados)
+                    var len_grad_w = len(grad_ws_out[camada].dados)
+                    var len_grad_b = len(grad_bs_out[camada].dados)
+                    var len_peso = len(peso_camada.dados)
+                    var len_grad_a_prev = len(grad_a_prev_out[camada].dados)
+
+                    _copiar_lista_para_device(ativ_prev_dev, ativ_prev.dados, len_ativ_prev)
+                    _copiar_lista_para_device(peso_dev, peso_camada.dados, len_peso)
+                    _copiar_lista_para_device(bias_dev, bias_camada.dados, len_grad_b)
+
+                    var grid_matmul_w = (len_grad_w + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_matmul_a_transposto_b](
+                        ativ_prev_dev,
+                        grad_z_dev,
+                        grad_w_dev,
+                        batch,
+                        fan_in,
+                        fan_out,
+                        grid_dim=(grid_matmul_w),
+                        block_dim=(block_dim),
+                    )
+
+                    var grid_sum_cols = (fan_out + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_somar_linhas](
+                        grad_z_dev,
+                        grad_b_dev,
+                        batch,
+                        fan_out,
+                        grid_dim=(grid_sum_cols),
+                        block_dim=(block_dim),
+                    )
+
+                    if calcular_grad_a_prev:
+                        var grid_matmul_a = (len_grad_a_prev + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_matmul_b_transposto](
+                            grad_z_dev,
+                            peso_dev,
+                            grad_a_prev_dev,
+                            batch,
+                            fan_out,
+                            fan_in,
+                            grid_dim=(grid_matmul_a),
+                            block_dim=(block_dim),
+                        )
+
+                        var grid_relu = (len_grad_a_prev + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_derivada_relu_local](
+                            ativ_prev_dev,
+                            grad_a_prev_dev,
+                            grad_a_prev_dev,
+                            len_grad_a_prev,
+                            grid_dim=(grid_relu),
+                            block_dim=(block_dim),
+                        )
+
+                        var grid_copy_grad = (len_grad_a_prev + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_copy](
+                            grad_a_prev_dev,
+                            grad_z_dev,
+                            len_grad_a_prev,
+                            grid_dim=(grid_copy_grad),
+                            block_dim=(block_dim),
+                        )
+
+                        len_grad_z_atual = len_grad_a_prev
+
+                    var grid_sgd_w = (len_peso + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_sgd_step](
+                        peso_dev,
+                        grad_w_dev,
+                        peso_upd_dev,
+                        len_peso,
+                        taxa_aprendizado,
+                        grid_dim=(grid_sgd_w),
+                        block_dim=(block_dim),
+                    )
+
+                    var grid_sgd_b = (len_grad_b + block_dim - 1) // block_dim
+                    ctx.enqueue_function_experimental[_kernel_sgd_step](
+                        bias_dev,
+                        grad_b_dev,
+                        bias_upd_dev,
+                        len_grad_b,
+                        taxa_aprendizado,
+                        grid_dim=(grid_sgd_b),
+                        block_dim=(block_dim),
+                    )
+
+                    ctx.synchronize()
+
+                    if copiar_grad_a_prev_para_host and calcular_grad_a_prev:
+                        _copiar_device_para_tensor(grad_a_prev_dev, grad_a_prev_out[camada], len_grad_a_prev)
+                        grad_a_prev_out[camada].id_pipeline_ultima_operacao = pipeline_id
+
+                    _copiar_device_para_tensor(grad_w_dev, grad_ws_out[camada], len_grad_w)
+                    _copiar_device_para_tensor(grad_b_dev, grad_bs_out[camada], len_grad_b)
+                    grad_ws_out[camada].id_pipeline_ultima_operacao = pipeline_id
+                    grad_bs_out[camada].id_pipeline_ultima_operacao = pipeline_id
+
+                    var formato_peso = peso_camada.formato.copy()
+                    var peso_atualizado = tensor_defs.Tensor(formato_peso^, peso_camada.tipo_computacao)
+                    _copiar_device_para_tensor(peso_upd_dev, peso_atualizado, len_peso)
+                    peso_atualizado.id_pipeline_ultima_operacao = pipeline_id
+                    pesos[camada] = peso_atualizado.copy()
+
+                    var formato_bias = bias_camada.formato.copy()
+                    var bias_atualizado = tensor_defs.Tensor(formato_bias^, bias_camada.tipo_computacao)
+                    _copiar_device_para_tensor(bias_upd_dev, bias_atualizado, len_grad_b)
+                    bias_atualizado.id_pipeline_ultima_operacao = pipeline_id
+                    biases[camada] = bias_atualizado.copy()
+        except _:
+            debug_assert(False, "falha ao executar backward_mlp_cuda_em_tensores_com_sgd")
     else:
         debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")

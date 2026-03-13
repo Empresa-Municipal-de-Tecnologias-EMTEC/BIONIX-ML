@@ -1,6 +1,7 @@
 import src.nucleo.Tensor as tensor_defs
 import src.computacao.tipos as tipos
 import src.computacao.cuda.kernels_tensor as kernels_tensor
+import src.computacao.sessao as sessao_driver
 from gpu.host import DeviceContext
 from sys import has_nvidia_gpu_accelerator
 
@@ -27,6 +28,34 @@ struct CUDABackend(Movable, Copyable):
 
     fn descricao(self) -> String:
         return "CUDA backend (fachada, compute pendente)"
+
+
+struct CUDASessaoExecucao(Movable, Copyable):
+    var backend: CUDABackend
+    var driver_sessao: sessao_driver.DriverSessao
+    var contexto_longo_prazo_habilitado: Bool
+
+    fn __init__(
+        out self,
+        backend_in: CUDABackend,
+        driver_sessao_in: sessao_driver.DriverSessao,
+    ):
+        self.backend = backend_in
+        self.driver_sessao = driver_sessao_in.copy()
+        self.contexto_longo_prazo_habilitado = self.driver_sessao.modo == "vram"
+
+    fn descricao(self) -> String:
+        return "CUDASessaoExecucao(" + self.driver_sessao.descricao() + ")"
+
+
+fn criar_sessao_execucao_cuda(
+    driver: sessao_driver.DriverSessao,
+    var device_id: Int = 0,
+    var stream_id: Int = 0,
+    var pipeline_memoria_id: Int = 0,
+) -> CUDASessaoExecucao:
+    var backend = CUDABackend(device_id, stream_id, pipeline_memoria_id)
+    return CUDASessaoExecucao(backend, driver)
 
 
 fn listar_dispositivos_disponiveis_cuda() -> List[String]:

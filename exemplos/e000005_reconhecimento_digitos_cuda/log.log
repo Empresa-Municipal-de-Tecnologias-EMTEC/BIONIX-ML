@@ -1,0 +1,23 @@
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
+/mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:480:47: warning: assignment to 'grads' was never used; assign to '_' instead?
+            var grads = autograd.MLPGradientes(List[tensor_defs.Tensor](), List[tensor_defs.Tensor](), 0.0)
+                                              ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:3:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_gradiente.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_gradiente.mojo:122:25: warning: assignment to 'loss' was never used; assign to '_' instead?
+    var loss: Float32 = 0.0
+                        ^
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/principal.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000005_reconhecimento_digitos_cuda/exemplo.mojo:1:
+Included from /mnt/c/PROJETOS/BIONIX-ML/exemplos/e000004_reconhecimento_digitos/exemplo.mojo:3:
+Included from /mnt/c/PROJETOS/BIONIX-ML/src/computacao/dispatcher_gradiente.mojo:5:
+/mnt/c/PROJETOS/BIONIX-ML/src/computacao/cuda/kernels_gradiente.mojo:123:37: warning: assignment to 'grad_z_atual' was never used; assign to '_' instead?
+    var grad_z_atual = ctx.pred.copy()
+                                    ^
+--- Validação CUDA real antes do treino ---
+Checando dispositivos disponíveis...
+[ 0 ]  nenhum dispositivo CUDA disponivel
+Nenhuma GPU CUDA disponível. Encerrando exemplo e000005 sem fallback para CPU.

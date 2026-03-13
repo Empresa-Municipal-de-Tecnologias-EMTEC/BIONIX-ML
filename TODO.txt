@@ -1,0 +1,98 @@
+[X] Remover fallback silencioso para CPU em backend invalido (dispatchers)
+[X] Migrar backward CUDA para caminho proprio (sem depender de autograd generico)
+[X] Agrupar backward MLP CUDA em contexto unico por iteracao
+[X] Introduzir workspace de gradiente CUDA reutilizavel por assinatura (shape/batch)
+[X] Evitar calculo duplicado de gradiente quando workspace CUDA esta ativo
+
+[X] Implementar pool persistente de planejamento de buffers CUDA no workspace (reuso entre iteracoes)
+[ ] Evoluir para pool persistente real de DeviceBuffer com contexto CUDA de longa vida
+[X] Tornar ativacoes device-resident no caminho quente do forward fused (sem reupload por camada)
+[ ] Tornar pesos e estados de treino device-resident entre iteracoes (contexto CUDA de longa vida)
+[X] Fusar kernels de forward/ativacoes para camadas ocultas CUDA (matmul+bias+relu)
+[X] Expandir fusao para saida CUDA com softmax (matmul+bias+softmax)
+[X] Reduzir copias intermediarias no forward fused CUDA (reuso in-place de buffer)
+[X] Reduzir copia host-device no forward fused: remover copia separada de z em camadas ReLU
+[X] Reduzir copia device-host no forward fused: evitar copia separada de z na saida softmax/linear
+[X] Reduzir copia host-device no backward: manter grad_z em device entre camadas
+[X] Reduzir copia host-device no backward: reutilizar ativ_prev device para mascara ReLU
+[X] Reduzir copia host-device no backward: evitar copia de grad_a_prev para host (intermediario)
+[X] Remover transposicao de ativacoes por kernel CUDA no backward (usar matmul especializado A^T*B)
+[X] Remover transposicao explicita de pesos no backward (matmul especializado com B^T)
+[X] Reduzir copias host-side antes do backward CUDA (reusar listas do contexto sem duplicacao)
+[X] Reduzir copias host-side no loop de backward CUDA (evitar copy() por camada)
+[X] Executar forward MLP CUDA completo em contexto unico com reuso de buffers por camada
+[X] Fusar passo de atualizacao SGD no caminho CUDA (substituir loops host por kernel)
+[X] Integrar backward+update no mesmo contexto CUDA (evitar reupload de gradientes no passo SGD)
+[X] Introduzir DriverSessao plugavel (nenhum/vram/ram/disco) e integrar no treino MLP + workspace CUDA
+[ ] Expandir fusao para mais operacoes de forward/ativacoes e reduzir copias intermediarias
+[ ] Integrar bibliotecas otimizadas (cuBLAS/cuBLASLt/cuDNN/FlashAttention)
+[X] Evoluir DriverSessao para API fluente (DriverSessao.disco("diretorio"), DriverSessao.vram(), DriverSessao.ram(), DriverSessao.nenhum())
+[ ] Planejador de execucao por memoria (camadas em VRAM, overflow em RAM/CPU)
+[X] Implementar base de adaptador de sessao plugavel (StorageSessao RAM/disco com save/load de tensores)
+[X] Integrar adaptador de sessao plugavel no treino MLP (save/load por camada com DriverSessao)
+[X] Integrar adaptador de sessao plugavel na inferencia MLP (prever/inferir com sessao)
+[X] Offload para disco: criar/validar diretorio automaticamente no StorageSessao
+[X] Offload para disco com checkpoint incremental (manifesto por intervalo de saves)
+[X] Offload para disco com prefetch inicial de pesos/bias no treino MLP
+[X] Offload RAM com politica de paginação (LRU por capacidade de cache) no StorageSessao
+[X] DriverSessao.disco: persistencia/carregamento de tensores por diretorio configuravel
+[ ] Paralelismo de dados (grad accumulation + sync eficiente)
+[ ] Paralelismo de modelo (layer/tensor sharding)
+[ ] Paralelismo de pipeline (micro-batches)
+[ ] Precisao mista (FP16/BF16 com acumulacao FP32)
+[ ] Otimizadores plugaveis (SGD, AdamW, Lion, Adafactor) com interface unica e caminho CUDA otimizado
+[ ] Modulo plugavel de representacao numerica (FP32, UINT16/8/4, packing em UINT32)
+[ ] QAT (treino quantizado) com escala/zero-point por tensor/canal
+[ ] Infra de LLM: blocos Transformer, KV-cache e dataloader streaming
+[X] Infra de Transformer (base): bloco de embedding + forward inicial com KVCacheProvider
+[X] Infra de Transformer (base): atencao causal multi-head com projecoes Q/K/V/O e leitura/escrita no KVCache
+[ ] Infra de Transformer: encoder/decoder completos com API de sessao
+[X] Infra de Transformer: bloco FFN + residual + layer norm para fluxo encoder/decoder
+[X] Implementar base de KVCacheProvider com DriverSessao plugavel (vram/ram/disco)
+[ ] KVCache com DriverSessao plugavel (vram/ram/disco) e diretorio quando modo disco
+[X] Implementar base de adaptador plugavel de captura de entrada/saida de camadas (train/inferencia)
+[X] Integrar captura de camadas no MLP (train/infer) e no forward Transformer base
+[X] Implementar adaptador de atencao SVD nao-stub (referencia CPU plugavel)
+[X] Implementar adaptador de atencao LoRA nao-stub (referencia CPU plugavel)
+[X] Implementar adaptador de atencao FlashAttention nao-stub (referencia CPU plugavel)
+[X] Implementar adaptador combinado de atencao (encadeamento/orquestracao)
+[X] Adaptador de captura: filtro por intervalo/fase/prefixo de camada para reduzir volume de destilacao
+[ ] Otimizar adaptadores de atencao com kernels reais (SVD/LoRA/FlashAttention)
+[X] Iniciar caminho LoRA no backend CUDA usando dispatcher_tensor (matmul/eltwise no backend ativo)
+[ ] Otimizar atencao causal multi-head com kernels CUDA dedicados (QK^T, softmax mascarado, AV)
+[X] Criar pacote de dados TXT em src/dados (carregar txt completo e linhas)
+[X] Criar exemplo e000006_embeding_bpe com dataset .txt e demonstracao de embeddings
+[X] Criar exemplo e000007_gpt_texto com treino demonstrativo e inferencia em modos conversa/instrucoes/ferramentas
+[X] Gerar lotes supervisionados GPT a partir de .txt com pares inicio/completar no mesmo arquivo
+[X] Adicionar carregamento de todos os .txt de um diretorio para lotes GPT supervisionados
+[X] Evoluir lotes GPT supervisionados para janela deslizante de contexto e alvo por token
+[X] Integrar treino supervisionado por janela token-a-token no exemplo e000007_gpt_texto
+[X] Adicionar metrica de perplexidade no exemplo e000007_gpt_texto
+[X] Evoluir treino GPT para cabeca de vocabulario completa (logits por token) com loss cross-entropy real
+[X] Integrar gradiente da loss GPT no bloco Transformer (atualizar pesos de atencao/FFN no treino)
+[X] Implementar backward analitico parcial no Transformer (FFN + residual + layer norm no ultimo token)
+[X] Estender backward parcial no Transformer para caminho de atencao (W_o + ajuste local Q/K/V no ultimo token)
+[X] Implementar gradiente analitico de atencao causal com softmax mascarado (Q/K/V) no ultimo token
+[X] Substituir surrogate de gradiente do Transformer por backward analitico completo (Q/K/V/FFN + layer norm)
+[X] Reduzir copias host-side no backward analitico do Transformer (eliminar cache prefixado por token com seq_limite)
+[X] Reusar emb_rows no backward analitico todos_tokens (evitar extracao repetida por posicao)
+[X] Vetorizar projecoes Q/K/V no backward analitico (matmul em bloco por prefixo)
+[X] Reduzir alocacoes por head no backward de atencao (remover ks/vs e gradientes 2D temporarios)
+[X] Vetorizar scores/contexto/d_p/d_q por head no backward de atencao (matmul qK^T, probsV, Vg, d_sK)
+[X] Vetorizar d_v/d_k e gradientes W_q/W_k/W_v + emb no backward de atencao (produtos matriciais)
+[X] Reusar tensores temporarios por head no backward de atencao (evitar recriacao por iteracao)
+[X] Trocar acumulacao grad_emb_atencao para tensor contiguo (evitar List[List] no caminho quente)
+[X] Remover listas temporarias de scores/probs/d_p/d_s no backward de atencao (fluxo tensorial)
+[X] Trocar context_last e grad_context para tensores contiguos no backward de atencao
+[X] Extrair helpers de escala/mascara/softmax 1xN no backward de atencao
+[X] Introduzir workspace de backward analitico do Transformer e reusar entre posicoes em todos_tokens
+[X] Reusar tensores snapshot de pesos Q/K/V no workspace do backward analitico
+[X] Reusar buffers de transposicao no workspace (k_head_t/probs_col/grad_ctx_h_col/d_s_col/emb_prefix_t)
+[ ] Otimizar backward analitico do Transformer para processamento vetorizado por sequencia/head (reduzir custo O(seq^2) host-side)
+[X] Criar exemplo e000008_reconhecimento_facial com novo bloco CNN
+[X] Desenvolver bloco CNN (convolucao/pooling/flatten/densa) para pipeline de visao
+[ ] Evoluir bloco CNN com treino fim-a-fim de kernels de convolucao (backprop conv)
+[ ] Otimizar bloco CNN para backend CUDA (conv/pool kernels dedicados)
+[ ] Observabilidade: profiler de tempo/memoria/copia host-device e testes de regressao
+
+[X] Inicio da melhoria prioritaria: reduzir alocacoes por camada no backward CUDA via reuso intra-iteracao de buffers
