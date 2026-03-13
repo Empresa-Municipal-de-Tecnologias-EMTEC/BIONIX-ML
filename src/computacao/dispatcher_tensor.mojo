@@ -1,3 +1,56 @@
+fn avgpool2x2_stride2_dispatch(
+    entrada: List[Float32],
+    h: Int,
+    w: Int,
+    tipo_computacao: String = "cpu",
+    pipeline_id: Int = 0,
+) -> List[Float32]:
+    if tipo_computacao == "cuda":
+        return kernels_cuda.avgpool2x2_stride2_cuda(entrada, h, w, tipo_computacao, pipeline_id)
+    # fallback para CPU (padrão antigo)
+    var out_h = h // 2
+    var out_w = w // 2
+    var out = List[Float32]()
+    for _ in range(out_h * out_w):
+        out.append(0.0)
+    for y in range(out_h):
+        for x in range(out_w):
+            var y0 = y * 2
+            var x0 = x * 2
+            var s = entrada[y0 * w + x0] + entrada[y0 * w + x0 + 1] + entrada[(y0 + 1) * w + x0] + entrada[(y0 + 1) * w + x0 + 1]
+            out[y * out_w + x] = s * 0.25
+    return out^
+import src.computacao.cuda.kernels_tensor as kernels_cuda
+fn conv2d_valid_relu_dispatch(
+    imagem: List[Float32],
+    altura: Int,
+    largura: Int,
+    kernel: List[Float32],
+    kh: Int,
+    kw: Int,
+    tipo_computacao: String = "cpu",
+    pipeline_id: Int = 0,
+) -> List[Float32]:
+    if tipo_computacao == "cuda":
+        return kernels_cuda.conv2d_valid_relu_cuda(imagem, altura, largura, kernel, kh, kw, tipo_computacao, pipeline_id)
+    # fallback para CPU (padrão antigo)
+    var out_h = altura - kh + 1
+    var out_w = largura - kw + 1
+    var out = List[Float32]()
+    for _ in range(out_h * out_w):
+        out.append(0.0)
+    for y in range(out_h):
+        for x in range(out_w):
+            var acc: Float32 = 0.0
+            for ky in range(kh):
+                for kx in range(kw):
+                    var iy = y + ky
+                    var ix = x + kx
+                    var v = imagem[iy * largura + ix]
+                    var w = kernel[ky * kw + kx]
+                    acc = acc + v * w
+            out[y * out_w + x] = acc if acc > 0.0 else Float32(0.0)
+    return out^
 import src.computacao.tipos as tipos
 import src.computacao.cpu.kernels_tensor as kernels_cpu
 import src.computacao.vulkan.kernels_tensor as kernels_vulkan

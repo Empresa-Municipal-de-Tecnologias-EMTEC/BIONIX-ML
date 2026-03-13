@@ -1,3 +1,7 @@
+fn ativacao_saida_gelu_id() -> Int:
+    return 43
+fn ativacao_saida_sigmoid_id() -> Int:
+    return 42
 # Tipos de ativação de saída e perda da MLP (enum-like) e utilitários de validação/conversão.
 
 fn ativacao_saida_hard_sigmoid_id() -> Int:
@@ -28,6 +32,10 @@ fn _normalizar_nome_ativacao_saida(var nome: String) -> String:
         return "linear"
     if n == "softmax" or n == "SOFTMAX":
         return "softmax"
+    if n == "sigmoid" or n == "SIGMOID":
+        return "sigmoid"
+    if n == "gelu" or n == "GELU":
+        return "gelu"
     var out = ""
     for i in range(len(n)):
         out = out + n[i:i+1]
@@ -54,6 +62,10 @@ fn ativacao_saida_id_de_nome(var nome: String) -> Int:
         return ativacao_saida_linear_id()
     if n == "softmax":
         return ativacao_saida_softmax_id()
+    if n == "sigmoid":
+        return ativacao_saida_sigmoid_id()
+    if n == "gelu":
+        return ativacao_saida_gelu_id()
     return -1
 
 
@@ -64,11 +76,15 @@ fn ativacao_saida_nome_de_id(var ativacao_saida_id: Int) -> String:
         return "linear"
     if ativacao_saida_id == ativacao_saida_softmax_id():
         return "softmax"
+    if ativacao_saida_id == ativacao_saida_sigmoid_id():
+        return "sigmoid"
+    if ativacao_saida_id == ativacao_saida_gelu_id():
+        return "gelu"
     return "desconhecida"
 
 
 fn ativacao_saida_id_valido(var ativacao_saida_id: Int) -> Bool:
-    return ativacao_saida_id == ativacao_saida_hard_sigmoid_id() or ativacao_saida_id == ativacao_saida_linear_id() or ativacao_saida_id == ativacao_saida_softmax_id()
+    return ativacao_saida_id == ativacao_saida_hard_sigmoid_id() or ativacao_saida_id == ativacao_saida_linear_id() or ativacao_saida_id == ativacao_saida_softmax_id() or ativacao_saida_id == ativacao_saida_sigmoid_id() or ativacao_saida_id == ativacao_saida_gelu_id()
 
 
 fn perda_id_de_nome(var nome: String) -> Int:

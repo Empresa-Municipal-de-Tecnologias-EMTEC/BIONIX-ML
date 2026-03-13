@@ -1,3 +1,183 @@
+fn _kernel_avgpool2x2_stride2(
+    entrada: UnsafePointer[Float32],
+    h: Int,
+    w: Int,
+    out_ptr: UnsafePointer[Float32],
+    out_h: Int,
+    out_w: Int,
+):
+    var tid = global_idx.x
+    var total = UInt(out_h * out_w)
+    if tid >= total:
+        return
+    var idx = Int(tid)
+    var y = idx // out_w
+    var x = idx - y * out_w
+    var y0 = y * 2
+    var x0 = x * 2
+    var s = entrada[y0 * w + x0] + entrada[y0 * w + x0 + 1] + entrada[(y0 + 1) * w + x0] + entrada[(y0 + 1) * w + x0 + 1]
+    out_ptr[idx] = s * 0.25
+
+fn avgpool2x2_stride2_cuda(
+    entrada: List[Float32],
+    h: Int,
+    w: Int,
+    tipo_computacao: String = "cuda",
+    pipeline_id: Int = 0,
+) -> List[Float32]:
+    var out_h = h // 2
+    var out_w = w // 2
+    var total = out_h * out_w
+    var out = List[Float32](capacity=total)
+    for _ in range(total):
+        out.append(0.0)
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var in_dev = ctx.enqueue_create_buffer[DType.float32](len(entrada))
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](total)
+                _copiar_lista_para_device(in_dev, entrada, len(entrada))
+                var block_dim = 128
+                var grid_dim = (total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_avgpool2x2_stride2](
+                    in_dev,
+                    h,
+                    w,
+                    out_dev,
+                    out_h,
+                    out_w,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, total)
+        except _:
+            debug_assert(False, "falha ao executar avgpool2x2_stride2_cuda")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+    return out^
+fn _kernel_conv2d_valid_relu(
+    imagem: UnsafePointer[Float32],
+    altura: Int,
+    largura: Int,
+    kernel: UnsafePointer[Float32],
+    kh: Int,
+    kw: Int,
+    out_ptr: UnsafePointer[Float32],
+    out_h: Int,
+    out_w: Int,
+):
+    var tid = global_idx.x
+    var total = UInt(out_h * out_w)
+    if tid >= total:
+        return
+    var idx = Int(tid)
+    var y = idx // out_w
+    var x = idx - y * out_w
+    var acc: Float32 = 0.0
+    for ky in range(kh):
+        for kx in range(kw):
+            var iy = y + ky
+            var ix = x + kx
+            var v = imagem[iy * largura + ix]
+            var w = kernel[ky * kw + kx]
+            acc = acc + v * w
+    out_ptr[idx] = acc if acc > 0.0 else Float32(0.0)
+
+fn conv2d_valid_relu_cuda(
+    imagem: List[Float32],
+    altura: Int,
+    largura: Int,
+    kernel: List[Float32],
+    kh: Int,
+    kw: Int,
+    tipo_computacao: String = "cuda",
+    pipeline_id: Int = 0,
+) -> List[Float32]:
+    # Parametrização padrão do projeto: listas, tipos explícitos, pipeline_id opcional
+    var out_h = altura - kh + 1
+    var out_w = largura - kw + 1
+    var total = out_h * out_w
+    var out = List[Float32](capacity=total)
+    for _ in range(total):
+        out.append(0.0)
+    @parameter
+    if has_nvidia_gpu_accelerator():
+        try:
+            with DeviceContext(0, api="cuda") as ctx:
+                var img_dev = ctx.enqueue_create_buffer[DType.float32](len(imagem))
+                var ker_dev = ctx.enqueue_create_buffer[DType.float32](len(kernel))
+                var out_dev = ctx.enqueue_create_buffer[DType.float32](total)
+                _copiar_lista_para_device(img_dev, imagem, len(imagem))
+                _copiar_lista_para_device(ker_dev, kernel, len(kernel))
+                var block_dim = 128
+                var grid_dim = (total + block_dim - 1) // block_dim
+                ctx.enqueue_function_experimental[_kernel_conv2d_valid_relu](
+                    img_dev,
+                    altura,
+                    largura,
+                    ker_dev,
+                    kh,
+                    kw,
+                    out_dev,
+                    out_h,
+                    out_w,
+                    grid_dim=(grid_dim),
+                    block_dim=(block_dim),
+                )
+                ctx.synchronize()
+                _copiar_device_para_tensor(out_dev, out, total)
+        except _:
+            debug_assert(False, "falha ao executar conv2d_valid_relu_cuda")
+    else:
+        debug_assert(False, "kernels CUDA nao disponiveis nesta compilacao")
+    return out^
+fn _kernel_linear_bias_gelu(
+    a: UnsafePointer[Float32],
+    w: UnsafePointer[Float32],
+    b: UnsafePointer[Float32],
+    out_ptr: UnsafePointer[Float32],
+    batch: Int,
+    fan_in: Int,
+    fan_out: Int,
+):
+    var tid = global_idx.x
+    var total = UInt(batch * fan_out)
+    if tid >= total:
+        return
+    var idx = Int(tid)
+    var i = idx // fan_out
+    var j = idx - i * fan_out
+    var acc: Float32 = 0.0
+    for k in range(fan_in):
+        acc = acc + a[i * fan_in + k] * w[k * fan_out + j]
+    acc = acc + b[j]
+    # GELU (approx)
+    var c = 0.7978845608 * (acc + 0.044715 * acc * acc * acc)
+    out_ptr[idx] = 0.5 * acc * (1.0 + tanh(c))
+fn _kernel_linear_bias_sigmoid(
+    a: UnsafePointer[Float32],
+    w: UnsafePointer[Float32],
+    b: UnsafePointer[Float32],
+    out_ptr: UnsafePointer[Float32],
+    batch: Int,
+    fan_in: Int,
+    fan_out: Int,
+):
+    var tid = global_idx.x
+    var total = UInt(batch * fan_out)
+    if tid >= total:
+        return
+    var idx = Int(tid)
+    var i = idx // fan_out
+    var j = idx - i * fan_out
+    var acc: Float32 = 0.0
+    for k in range(fan_in):
+        acc = acc + a[i * fan_in + k] * w[k * fan_out + j]
+    acc = acc + b[j]
+    # Sigmoid
+    out_ptr[idx] = 1.0 / (1.0 + exp(-acc))
 import src.nucleo.Tensor as tensor_defs
 import src.computacao.cuda.device_buffer_pool as buffer_pool
 from gpu import global_idx
@@ -1020,94 +1200,22 @@ fn mlp_forward_cuda_fused(
                     _copiar_lista_para_device(w_dev, w.dados, len_w)
                     _copiar_lista_para_device(b_dev, b.dados, len_b)
 
-                    var grid_matmul = (len_out + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_matmul](
-                        a_dev,
-                        w_dev,
-                        z_dev,
-                        batch,
-                        fan_in,
-                        fan_out,
-                        grid_dim=(grid_matmul),
-                        block_dim=(block_dim),
-                    )
-
-                    var grid_bias = (len_out + block_dim - 1) // block_dim
-                    ctx.enqueue_function_experimental[_kernel_add_bias_vetor_coluna](
-                        z_dev,
-                        b_dev,
-                        z_dev,
-                        batch,
-                        fan_out,
-                        grid_dim=(grid_bias),
-                        block_dim=(block_dim),
-                    )
-
                     var eh_saida = camada == num_camadas - 1
-                    if not eh_saida:
-                        var grid_relu = (len_out + block_dim - 1) // block_dim
-                        ctx.enqueue_function_experimental[_kernel_relu_inplace](
-                            z_dev,
-                            len_out,
-                            grid_dim=(grid_relu),
-                            block_dim=(block_dim),
-                        )
-
-                        # Mantém ativação no device para a próxima camada, evitando upload host->device.
-                        var grid_copy_hidden = (len_out + block_dim - 1) // block_dim
-                        ctx.enqueue_function_experimental[_kernel_copy](
-                            z_dev,
+                    var usar_sigmoid = eh_saida and ativacao_saida_id == 42  # 42: id para sigmoid
+                    var usar_gelu = eh_saida and ativacao_saida_id == 43    # 43: id para gelu
+                    if usar_sigmoid:
+                        var grid_fused = (len_out + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_linear_bias_sigmoid](
                             a_dev,
-                            len_out,
-                            grid_dim=(grid_copy_hidden),
+                            w_dev,
+                            b_dev,
+                            z_dev,
+                            batch,
+                            fan_in,
+                            fan_out,
+                            grid_dim=(grid_fused),
                             block_dim=(block_dim),
                         )
-
-                        # Para ReLU, a derivada depende apenas do sinal; usar ativação como proxy de z evita uma cópia extra.
-                        ctx.synchronize()
-                        var formato_a_hidden = List[Int]()
-                        formato_a_hidden.append(batch)
-                        formato_a_hidden.append(fan_out)
-                        var ativ_hidden = tensor_defs.Tensor(formato_a_hidden^, entradas.tipo_computacao)
-                        _copiar_device_para_tensor(z_dev, ativ_hidden, len_out)
-                        ativ_hidden.id_pipeline_ultima_operacao = pipeline_id
-                        zs_out.append(ativ_hidden.copy())
-                        ativs_out.append(ativ_hidden.copy())
-                        fan_in_atual = fan_out
-                    else:
-                        var preservar_pre_ativacao = ativacao_saida_id == ativacao_saida_hard_sigmoid_id
-                        if preservar_pre_ativacao:
-                            ctx.synchronize()
-                            var formato_z = List[Int]()
-                            formato_z.append(batch)
-                            formato_z.append(fan_out)
-                            var z_host = tensor_defs.Tensor(formato_z^, entradas.tipo_computacao)
-                            _copiar_device_para_tensor(z_dev, z_host, len_out)
-                            z_host.id_pipeline_ultima_operacao = pipeline_id
-                            zs_out.append(z_host.copy())
-
-                        if ativacao_saida_id == ativacao_saida_softmax_id:
-                            var softmax_block = 128
-                            var softmax_grid = (batch + softmax_block - 1) // softmax_block
-                            ctx.enqueue_function_experimental[_kernel_softmax_linhas](
-                                z_dev,
-                                z_dev,
-                                batch,
-                                fan_out,
-                                grid_dim=(softmax_grid),
-                                block_dim=(softmax_block),
-                            )
-                        elif ativacao_saida_id == ativacao_saida_hard_sigmoid_id:
-                            var grid_hs = (len_out + block_dim - 1) // block_dim
-                            ctx.enqueue_function_experimental[_kernel_hard_sigmoid_inplace_local](
-                                z_dev,
-                                len_out,
-                                grid_dim=(grid_hs),
-                                block_dim=(block_dim),
-                            )
-                        elif ativacao_saida_id == ativacao_saida_linear_id:
-                            pass
-
                         ctx.synchronize()
                         var formato_a = List[Int]()
                         formato_a.append(batch)
@@ -1115,14 +1223,137 @@ fn mlp_forward_cuda_fused(
                         var ativ_host = tensor_defs.Tensor(formato_a^, entradas.tipo_computacao)
                         _copiar_device_para_tensor(z_dev, ativ_host, len_out)
                         ativ_host.id_pipeline_ultima_operacao = pipeline_id
-
-                        # Para softmax/linear, o backward atual nao depende de z de saida;
-                        # usar ativacao como proxy reduz uma copia device->host por iteracao.
-                        if not preservar_pre_ativacao:
-                            zs_out.append(ativ_host.copy())
-
+                        zs_out.append(ativ_host.copy())
                         ativs_out.append(ativ_host.copy())
                         pred_host = ativ_host.copy()
+                        fan_in_atual = fan_out
+                    elif usar_gelu:
+                        var grid_fused = (len_out + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_linear_bias_gelu](
+                            a_dev,
+                            w_dev,
+                            b_dev,
+                            z_dev,
+                            batch,
+                            fan_in,
+                            fan_out,
+                            grid_dim=(grid_fused),
+                            block_dim=(block_dim),
+                        )
+                        ctx.synchronize()
+                        var formato_a = List[Int]()
+                        formato_a.append(batch)
+                        formato_a.append(fan_out)
+                        var ativ_host = tensor_defs.Tensor(formato_a^, entradas.tipo_computacao)
+                        _copiar_device_para_tensor(z_dev, ativ_host, len_out)
+                        ativ_host.id_pipeline_ultima_operacao = pipeline_id
+                        zs_out.append(ativ_host.copy())
+                        ativs_out.append(ativ_host.copy())
+                        pred_host = ativ_host.copy()
+                        fan_in_atual = fan_out
+                    else:
+                        var grid_matmul = (len_out + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_matmul](
+                            a_dev,
+                            w_dev,
+                            z_dev,
+                            batch,
+                            fan_in,
+                            fan_out,
+                            grid_dim=(grid_matmul),
+                            block_dim=(block_dim),
+                        )
+
+                        var grid_bias = (len_out + block_dim - 1) // block_dim
+                        ctx.enqueue_function_experimental[_kernel_add_bias_vetor_coluna](
+                            z_dev,
+                            b_dev,
+                            z_dev,
+                            batch,
+                            fan_out,
+                            grid_dim=(grid_bias),
+                            block_dim=(block_dim),
+                        )
+
+                        if not eh_saida:
+                            var grid_relu = (len_out + block_dim - 1) // block_dim
+                            ctx.enqueue_function_experimental[_kernel_relu_inplace](
+                                z_dev,
+                                len_out,
+                                grid_dim=(grid_relu),
+                                block_dim=(block_dim),
+                            )
+
+                            # Mantém ativação no device para a próxima camada, evitando upload host->device.
+                            var grid_copy_hidden = (len_out + block_dim - 1) // block_dim
+                            ctx.enqueue_function_experimental[_kernel_copy](
+                                z_dev,
+                                a_dev,
+                                len_out,
+                                grid_dim=(grid_copy_hidden),
+                                block_dim=(block_dim),
+                            )
+
+                            # Para ReLU, a derivada depende apenas do sinal; usar ativação como proxy de z evita uma cópia extra.
+                            ctx.synchronize()
+                            var formato_a_hidden = List[Int]()
+                            formato_a_hidden.append(batch)
+                            formato_a_hidden.append(fan_out)
+                            var ativ_hidden = tensor_defs.Tensor(formato_a_hidden^, entradas.tipo_computacao)
+                            _copiar_device_para_tensor(z_dev, ativ_hidden, len_out)
+                            ativ_hidden.id_pipeline_ultima_operacao = pipeline_id
+                            zs_out.append(ativ_hidden.copy())
+                            ativs_out.append(ativ_hidden.copy())
+                            fan_in_atual = fan_out
+                        else:
+                            var preservar_pre_ativacao = ativacao_saida_id == ativacao_saida_hard_sigmoid_id
+                            if preservar_pre_ativacao:
+                                ctx.synchronize()
+                                var formato_z = List[Int]()
+                                formato_z.append(batch)
+                                formato_z.append(fan_out)
+                                var z_host = tensor_defs.Tensor(formato_z^, entradas.tipo_computacao)
+                                _copiar_device_para_tensor(z_dev, z_host, len_out)
+                                z_host.id_pipeline_ultima_operacao = pipeline_id
+                                zs_out.append(z_host.copy())
+
+                            if ativacao_saida_id == ativacao_saida_softmax_id:
+                                var softmax_block = 128
+                                var softmax_grid = (batch + softmax_block - 1) // softmax_block
+                                ctx.enqueue_function_experimental[_kernel_softmax_linhas](
+                                    z_dev,
+                                    z_dev,
+                                    batch,
+                                    fan_out,
+                                    grid_dim=(softmax_grid),
+                                    block_dim=(softmax_block),
+                                )
+                            elif ativacao_saida_id == ativacao_saida_hard_sigmoid_id:
+                                var grid_hs = (len_out + block_dim - 1) // block_dim
+                                ctx.enqueue_function_experimental[_kernel_hard_sigmoid_inplace_local](
+                                    z_dev,
+                                    len_out,
+                                    grid_dim=(grid_hs),
+                                    block_dim=(block_dim),
+                                )
+                            elif ativacao_saida_id == ativacao_saida_linear_id:
+                                pass
+
+                            ctx.synchronize()
+                            var formato_a = List[Int]()
+                            formato_a.append(batch)
+                            formato_a.append(fan_out)
+                            var ativ_host = tensor_defs.Tensor(formato_a^, entradas.tipo_computacao)
+                            _copiar_device_para_tensor(z_dev, ativ_host, len_out)
+                            ativ_host.id_pipeline_ultima_operacao = pipeline_id
+
+                            # Para softmax/linear, o backward atual nao depende de z de saida;
+                            # usar ativacao como proxy reduz uma copia device->host por iteracao.
+                            if not preservar_pre_ativacao:
+                                zs_out.append(ativ_host.copy())
+
+                            ativs_out.append(ativ_host.copy())
+                            pred_host = ativ_host.copy()
         except _:
             debug_assert(False, "falha ao executar mlp_forward_cuda_fused")
     else:
@@ -1180,9 +1411,6 @@ fn passo_backprop_mlp_cuda(
             with DeviceContext(0, api="cuda") as ctx:
                 var ativ_prev_dev = ctx.enqueue_create_buffer[DType.float32](len_ativ_prev)
                 var grad_z_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_z)
-                _copiar_lista_para_device(ativ_prev_dev, ativ_prev.dados, len_ativ_prev)
-                _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z)
-
                 var grad_w_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_w)
                 var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](len_grad_b)
                 var peso_dev = buffer_pool.device_buffer_pool.acquire(len_peso)

@@ -1,3 +1,37 @@
+fn _conv2d_valid_relu_backward(
+    var imagem: List[Float32],
+    var altura: Int,
+    var largura: Int,
+    var kernel: tensor_defs.Tensor,
+    var grad_saida: List[Float32],
+    var kh: Int,
+    var kw: Int
+) -> List[Float32]:
+    # Calcula gradiente do kernel dado gradiente da saída (dL/dY)
+    var out_h = altura - kh + 1
+    var out_w = largura - kw + 1
+    var grad_kernel = List[Float32]()
+    for _ in range(kh * kw):
+        grad_kernel.append(0.0)
+    for y in range(out_h):
+        for x in range(out_w):
+            # Só propaga se ativação passou pelo ReLU
+            var acc: Float32 = 0.0
+            for ky in range(kh):
+                for kx in range(kw):
+                    var iy = y + ky
+                    var ix = x + kx
+                    var v = imagem[iy * largura + ix]
+                    var w = kernel.dados[ky * kw + kx]
+                    acc = acc + v * w
+            if acc > 0.0:
+                for ky in range(kh):
+                    for kx in range(kw):
+                        var iy = y + ky
+                        var ix = x + kx
+                        var v = imagem[iy * largura + ix]
+                        grad_kernel[ky * kw + kx] = grad_kernel[ky * kw + kx] + grad_saida[y * out_w + x] * v
+    return grad_kernel^
 import src.nucleo.Tensor as tensor_defs
 import src.computacao.dispatcher_tensor as dispatcher_tensor
 import math
@@ -44,6 +78,45 @@ struct BlocoCNN(Movable, Copyable):
         var feat_dim = self.num_filtros * pool_h * pool_w
 
         var formato_saida = List[Int]()
+
+            # --- Backpropagação para os kernels convolucionais ---
+            # Para cada filtro, computa gradiente do kernel
+            var amostras = entradas.formato[0]
+            var conv_h = bloco.altura - bloco.kernel_h + 1
+            var conv_w = bloco.largura - bloco.kernel_w + 1
+            var pool_h = conv_h // 2
+            var pool_w = conv_w // 2
+            var feat_dim = bloco.num_filtros * pool_h * pool_w
+
+            # grad_feats: [N, feat_dim]
+            # grad_feats = grad_z * W^T
+            var grad_feats = dispatcher_tensor.multiplicar_matrizes(grad_z, dispatcher_tensor.transpor(bloco.peso_saida))
+
+            for n in range(amostras):
+                var img = List[Float32]()
+                var base = n * bloco.altura * bloco.largura
+                for i in range(bloco.altura * bloco.largura):
+                    img.append(entradas.dados[base + i])
+
+                var off = 0
+                for f in range(bloco.num_filtros):
+                    # grad_feat para este filtro
+                    var grad_feat_f = List[Float32]()
+                    for i in range(pool_h * pool_w):
+                        grad_feat_f.append(grad_feats.dados[n * feat_dim + off + i])
+                    # Desfaz pooling (aproximação: distribui gradiente igualmente)
+                    var grad_conv = List[Float32]()
+                    for y in range(conv_h):
+                        for x in range(conv_w):
+                            var pool_y = y // 2
+                            var pool_x = x // 2
+                            grad_conv.append(grad_feat_f[pool_y * pool_w + pool_x] * 0.25)
+                    # grad_kernel para este filtro nesta amostra
+                    var grad_kernel = _conv2d_valid_relu_backward(img, bloco.altura, bloco.largura, bloco.kernels[f], grad_conv, bloco.kernel_h, bloco.kernel_w)
+                    # Atualiza kernel (SGD)
+                    for i in range(len(grad_kernel)):
+                        bloco.kernels[f].dados[i] = bloco.kernels[f].dados[i] - taxa_aprendizado * grad_kernel[i]
+                    off = off + pool_h * pool_w
         formato_saida.append(feat_dim)
         formato_saida.append(1)
         self.peso_saida = tensor_defs.Tensor(formato_saida^, self.tipo_computacao)
@@ -108,43 +181,16 @@ fn _conv2d_valid_relu(
     var altura: Int,
     var largura: Int,
     kernel: tensor_defs.Tensor,
+    tipo_computacao: String = "cpu",
 ) -> List[Float32]:
     var kh = kernel.formato[0]
     var kw = kernel.formato[1]
-    var out_h = altura - kh + 1
-    var out_w = largura - kw + 1
-    var out = List[Float32]()
-    for _ in range(out_h * out_w):
-        out.append(0.0)
-
-    for y in range(out_h):
-        for x in range(out_w):
-            var acc: Float32 = 0.0
-            for ky in range(kh):
-                for kx in range(kw):
-                    var iy = y + ky
-                    var ix = x + kx
-                    var v = imagem[iy * largura + ix]
-                    var w = kernel.dados[ky * kw + kx]
-                    acc = acc + v * w
-            out[y * out_w + x] = _relu(acc)
-    return out^
+    # Usa dispatcher para ativar CUDA se disponível
+    return dispatcher_tensor.conv2d_valid_relu_dispatch(imagem, altura, largura, kernel.dados, kh, kw, tipo_computacao)
 
 
-fn _avgpool2x2_stride2(var entrada: List[Float32], var h: Int, var w: Int) -> List[Float32]:
-    var out_h = h // 2
-    var out_w = w // 2
-    var out = List[Float32]()
-    for _ in range(out_h * out_w):
-        out.append(0.0)
-
-    for y in range(out_h):
-        for x in range(out_w):
-            var y0 = y * 2
-            var x0 = x * 2
-            var s = entrada[y0 * w + x0] + entrada[y0 * w + x0 + 1] + entrada[(y0 + 1) * w + x0] + entrada[(y0 + 1) * w + x0 + 1]
-            out[y * out_w + x] = s * 0.25
-    return out^
+fn _avgpool2x2_stride2(var entrada: List[Float32], var h: Int, var w: Int, tipo_computacao: String = "cpu") -> List[Float32]:
+    return dispatcher_tensor.avgpool2x2_stride2_dispatch(entrada, h, w, tipo_computacao)
 
 
 fn extrair_features(bloco: BlocoCNN, entradas: tensor_defs.Tensor) -> tensor_defs.Tensor:
@@ -171,8 +217,8 @@ fn extrair_features(bloco: BlocoCNN, entradas: tensor_defs.Tensor) -> tensor_def
 
         var off = 0
         for f in range(bloco.num_filtros):
-            var conv = _conv2d_valid_relu(img, bloco.altura, bloco.largura, bloco.kernels[f])
-            var pool = _avgpool2x2_stride2(conv, conv_h, conv_w)
+            var conv = _conv2d_valid_relu(img, bloco.altura, bloco.largura, bloco.kernels[f], bloco.tipo_computacao)
+            var pool = _avgpool2x2_stride2(conv, conv_h, conv_w, bloco.tipo_computacao)
             for i in range(len(pool)):
                 out.dados[n * feat_dim + off + i] = pool[i]
             off = off + len(pool)

@@ -5,6 +5,7 @@ import src.computacao.sessao as sessao_driver
 import src.computacao.storage_sessao as storage_sessao
 import src.computacao.captura_camadas as captura_camadas
 import src.computacao.cuda.cuda as cuda_backend
+import src.computacao.cuda.pesos_device_resident as cuda_pesos
 import src.conjuntos.lotes_supervisionados as lotes_sup
 import src.nucleo.Tensor as tensor_defs
 import math
@@ -329,3 +330,41 @@ fn treinar(
                     print("  ->", ar)
 
     return loss_final
+
+
+# Exemplo de forward+update device-resident para uma camada
+import src.computacao.cuda.kernels_tensor as cuda_kernels
+
+def exemplo_forward_update_device_resident(
+    bloco: BlocoMLPDeviceResident,
+    entrada_dev: DeviceBuffer[DType.float32],
+    grad_saida_dev: DeviceBuffer[DType.float32],
+    batch: Int,
+    fan_in: Int,
+    fan_out: Int,
+    taxa_aprendizado: Float32,
+    sincronizar_para_host: Bool = False,
+) -> DeviceBuffer[DType.float32]:
+    # Forward: matmul + bias (device-resident)
+    var w_dev = bloco.pesos[0].buffer
+    var b_dev = bloco.biases[0].buffer
+    var len_out = batch * fan_out
+    var z_dev = cuda_kernels.buffer_pool.device_buffer_pool.acquire(len_out)
+    # Matmul (entrada_dev x w_dev -> z_dev)
+    # Aqui você chamaria um kernel matmul device-resident (não implementado neste exemplo)
+    # cuda_kernels.matmul_device_resident(entrada_dev, w_dev, z_dev, batch, fan_in, fan_out)
+    # Bias (z_dev + b_dev -> z_dev)
+    # cuda_kernels.add_bias_device_resident(z_dev, b_dev, z_dev, batch, fan_out)
+    # Ativação (ReLU, por exemplo)
+    # cuda_kernels.relu_inplace_device_resident(z_dev, len_out)
+    # Backward/update: SGD direto no device
+    var grad_dev = grad_saida_dev
+    var w_atualizado_dev = cuda_kernels.aplicar_sgd_em_pesos_device_resident_cuda(w_dev, grad_dev, len_out, taxa_aprendizado, 0)
+    # Opcional: sincronizar para host
+    if sincronizar_para_host:
+        var saida_host = List[Float32]()
+        with z_dev.map_to_host() as host:
+            for i in range(len_out):
+                saida_host.append(host[i])
+        return saida_host
+    return z_dev
