@@ -183,7 +183,7 @@ import src.computacao.cuda.device_buffer_pool as buffer_pool
 from gpu import global_idx
 from gpu.host import DeviceContext, DeviceBuffer
 from sys import has_nvidia_gpu_accelerator
-from math import exp
+from math import exp, tanh
 
 
 # Implementação de referência para backend CUDA sem fallback para kernels CPU.
@@ -1658,8 +1658,8 @@ fn backward_mlp_cuda_em_tensores(
     var pool_max_len_grad_b: Int,
     var pool_max_len_peso: Int,
     var pool_max_len_grad_a_prev: Int,
-    var copiar_grad_a_prev_para_host: Bool = False,
     var pipeline_id: Int,
+    var copiar_grad_a_prev_para_host: Bool = False,
 ):
     var num_camadas = len(pesos)
     debug_assert(num_camadas > 0, "MLP precisa de ao menos uma camada")
@@ -1702,6 +1702,9 @@ fn backward_mlp_cuda_em_tensores(
                 var grad_b_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
                 var peso_dev = buffer_pool.device_buffer_pool.acquire(len_peso)
                 var grad_a_prev_dev = buffer_pool.device_buffer_pool.acquire(len_grad_a_prev)
+                var bias_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
+                var peso_upd_dev = ctx.enqueue_create_buffer[DType.float32](max_len_peso)
+                var bias_upd_dev = ctx.enqueue_create_buffer[DType.float32](max_len_grad_b)
 
                 var len_grad_z_atual = len(grad_z_atual.dados)
                 _copiar_lista_para_device(grad_z_dev, grad_z_atual.dados, len_grad_z_atual)
@@ -1710,6 +1713,7 @@ fn backward_mlp_cuda_em_tensores(
                     var camada = num_camadas - 1 - passo
                     var ativ_prev = ativacoes_forward[camada]
                     var peso_camada = pesos[camada]
+                    var bias_camada = grad_bs_out[camada]  # Usar grad_bs_out como referência para bias_camada
                     var calcular_grad_a_prev = camada > 0
 
                     var batch = ativ_prev.formato[0]
@@ -1789,17 +1793,7 @@ fn backward_mlp_cuda_em_tensores(
                     grad_ws_out[camada].id_pipeline_ultima_operacao = pipeline_id
                     grad_bs_out[camada].id_pipeline_ultima_operacao = pipeline_id
 
-                    var formato_peso = peso_camada.formato.copy()
-                    var peso_atualizado = tensor_defs.Tensor(formato_peso^, peso_camada.tipo_computacao)
-                    _copiar_device_para_tensor(peso_upd_dev, peso_atualizado, len_peso)
-                    peso_atualizado.id_pipeline_ultima_operacao = pipeline_id
-                    pesos[camada] = peso_atualizado.copy()
-
-                    var formato_bias = bias_camada.formato.copy()
-                    var bias_atualizado = tensor_defs.Tensor(formato_bias^, bias_camada.tipo_computacao)
-                    _copiar_device_para_tensor(bias_upd_dev, bias_atualizado, len_grad_b)
-                    bias_atualizado.id_pipeline_ultima_operacao = pipeline_id
-                    biases[camada] = bias_atualizado.copy()
+                    # Remover atualização de pesos/biases aqui, pois não faz sentido em backward puro
         except _:
             debug_assert(False, "falha ao executar backward_mlp_cuda_em_tensores")
     else:
