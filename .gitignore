@@ -1,0 +1,7 @@
+# Ignore build output folders
+bin/
+obj/
+
+# Also ignore nested project build folders
+**/bin/
+**/obj/
